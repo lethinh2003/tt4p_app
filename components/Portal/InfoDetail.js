@@ -41,7 +41,7 @@ const InfoDetail = ({ setStep, setInfo, info }) => {
         findSex: findSex,
         cityLive: cityLive,
       }));
-      setStep(5);
+      setStep(6);
     } else {
       setError((prev) => ({
         ...prev,
@@ -73,6 +73,8 @@ const InfoDetail = ({ setStep, setInfo, info }) => {
     textTransform: "capitalize",
     borderRadius: "10px",
     padding: "10px",
+    width: "100%",
+    fontWeight: "bold",
 
     "&:hover": {
       backgroundColor: "#fd6b2229",
@@ -85,6 +87,7 @@ const InfoDetail = ({ setStep, setInfo, info }) => {
     height: "50px",
     borderRadius: "10px",
     padding: "10px",
+    cursor: "pointer",
 
     "&:hover": {
       backgroundColor: "#fd6b2229",
@@ -138,7 +141,7 @@ const InfoDetail = ({ setStep, setInfo, info }) => {
               sexOption.map((item, i) => (
                 <ButtonOptionWrapper
                   as={motion.div}
-                  whileHover={{ scale: 1.1 }}
+                  whileHover={{ scale: 1.02 }}
                   className={mySex == item.key ? "active" : null}
                   onClick={() => setMySex(item.key)}
                   key={i}
@@ -176,7 +179,7 @@ const InfoDetail = ({ setStep, setInfo, info }) => {
               sexOption.map((item, i) => (
                 <ButtonOptionWrapper
                   as={motion.div}
-                  whileHover={{ scale: 1.1 }}
+                  whileHover={{ scale: 1.02 }}
                   className={findSex == item.key ? "active" : null}
                   onClick={() => setFindSex(item.key)}
                   key={i}
@@ -219,9 +222,22 @@ const InfoDetail = ({ setStep, setInfo, info }) => {
             <ErrorContent>Vui lòng chọn thành phố của bạn</ErrorContent>
           )}
         </FormControl>
-        <ButtonSocialWrapper type="submit" onClick={onSubmit}>
-          Next
-        </ButtonSocialWrapper>
+        <Box
+          as={motion.div}
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            fontWeight: "bold",
+            cursor: "pointer",
+            width: "100%",
+          }}
+          whileHover={{ scale: 1.02 }}
+        >
+          <ButtonSocialWrapper type="submit" onClick={onSubmit}>
+            Next
+          </ButtonSocialWrapper>
+        </Box>
       </form>
     </>
   );

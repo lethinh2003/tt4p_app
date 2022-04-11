@@ -5,8 +5,10 @@ import Image from "next/image";
 import { useState } from "react";
 import InfoDetail from "./InfoDetail";
 import Signup from "./Signup";
+import Login from "./Login";
 import FinalStep from "./FinalStep";
 import { useSession } from "next-auth/react";
+
 const Index = () => {
   const { data: session, status } = useSession();
 
@@ -15,7 +17,7 @@ const Index = () => {
   const [info, setInfo] = useState({});
 
   const ContainerWrapper = styled(Box)(({ theme }) => ({
-    backgroundColor: theme.palette.background.first,
+    backgroundColor: theme.palette.box.background.default,
     // height: "600px",
     maxWidth: "400px",
     width: "100%",
@@ -23,6 +25,8 @@ const Index = () => {
     transform: "translate(-50%, -50%)",
     top: "50%",
     left: "50%",
+    borderRadius: "30px",
+    boxShadow: `0px 4px 6px 2px ${theme.palette.box.shadow.default}`,
   }));
   const BoxWrapper = styled(Box)(({ theme }) => ({
     height: "100%",
@@ -78,7 +82,7 @@ const Index = () => {
                 fontSize: "30px",
               }}
             >
-              Chào mừng đến với tâm sự 4P
+              Chào mừng đến với tâm sự 4 phương
             </Typography>
             <Typography
               sx={{
@@ -94,7 +98,20 @@ const Index = () => {
               width={200}
               height={300}
             />
-            <ButtonWrapper onClick={() => setStep(2)}>Start</ButtonWrapper>
+            <ButtonWrapper
+              as={motion.div}
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                fontWeight: "bold",
+                cursor: "pointer",
+              }}
+              whileHover={{ scale: 1.02 }}
+              onClick={() => setStep(2)}
+            >
+              Start
+            </ButtonWrapper>
             <Typography
               sx={{
                 opacity: 0.7,
@@ -137,8 +154,33 @@ const Index = () => {
               width={200}
               height={300}
             />
-            <ButtonSocialWrapper onClick={() => setStep(3)}>
-              Next
+            <ButtonSocialWrapper
+              as={motion.div}
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                fontWeight: "bold",
+                cursor: "pointer",
+              }}
+              whileHover={{ scale: 1.02 }}
+              onClick={() => setStep(4)}
+            >
+              Đăng nhập
+            </ButtonSocialWrapper>
+            <ButtonSocialWrapper
+              as={motion.div}
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                fontWeight: "bold",
+                cursor: "pointer",
+              }}
+              whileHover={{ scale: 1.02 }}
+              onClick={() => setStep(3)}
+            >
+              Người dùng mới
             </ButtonSocialWrapper>
           </BoxWrapper>
         )}
@@ -188,6 +230,34 @@ const Index = () => {
             </Typography>
             <Typography
               sx={{
+                opacity: 0.7,
+                fontSize: "14px",
+              }}
+            >
+              Vui lòng mô tả chính xác thông tin của bạn, để chúng tôi có thể
+              tìm chính xác partner cho bạn nhé
+            </Typography>
+            <Login setStep={setStep} />
+          </BoxWrapper>
+        )}
+        {step == 5 && (
+          <BoxWrapper
+            as={motion.div}
+            initial={{ opacity: 0, x: "-100%" }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Typography
+              sx={{
+                fontWeight: "bold",
+                fontSize: "35px",
+                alignSelf: "center",
+              }}
+            >
+              Thông tin của bạn
+            </Typography>
+            <Typography
+              sx={{
                 fontWeight: "bold",
                 fontSize: "20px",
                 alignSelf: "center",
@@ -205,10 +275,23 @@ const Index = () => {
             </Typography>
             <InfoDetail setStep={setStep} setInfo={setInfo} info={info} />
 
-            <ButtonWrapper onClick={() => setStep(3)}>Previous</ButtonWrapper>
+            <ButtonWrapper
+              as={motion.div}
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                fontWeight: "bold",
+                cursor: "pointer",
+              }}
+              whileHover={{ scale: 1.02 }}
+              onClick={() => setStep(3)}
+            >
+              Previous
+            </ButtonWrapper>
           </BoxWrapper>
         )}
-        {step == 5 && (
+        {step == 6 && (
           <BoxWrapper
             as={motion.div}
             initial={{ opacity: 0, x: "-100%" }}

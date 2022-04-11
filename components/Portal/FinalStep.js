@@ -69,6 +69,8 @@ const FinalStep = ({ setStep, setInfo, info }) => {
     textTransform: "capitalize",
     borderRadius: "10px",
     padding: "10px",
+    width: "100%",
+    fontWeight: "bold",
 
     "&:hover": {
       backgroundColor: "#fd6b2229",
@@ -161,11 +163,12 @@ const FinalStep = ({ setStep, setInfo, info }) => {
             : "Bạn LGBT"}
           .
         </Typography>
+
         <ButtonSocialWrapper type="submit" onClick={onSubmit}>
           Next
         </ButtonSocialWrapper>
 
-        <ButtonWrapper onClick={() => setStep(4)}>Previous</ButtonWrapper>
+        <ButtonWrapper onClick={() => setStep(5)}>Previous</ButtonWrapper>
       </Box>
     </>
   );

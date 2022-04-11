@@ -33,11 +33,11 @@ export default NextAuth({
         });
 
         if (!user) {
-          throw new Error("No user found");
+          throw new Error("Tài khoản không tồn tại, vui lòng thử lại");
         }
         const authPassword = await bcrypt.compare(password, user.password);
         if (!authPassword) {
-          throw new Error("Password incorrect");
+          throw new Error("Password không chính xác");
         }
 
         return user;

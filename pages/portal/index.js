@@ -59,10 +59,20 @@ const getDesignTokens = (mode) => ({
     box: {
       ...(mode === "dark"
         ? {
-            default: "#323844",
+            background: {
+              default: "#323844",
+            },
+            shadow: {
+              default: "#d1d1d1",
+            },
           }
         : {
-            default: "#323844",
+            background: {
+              default: "#ffffff",
+            },
+            shadow: {
+              default: "#d1d1d1",
+            },
           }),
     },
     button: {
@@ -178,15 +188,15 @@ const Portal = (props) => {
           <Index />
         </ContainerWrapper>
         <ToastContainer
-          position="top-right"
+          position="top-center"
           autoClose={5000}
           hideProgressBar={false}
           newestOnTop={false}
           closeOnClick
           rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
+          pauseOnFocusLoss={false}
+          draggable={false}
+          pauseOnHover={false}
         />
       </ThemeProvider>
     </>

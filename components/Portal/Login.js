@@ -1,34 +1,27 @@
-import {
-  Box,
-  Container,
-  Typography,
-  Button,
-  FormControl,
-  TextField,
-  OutlinedInput,
-  InputAdornment,
-  Select,
-  MenuItem,
-  IconButton,
-} from "@mui/material";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { useEffect, useState, useRef } from "react";
-import { createGlobalStyle } from "styled-components";
-import Image from "next/image";
-import { styled } from "@mui/material/styles";
-import { motion } from "framer-motion";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Controller, useForm } from "react-hook-form";
-import * as Yup from "yup";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import {
+  Box,
+  Button,
+  FormControl,
+  IconButton,
+  InputAdornment,
+  OutlinedInput,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { styled } from "@mui/material/styles";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
+import { motion } from "framer-motion";
+import { signIn } from "next-auth/react";
+import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { Hearts } from "react-loading-icons";
+import { toast } from "react-toastify";
+import * as Yup from "yup";
 
-const Signup = ({ setStep, setInfo, info }) => {
-  const currentYears = new Date().getFullYear();
-  const [date, setDate] = useState(info.date ? info.date : currentYears);
+const Login = ({ setStep }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const variants = {
@@ -39,20 +32,6 @@ const Signup = ({ setStep, setInfo, info }) => {
     open: { opacity: 1, display: "flex" },
     closed: { opacity: 0, display: "none" },
   };
-  const generateYearOptions = () => {
-    const arrDate = [];
-    const startYear = 1950;
-    const endYear = currentYears;
-
-    for (let i = endYear; i >= startYear; i--) {
-      arrDate.push(
-        <MenuItem value={i} key={i}>
-          {i}
-        </MenuItem>
-      );
-    }
-    return arrDate;
-  };
 
   // form validation rules
   const validationSchema = Yup.object().shape({
@@ -62,9 +41,6 @@ const Signup = ({ setStep, setInfo, info }) => {
       .trim("Account invalid")
       .matches(/^\S*$/, "Account invalid")
       .strict(true),
-    name: Yup.string()
-      .required("Name is required")
-      .min(2, "Min-length 2, please re-enter"),
 
     password: Yup.string()
       .required("Password is required")
@@ -83,25 +59,21 @@ const Signup = ({ setStep, setInfo, info }) => {
   } = useForm(formOptions);
   const onSubmit = async (data) => {
     try {
-      if (date >= 1950 && date <= currentYears) {
-        setIsLoading(true);
-        const res = await axios.post(
-          `${process.env.ENDPOINT_SERVER}/api/v1/users/check-user`,
-          {
-            account: data.account,
-          }
-        );
+      setIsLoading(true);
 
-        setInfo((prev) => ({
-          ...prev,
-          account: data.account,
-          name: data.name,
-          password: data.password,
-          date,
-        }));
-        setStep(5);
-        setIsLoading(false);
+      const result = await signIn("login", {
+        account: data.account,
+        password: data.password,
+        redirect: false,
+      });
+
+      setIsLoading(false);
+      if (result.error) {
+        return toast.error(result.error);
       }
+
+      toast.success("Đăng nhập thành công, chúc bạn tham gia vui vẻ");
+      window.location.reload();
     } catch (err) {
       setIsLoading(false);
       if (err.response) {
@@ -145,8 +117,8 @@ const Signup = ({ setStep, setInfo, info }) => {
     textTransform: "capitalize",
     borderRadius: "10px",
     padding: "10px",
-    fontWeight: "bold",
     width: "100%",
+    fontWeight: "bold",
 
     "&:hover": {
       backgroundColor: "#fd6b2229",
@@ -222,7 +194,7 @@ const Signup = ({ setStep, setInfo, info }) => {
                   {...field}
                 />
               )}
-              defaultValue={info.account ? info.account : ""}
+              defaultValue={""}
             />
           </FormControl>
           <FormControl
@@ -256,50 +228,11 @@ const Signup = ({ setStep, setInfo, info }) => {
                   {...field}
                 />
               )}
-              defaultValue={info.password ? info.password : ""}
+              defaultValue={""}
             />
             <ErrorContent>
               {errors.password ? errors.password.message : ""}
             </ErrorContent>
-          </FormControl>
-          <FormControl
-            variant="standard"
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <LabelInput>Họ tên</LabelInput>
-            <Controller
-              name="name"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  size="small"
-                  fullWidth
-                  error={errors.name ? true : false}
-                  helperText={errors.name ? errors.name.message : ""}
-                  {...field}
-                />
-              )}
-              defaultValue={info.name ? info.name : ""}
-            />
-          </FormControl>
-          <FormControl
-            variant="standard"
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <LabelInput>Năm sinh</LabelInput>
-            <Select
-              value={date}
-              defaultValue={info.date ? info.date : currentYears}
-              onChange={(e) => setDate(e.target.value)}
-            >
-              {generateYearOptions()}
-            </Select>
           </FormControl>
           <Box
             as={motion.div}
@@ -314,7 +247,7 @@ const Signup = ({ setStep, setInfo, info }) => {
             whileHover={{ scale: 1.02 }}
           >
             <ButtonSocialWrapper type="submit" onClick={handleSubmit(onSubmit)}>
-              Next
+              Đăng nhập
             </ButtonSocialWrapper>
           </Box>
           <ButtonWrapper
@@ -336,4 +269,4 @@ const Signup = ({ setStep, setInfo, info }) => {
     </>
   );
 };
-export default Signup;
+export default Login;

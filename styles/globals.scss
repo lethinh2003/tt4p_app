@@ -1,0 +1,49 @@
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.Toastify__toast-theme--light {
+  color: #ffffff;
+  border-radius: 15px;
+  font-size: 16px;
+  background: rgb(233, 0, 0);
+  font-family: 'NOTO SANS';
+  &.Toastify__toast--error {
+    background: rgb(233, 0, 0);
+
+  }
+  &.Toastify__toast--info {
+    background: rgb(225, 230, 230);
+    color: black;
+
+  }
+  &.Toastify__toast--success  {
+    background: rgb(8, 217, 221);
+
+  }
+  &.Toastify__toast--warning  {
+    background: rgb(175 187 72);
+
+  }
+}
+.Toastify__progress-bar {
+  background: #f3eeee;
+}
+.Toastify__toast-icon {
+  color: #ffffff;
+} 
