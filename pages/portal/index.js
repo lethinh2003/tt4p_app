@@ -5,6 +5,8 @@ import { createGlobalStyle } from "styled-components";
 import Index from "../../components/Portal/Index";
 // import PlayerInfo from "./PlayerInfo";
 import { styled } from "@mui/material/styles";
+import { ToastContainer, toast } from "react-toastify";
+import { getSession } from "next-auth/react";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -175,8 +177,36 @@ const Portal = (props) => {
         <ContainerWrapper>
           <Index />
         </ContainerWrapper>
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
       </ThemeProvider>
     </>
   );
 };
 export default Portal;
+export const getServerSideProps = async (context) => {
+  const { req, res } = context;
+  const session = await getSession({ req });
+  if (session && session.user) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/",
+      },
+      props: {},
+    };
+  } else {
+    return {
+      props: {},
+    };
+  }
+};

@@ -5,7 +5,12 @@ import Image from "next/image";
 import { useState } from "react";
 import InfoDetail from "./InfoDetail";
 import Signup from "./Signup";
+import FinalStep from "./FinalStep";
+import { useSession } from "next-auth/react";
 const Index = () => {
+  const { data: session, status } = useSession();
+
+  console.log(session);
   const [step, setStep] = useState(1);
   const [info, setInfo] = useState({});
 
@@ -210,54 +215,7 @@ const Index = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <Typography
-              sx={{
-                fontWeight: "bold",
-                fontSize: "35px",
-                alignSelf: "center",
-              }}
-            >
-              Thông tin của bạn
-            </Typography>
-            <Typography
-              sx={{
-                fontWeight: "bold",
-                fontSize: "20px",
-                alignSelf: "center",
-              }}
-            >
-              Chào {info.name}
-            </Typography>
-            <Typography
-              sx={{
-                opacity: 0.7,
-                fontSize: "14px",
-              }}
-            >
-              Vui lòng xác nhận thông tin của bạn nhé
-            </Typography>
-            <Typography
-              sx={{
-                fontWeight: "bold",
-                fontSize: "20px",
-              }}
-            >
-              Họ tên: {info.name}, sinh năm {info.date}, giới tính{" "}
-              {info.mySex === "boy"
-                ? "Trai"
-                : info.mySex === "girl"
-                ? "Gái"
-                : "LGBT"}
-              , sống ở {info.cityLive}, muốn tìm{" "}
-              {info.findSex === "boy"
-                ? "Bạn Trai"
-                : info.findSex === "girl"
-                ? "Bạn Gái"
-                : "Bạn LGBT"}
-              .
-            </Typography>
-
-            <ButtonWrapper onClick={() => setStep(4)}>Previous</ButtonWrapper>
+            <FinalStep setStep={setStep} setInfo={setInfo} info={info} />
           </BoxWrapper>
         )}
       </ContainerWrapper>

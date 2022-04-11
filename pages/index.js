@@ -1,6 +1,7 @@
 import Head from "next/head";
 import { useEffect, useRef, useState } from "react";
 import Layout from "../components/Layout/Layout";
+import { getSession } from "next-auth/react";
 
 export default function Home() {
   return (
@@ -14,3 +15,21 @@ export default function Home() {
     </>
   );
 }
+export const getServerSideProps = async (context) => {
+  const { req, res } = context;
+  const session = await getSession({ req });
+  console.log(session);
+  if (session && session.user) {
+    return {
+      props: {},
+    };
+  } else {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/portal",
+      },
+      props: {},
+    };
+  }
+};

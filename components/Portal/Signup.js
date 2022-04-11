@@ -22,10 +22,23 @@ import { Controller, useForm } from "react-hook-form";
 import * as Yup from "yup";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import { Hearts } from "react-loading-icons";
+
 const Signup = ({ setStep, setInfo, info }) => {
   const currentYears = new Date().getFullYear();
   const [date, setDate] = useState(info.date ? info.date : currentYears);
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const variants = {
+    open: { opacity: 1 },
+    closed: { opacity: 0, y: "-100%" },
+  };
+  const loadingVariants = {
+    open: { opacity: 1, display: "flex" },
+    closed: { opacity: 0, display: "none" },
+  };
   const generateYearOptions = () => {
     const arrDate = [];
     const startYear = 1950;
@@ -68,16 +81,32 @@ const Signup = ({ setStep, setInfo, info }) => {
     register,
     reset,
   } = useForm(formOptions);
-  const onSubmit = (data) => {
-    if (date >= 1950 && date <= currentYears) {
-      setInfo((prev) => ({
-        ...prev,
-        account: data.account,
-        name: data.name,
-        password: data.password,
-        date,
-      }));
-      setStep(4);
+  const onSubmit = async (data) => {
+    try {
+      if (date >= 1950 && date <= currentYears) {
+        setIsLoading(true);
+        const res = await axios.post(
+          `${process.env.ENDPOINT_SERVER}/api/v1/users/check-user`,
+          {
+            account: data.account,
+          }
+        );
+
+        setInfo((prev) => ({
+          ...prev,
+          account: data.account,
+          name: data.name,
+          password: data.password,
+          date,
+        }));
+        setStep(4);
+        setIsLoading(false);
+      }
+    } catch (err) {
+      setIsLoading(false);
+      if (err.response) {
+        toast.error(err.response.data.message);
+      }
     }
   };
 
@@ -136,118 +165,145 @@ const Signup = ({ setStep, setInfo, info }) => {
   });
   return (
     <>
-      <form
-        style={{
+      <Box
+        as={motion.div}
+        animate={isLoading ? "open" : "closed"}
+        variants={loadingVariants}
+        sx={{
           display: "flex",
+          justifyContent: "center",
           flexDirection: "column",
-          width: "100%",
-          gap: "15px",
+          alignItems: "center",
         }}
-        onSubmit={handleSubmit(onSubmit)}
       >
-        <FormControl
-          variant="standard"
+        <Hearts fill="#cf65be" strokeOpacity={0.125} speed={0.75} />
+        <Typography
           sx={{
-            display: "flex",
-            flexDirection: "column",
+            fontWeight: "bold",
+            fontSize: "20px",
           }}
         >
-          <LabelInput>Tài khoản</LabelInput>
-          <Controller
-            name="account"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                size="small"
-                fullWidth
-                error={errors.account ? true : false}
-                helperText={errors.account ? errors.account.message : ""}
-                {...field}
-              />
-            )}
-            defaultValue={info.account ? info.account : ""}
-          />
-        </FormControl>
-        <FormControl
-          sx={{
+          Đang tải...
+        </Typography>
+      </Box>
+      <Box
+        as={motion.div}
+        animate={!isLoading ? "open" : "closed"}
+        variants={variants}
+      >
+        <form
+          style={{
             display: "flex",
             flexDirection: "column",
+            width: "100%",
+            gap: "15px",
           }}
+          onSubmit={handleSubmit(onSubmit)}
         >
-          <LabelInput>Password</LabelInput>
-
-          <Controller
-            name="password"
-            control={control}
-            render={({ field }) => (
-              <OutlinedInput
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={() => setShowPassword(!showPassword)}
-                      edge="end"
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                }
-                type={showPassword ? "text" : "password"}
-                size="small"
-                fullWidth
-                error={errors.password ? true : false}
-                {...field}
-              />
-            )}
-            defaultValue={info.password ? info.password : ""}
-          />
-          <ErrorContent>
-            {errors.password ? errors.password.message : ""}
-          </ErrorContent>
-        </FormControl>
-        <FormControl
-          variant="standard"
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <LabelInput>Họ tên</LabelInput>
-          <Controller
-            name="name"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                size="small"
-                fullWidth
-                error={errors.name ? true : false}
-                helperText={errors.name ? errors.name.message : ""}
-                {...field}
-              />
-            )}
-            defaultValue={info.name ? info.name : ""}
-          />
-        </FormControl>
-        <FormControl
-          variant="standard"
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <LabelInput>Năm sinh</LabelInput>
-          <Select
-            value={date}
-            defaultValue={info.date ? info.date : currentYears}
-            onChange={(e) => setDate(e.target.value)}
+          <FormControl
+            variant="standard"
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+            }}
           >
-            {generateYearOptions()}
-          </Select>
-        </FormControl>
-        <ButtonSocialWrapper type="submit" onClick={handleSubmit(onSubmit)}>
-          Next
-        </ButtonSocialWrapper>
-      </form>
+            <LabelInput>Tài khoản</LabelInput>
+            <Controller
+              name="account"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  size="small"
+                  fullWidth
+                  error={errors.account ? true : false}
+                  helperText={errors.account ? errors.account.message : ""}
+                  {...field}
+                />
+              )}
+              defaultValue={info.account ? info.account : ""}
+            />
+          </FormControl>
+          <FormControl
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <LabelInput>Password</LabelInput>
+
+            <Controller
+              name="password"
+              control={control}
+              render={({ field }) => (
+                <OutlinedInput
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={() => setShowPassword(!showPassword)}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  type={showPassword ? "text" : "password"}
+                  size="small"
+                  fullWidth
+                  error={errors.password ? true : false}
+                  {...field}
+                />
+              )}
+              defaultValue={info.password ? info.password : ""}
+            />
+            <ErrorContent>
+              {errors.password ? errors.password.message : ""}
+            </ErrorContent>
+          </FormControl>
+          <FormControl
+            variant="standard"
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <LabelInput>Họ tên</LabelInput>
+            <Controller
+              name="name"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  size="small"
+                  fullWidth
+                  error={errors.name ? true : false}
+                  helperText={errors.name ? errors.name.message : ""}
+                  {...field}
+                />
+              )}
+              defaultValue={info.name ? info.name : ""}
+            />
+          </FormControl>
+          <FormControl
+            variant="standard"
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <LabelInput>Năm sinh</LabelInput>
+            <Select
+              value={date}
+              defaultValue={info.date ? info.date : currentYears}
+              onChange={(e) => setDate(e.target.value)}
+            >
+              {generateYearOptions()}
+            </Select>
+          </FormControl>
+          <ButtonSocialWrapper type="submit" onClick={handleSubmit(onSubmit)}>
+            Next
+          </ButtonSocialWrapper>
+        </form>
+      </Box>
     </>
   );
 };
