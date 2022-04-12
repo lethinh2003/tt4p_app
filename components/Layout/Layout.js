@@ -45,23 +45,61 @@ const getDesignTokens = (mode) => ({
     background: {
       ...(mode === "dark"
         ? {
-            first: "#09071c",
-            second: "#122536",
-            third: "#350c2c",
+            first: "#e1e1e1",
+            second: "#c9adc5",
+            third: "#cb8daf",
           }
         : {
-            first: "#09071c",
-            second: "#122536",
-            third: "#350c2c",
+            first: "#e1e1e1",
+            second: "#c9adc5",
+            third: "#cb8daf",
+          }),
+    },
+    box: {
+      ...(mode === "dark"
+        ? {
+            background: {
+              default: "#323844",
+            },
+            shadow: {
+              default: "#d1d1d1",
+            },
+          }
+        : {
+            background: {
+              default: "#ffffff",
+            },
+            shadow: {
+              default: "#d1d1d1",
+            },
+          }),
+    },
+    button: {
+      ...(mode === "dark"
+        ? {
+            default: "#20b8fb",
+          }
+        : {
+            default: "#20b8fb",
           }),
     },
     sidebar: {
       ...(mode === "dark"
         ? {
-            default: "#323844",
+            background: {
+              default: "#323844",
+            },
+            border: "#ccc",
+            activeIcon: "#6176f3",
+            normalIcon: "#999",
           }
         : {
-            default: "#323844",
+            background: {
+              default: "#ffffff",
+            },
+            border: "#ccc",
+            activeIcon: "#6176f3",
+            normalIcon: "#999",
           }),
     },
     musicplayer: {
@@ -117,7 +155,6 @@ const getDesignTokens = (mode) => ({
     },
   },
 });
-
 const Layout = (props) => {
   //   const { data: session, status } = useSession();
   //   if (session && session.user.access_token) {
@@ -142,20 +179,50 @@ const Layout = (props) => {
   //     const test = JSON.parse(localStorage.getItem("darkMode")) || false;
   //     dispatch(getDarkmode(test));
   //   }, []);
-  const theme = createTheme(getDesignTokens("dark"));
+  const theme = createTheme(getDesignTokens("light"));
   const ContainerWrapper = styled(Box)(({ theme }) => ({
     backgroundImage: `linear-gradient(83deg, ${theme.palette.background.first} 0%, ${theme.palette.background.second} 29%, ${theme.palette.background.third} 100%)`,
     color: theme.palette.text.first,
     minHeight: "100vh",
     width: "100vw",
   }));
+  const ContainerBoxWrapper = styled(Box)(({ theme }) => ({
+    backgroundColor: theme.palette.box.background.default,
+    // height: "600px",
+    maxWidth: "800px",
+    width: "100%",
+    height: "calc(100% - 20px)",
+    position: "absolute",
+    transform: "translate(-50%, -50%)",
+    top: "50%",
+    left: "50%",
+    borderRadius: "30px",
+    boxShadow: `0px 4px 6px 2px ${theme.palette.box.shadow.default}`,
+    overflow: "hidden",
+  }));
+  const ContainerBoxRightWrapper = styled(Box)(({ theme }) => ({
+    backgroundColor: theme.palette.box.background.default,
+    // height: "600px",
+    width: "calc(100% - 90px)",
+    height: "100%",
+    position: "absolute",
+    left: "90px",
+    padding: "20px",
+  }));
 
   return (
     <>
       <ThemeProvider theme={theme}>
         <GlobalStyle theme={theme} />
-        <Sidebar />
-        <ContainerWrapper>{props.children}</ContainerWrapper>
+
+        <ContainerWrapper>
+          <ContainerBoxWrapper>
+            <Sidebar />
+            <ContainerBoxRightWrapper>
+              {props.children}
+            </ContainerBoxRightWrapper>
+          </ContainerBoxWrapper>
+        </ContainerWrapper>
       </ThemeProvider>
     </>
   );

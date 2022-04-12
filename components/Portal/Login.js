@@ -26,7 +26,7 @@ const Login = ({ setStep }) => {
   const [isLoading, setIsLoading] = useState(false);
   const variants = {
     open: { opacity: 1 },
-    closed: { opacity: 0, y: "-100%" },
+    closed: { opacity: 0, y: "-100%", pointerEvents: "none" },
   };
   const loadingVariants = {
     open: { opacity: 1, display: "flex" },
@@ -148,6 +148,7 @@ const Login = ({ setStep }) => {
           justifyContent: "center",
           flexDirection: "column",
           alignItems: "center",
+          pointerEvents: "none",
         }}
       >
         <Hearts fill="#cf65be" strokeOpacity={0.125} speed={0.75} />

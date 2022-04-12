@@ -33,7 +33,7 @@ const Signup = ({ setStep, setInfo, info }) => {
   const [isLoading, setIsLoading] = useState(false);
   const variants = {
     open: { opacity: 1 },
-    closed: { opacity: 0, y: "-100%" },
+    closed: { opacity: 0, y: "-100%", pointerEvents: "none" },
   };
   const loadingVariants = {
     open: { opacity: 1, display: "flex" },
@@ -99,6 +99,7 @@ const Signup = ({ setStep, setInfo, info }) => {
           password: data.password,
           date,
         }));
+
         setStep(5);
         setIsLoading(false);
       }
@@ -176,6 +177,7 @@ const Signup = ({ setStep, setInfo, info }) => {
           justifyContent: "center",
           flexDirection: "column",
           alignItems: "center",
+          pointerEvents: "none",
         }}
       >
         <Hearts fill="#cf65be" strokeOpacity={0.125} speed={0.75} />

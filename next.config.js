@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  optimizeFonts: false,
   env: {
     ENDPOINT_SERVER: process.env.ENDPOINT_SERVER,
     MONGODB_URL: process.env.MONGODB_URL,

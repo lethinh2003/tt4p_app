@@ -13,7 +13,7 @@ const FinalStep = ({ setStep, setInfo, info }) => {
   const [isLoading, setIsLoading] = useState(false);
   const variants = {
     open: { opacity: 1 },
-    closed: { opacity: 0, y: "-100%" },
+    closed: { opacity: 0, y: "-100%", pointerEvents: "none" },
   };
   const loadingVariants = {
     open: { opacity: 1, display: "flex" },

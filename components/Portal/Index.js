@@ -37,7 +37,12 @@ const Index = () => {
     justifyContent: "space-between",
     padding: "20px",
     gap: "10px",
-    overflow: "auto",
+    overflowY: "auto",
+    margin: "10px 0",
+
+    "&::-webkit-scrollbar": {
+      display: "none",
+    },
   }));
   const ButtonWrapper = styled(Button)(({ theme }) => ({
     backgroundColor: theme.palette.button.default,
