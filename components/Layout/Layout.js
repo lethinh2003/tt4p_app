@@ -3,6 +3,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useEffect, useState, useRef } from "react";
 import { createGlobalStyle } from "styled-components";
 import Sidebar from "./Sidebar";
+import { ToastContainer, toast } from "react-toastify";
 
 // import PlayerInfo from "./PlayerInfo";
 import { styled } from "@mui/material/styles";
@@ -223,6 +224,17 @@ const Layout = (props) => {
             </ContainerBoxRightWrapper>
           </ContainerBoxWrapper>
         </ContainerWrapper>
+        <ToastContainer
+          position="top-center"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss={false}
+          draggable={false}
+          pauseOnHover={false}
+        />
       </ThemeProvider>
     </>
   );
