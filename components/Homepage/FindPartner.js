@@ -9,6 +9,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import socketIOClient from "socket.io-client";
 import Chat from "./Chat";
+import Introduce from "./Introduce";
 let socket;
 const FindPartner = () => {
   const TimeOutFindPartner = useRef(null);
@@ -71,7 +72,9 @@ const FindPartner = () => {
     socket = socketIOClient.connect(process.env.ENDPOINT_SERVER);
 
     socket.on("find-partner", (data) => {
-      setIsLoading(false);
+      console.log("wwtf");
+      const test = setIsLoading(false);
+      console.log("etst", test);
       if (data.status === "fail") {
         toast.error(data.message);
       }
@@ -146,13 +149,13 @@ const FindPartner = () => {
       }
     }
   };
-  const handleClickOutWaitingRoom = () => {
-    socket.emit("out-waiting-room");
+  const handleClickOutWaitingRoom = async () => {
+    await socket.emit("out-waiting-room");
     setIsWaitingRoom(false);
     setIsInRoom(false);
   };
-  const handleClickOutChatRoom = () => {
-    socket.emit("out-chat-room", partner);
+  const handleClickOutChatRoom = async () => {
+    await socket.emit("out-chat-room", partner);
     setIsWaitingRoom(false);
     setIsInRoom(false);
   };
@@ -176,7 +179,7 @@ const FindPartner = () => {
   const BoxWrapper = styled(Box)(({ theme }) => ({
     height: "100%",
     width: "100%",
-    maxHeight: "600px",
+
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -316,23 +319,14 @@ const FindPartner = () => {
                 <Image
                   src={"https://i.imgur.com/VdhhRt3.gif"}
                   alt="Loading cute"
-                  width={150}
+                  width={200}
                   height={150}
                 />
                 <LoadingContent>Loading...</LoadingContent>
               </BoxLoading>
             </Backdrop>
           )}
-          <Typography
-            sx={{
-              fontWeight: "bold",
-              fontSize: "35px",
-              alignSelf: "center",
-            }}
-          >
-            Hôm nay là {convertDay(new Date().getDay())}, thời điểm vàng để tìm
-            bạn tâm sự nhaaa
-          </Typography>
+          <Introduce />
           <Typography
             sx={{
               fontWeight: "bold",

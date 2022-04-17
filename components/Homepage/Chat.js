@@ -116,10 +116,13 @@ const Chat = ({ socket, partner }) => {
         fontSize: "15px",
       },
       "&--text": {
+        display: "flex",
+        flexWrap: "wrap",
         padding: "10px",
         borderRadius: "0 10px 10px 10px",
         backgroundColor: "#ccc",
         fontSize: "20px",
+        color: "black",
       },
     },
   }));
@@ -254,9 +257,7 @@ const Chat = ({ socket, partner }) => {
                       <Typography className="box-content--userName">
                         {item.name}
                       </Typography>
-                      <Typography className="box-content--text">
-                        {item.message}
-                      </Typography>
+                      <Box className="box-content--text">{item.message}</Box>
                     </Box>
                     <BoxAvatar>
                       <Image
@@ -292,9 +293,7 @@ const Chat = ({ socket, partner }) => {
                 <Typography className="box-content--userName">
                   {partner.name}
                 </Typography>
-                <Typography className="box-content--text">
-                  {typingMessage}
-                </Typography>
+                <Box className="box-content--text">{typingMessage}</Box>
               </Box>
             </BoxChatUserLeft>
           )}

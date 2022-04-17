@@ -19,6 +19,9 @@ const GlobalStyle = createGlobalStyle`
     background-color:  ${({ theme }) => theme.palette.background.first};
   }
 }
+.MuiBackdrop-root {
+  background-color:${({ theme }) => theme.palette.background.overlay} ;
+}
 `;
 
 const getDesignTokens = (mode) => ({
@@ -49,18 +52,37 @@ const getDesignTokens = (mode) => ({
             first: "#e1e1e1",
             second: "#c9adc5",
             third: "#cb8daf",
+            dialog: "#17191f",
+            overlay: "#ffffff3d",
           }
         : {
             first: "#e1e1e1",
             second: "#c9adc5",
             third: "#cb8daf",
+            dialog: "#edf0f7",
+            overlay: "#0e12173d",
+          }),
+    },
+    border: {
+      ...(mode === "dark"
+        ? {
+            first: "#e1e1e1",
+            second: "#c9adc5",
+            third: "#cb8daf",
+            dialog: "#a8b3cf66",
+          }
+        : {
+            first: "#e1e1e1",
+            second: "#c9adc5",
+            third: "#cb8daf",
+            dialog: "#52586666",
           }),
     },
     box: {
       ...(mode === "dark"
         ? {
             background: {
-              default: "#323844",
+              default: "#0e1217",
             },
             shadow: {
               default: "#d1d1d1",
@@ -88,9 +110,9 @@ const getDesignTokens = (mode) => ({
       ...(mode === "dark"
         ? {
             background: {
-              default: "#323844",
+              default: "#0e1217",
             },
-            border: "#ccc",
+            border: "#a8b3cf",
             activeIcon: "#6176f3",
             normalIcon: "#999",
           }
@@ -145,7 +167,7 @@ const getDesignTokens = (mode) => ({
           }
         : {
             color: {
-              first: "#ffffff",
+              first: "#0e1217",
               second: "#ccc",
             },
             fontSize: {
@@ -157,6 +179,13 @@ const getDesignTokens = (mode) => ({
   },
 });
 const Layout = (props) => {
+  const [darkMore, setDarkMore] = useState(false);
+  useEffect(() => {
+    const getTheme = JSON.parse(localStorage.getItem("darkMode")) || false;
+    setDarkMore(getTheme);
+    console.log("dark more", getTheme);
+  }, []);
+
   //   const { data: session, status } = useSession();
   //   if (session && session.user.access_token) {
   //     axios.defaults.headers.common[
@@ -180,10 +209,11 @@ const Layout = (props) => {
   //     const test = JSON.parse(localStorage.getItem("darkMode")) || false;
   //     dispatch(getDarkmode(test));
   //   }, []);
-  const theme = createTheme(getDesignTokens("light"));
+
+  const theme = createTheme(getDesignTokens(darkMore ? "dark" : "light"));
   const ContainerWrapper = styled(Box)(({ theme }) => ({
     backgroundImage: `linear-gradient(83deg, ${theme.palette.background.first} 0%, ${theme.palette.background.second} 29%, ${theme.palette.background.third} 100%)`,
-    color: theme.palette.text.first,
+    color: theme.palette.text.color.first,
     minHeight: "100vh",
     width: "100vw",
   }));
@@ -218,8 +248,19 @@ const Layout = (props) => {
 
         <ContainerWrapper>
           <ContainerBoxWrapper>
-            <Sidebar />
-            <ContainerBoxRightWrapper>
+            <Sidebar setDarkMore={setDarkMore} />
+            <ContainerBoxRightWrapper
+              sx={{
+                width: {
+                  xs: "100%",
+                  md: "calc(100% - 90px)",
+                },
+                left: {
+                  xs: "0",
+                  md: "90px",
+                },
+              }}
+            >
               {props.children}
             </ContainerBoxRightWrapper>
           </ContainerBoxWrapper>

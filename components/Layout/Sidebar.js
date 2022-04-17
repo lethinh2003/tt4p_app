@@ -9,7 +9,11 @@ import { FaMicrophone } from "react-icons/fa";
 import { GiLoveSong } from "react-icons/gi";
 import MessageOutlinedIcon from "@mui/icons-material/MessageOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-const Sidebar = () => {
+import { useEffect, useRef, useState } from "react";
+import Setting from "../Homepage/Setting";
+const Sidebar = ({ setDarkMore }) => {
+  const [isOpenSetting, setIsOpenSetting] = useState(false);
+
   const router = useRouter();
   const ItemWrapper = styled(Box)(({ theme }) => ({
     backgroundColor: theme.palette.sidebar.background.default,
@@ -177,7 +181,19 @@ const Sidebar = () => {
 
   return (
     <>
-      <ItemWrapper className="ms-sidebar">
+      {isOpenSetting && (
+        <Setting
+          setDarkMore={setDarkMore}
+          isOpenSetting={isOpenSetting}
+          setIsOpenSetting={setIsOpenSetting}
+        />
+      )}
+      <ItemWrapper
+        className="ms-sidebar"
+        sx={{
+          display: { xs: "none", md: "flex" },
+        }}
+      >
         <div className="ms-sidebar__wrapper">
           <div className="ms-navbar">
             <div className="ms-navbar__item">
@@ -206,19 +222,18 @@ const Sidebar = () => {
               </div>
             </Link>
 
-            <Link href={`/settings`}>
-              <div
-                className={
-                  router.pathname === "/settings"
-                    ? "ms-navbar__item active"
-                    : "ms-navbar__item"
-                }
-              >
-                <span className="ms-navbar__item--icon">
-                  <SettingsOutlinedIcon />
-                </span>
-              </div>
-            </Link>
+            <div
+              onClick={() => setIsOpenSetting(true)}
+              className={
+                router.pathname === "/settings"
+                  ? "ms-navbar__item active"
+                  : "ms-navbar__item"
+              }
+            >
+              <span className="ms-navbar__item--icon">
+                <SettingsOutlinedIcon />
+              </span>
+            </div>
 
             <div
               onClick={() => signOut()}
@@ -232,27 +247,6 @@ const Sidebar = () => {
                 <LogoutOutlinedIcon />
               </span>
             </div>
-
-            <Link href={`/settings`}>
-              <div
-                style={{
-                  transform: "rotate(90deg)",
-                }}
-                className={
-                  router.pathname === "/settings"
-                    ? "ms-navbar__item active"
-                    : "ms-navbar__item"
-                }
-              >
-                <span className="ms-navbar__item--icon">
-                  <MaterialUISwitch
-                    sx={{ m: 1 }}
-                    onClick={handleClickSwitch}
-                    checked={theme.palette.mode === "dark" ? true : false}
-                  />
-                </span>
-              </div>
-            </Link>
           </div>
         </div>
       </ItemWrapper>
