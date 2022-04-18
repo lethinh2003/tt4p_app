@@ -1,11 +1,13 @@
 import { Typography } from "@mui/material";
-let socket;
+import { useEffect, useRef, useState } from "react";
+
 const Introduce = () => {
   const convertDay = (day) => {
     let weekDay = "";
     let dayNum = day;
     dayNum = dayNum + 1;
-    if (dayNum == 8) {
+
+    if (dayNum == 1) {
       weekDay = "chủ nhật";
     } else {
       weekDay = `thứ ${dayNum}`;

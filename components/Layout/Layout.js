@@ -1,12 +1,9 @@
-import { Box, Container } from "@mui/material";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { useEffect, useState, useRef } from "react";
+import { Box } from "@mui/material";
+import { createTheme, styled, ThemeProvider } from "@mui/material/styles";
+import { useEffect, useState } from "react";
+import { ToastContainer } from "react-toastify";
 import { createGlobalStyle } from "styled-components";
 import Sidebar from "./Sidebar";
-import { ToastContainer, toast } from "react-toastify";
-
-// import PlayerInfo from "./PlayerInfo";
-import { styled } from "@mui/material/styles";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -62,6 +59,17 @@ const getDesignTokens = (mode) => ({
             dialog: "#edf0f7",
             overlay: "#0e12173d",
           }),
+    },
+    header: {
+      background: {
+        ...(mode === "light"
+          ? {
+              default: "#ffffff",
+            }
+          : {
+              default: "#0e1217",
+            }),
+      },
     },
     border: {
       ...(mode === "dark"

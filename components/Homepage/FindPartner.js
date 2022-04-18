@@ -20,7 +20,7 @@ const FindPartner = () => {
   const [isInRoom, setIsInRoom] = useState(false);
   const [partner, setPartner] = useState({});
   const [user, setUser] = useState({});
-
+  console.log("re render");
   useEffect(() => {
     socketInitializer();
     if (status === "authenticated") {
@@ -164,20 +164,9 @@ const FindPartner = () => {
 
     socket.emit("find-partner", user);
   };
-  const convertDay = (day) => {
-    let weekDay = "";
-    let dayNum = day;
-    dayNum = dayNum + 1;
-    if (dayNum == 7) {
-      weekDay = "chủ nhật";
-    } else {
-      weekDay = `thứ ${dayNum}`;
-    }
-    return weekDay;
-  };
 
   const BoxWrapper = styled(Box)(({ theme }) => ({
-    height: "100%",
+    height: "calc(100% - 70px)",
     width: "100%",
 
     display: "flex",
@@ -326,7 +315,7 @@ const FindPartner = () => {
               </BoxLoading>
             </Backdrop>
           )}
-          <Introduce />
+          <Introduce socket={socket} />
           <Typography
             sx={{
               fontWeight: "bold",

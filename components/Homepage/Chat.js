@@ -46,7 +46,7 @@ const Chat = ({ socket, partner }) => {
   }, []);
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, isTyping]);
 
   const scrollToBottom = () => {
     messagesEndRef.current.scrollIntoView({ behavior: "smooth" });

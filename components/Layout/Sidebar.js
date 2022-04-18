@@ -11,6 +11,7 @@ import MessageOutlinedIcon from "@mui/icons-material/MessageOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import { useEffect, useRef, useState } from "react";
 import Setting from "../Homepage/Setting";
+import Footer from "./Footer";
 const Sidebar = ({ setDarkMore }) => {
   const [isOpenSetting, setIsOpenSetting] = useState(false);
 
@@ -250,6 +251,7 @@ const Sidebar = ({ setDarkMore }) => {
           </div>
         </div>
       </ItemWrapper>
+      <Footer setIsOpenSetting={setIsOpenSetting} />
     </>
   );
 };

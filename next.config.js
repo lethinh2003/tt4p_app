@@ -6,6 +6,7 @@ const nextConfig = {
     MONGODB_URL: process.env.MONGODB_URL,
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+    NEXT_PUBLIC_GOOGLE_ANALYTICS: process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS,
   },
   reactStrictMode: true,
   images: {
