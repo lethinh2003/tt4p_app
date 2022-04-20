@@ -106,6 +106,7 @@ export default NextAuth({
       session.user.sex = token.sex;
       session.user.findSex = token.findSex;
       session.user.city = token.city;
+      session.user.date = token.date;
 
       return session;
     },
@@ -138,6 +139,7 @@ export default NextAuth({
         token.account = user.account;
         token.name = user.name;
         token.sex = user.sex;
+        token.date = user.date;
         token.findSex = user.findSex;
         token.city = user.city;
         token.role = user.role;

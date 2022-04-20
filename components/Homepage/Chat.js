@@ -16,32 +16,48 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import SendIcon from "@mui/icons-material/Send";
 import ChatForm from "./ChatForm";
+
 const Chat = ({ socket, partner }) => {
   const { data: session, status } = useSession();
+
   const [messages, setMessages] = useState([]);
   const [typingMessage, setTypingMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [isScroll, setIsScroll] = useState(false);
   const socketOn = useRef(null);
   const socketTypingChatOn = useRef(null);
   const boxChat = useRef(null);
   const boxChat2 = useRef(null);
+  const chatSoundRef = useRef(null);
+  const onScrollChat = useRef(null);
+  const socketChatSoundOn = useRef(null);
+
   const messagesEndRef = useRef(null);
   useEffect(() => {
-    if (!socketOn.current) {
-      socketOn.current = socket.on("receive-chat-content", (message) => {
-        setMessages((prev) => [...prev, message]);
-      });
-    }
-    if (!socketTypingChatOn.current) {
-      socketTypingChatOn.current = socket.on("chat-typing", (data) => {
-        if (data.status === true) {
-          setIsTyping(true);
-          setTypingMessage(data.message);
-        } else {
-          setIsTyping(false);
-          setTypingMessage("");
+    if (socket) {
+      if (!socketOn.current) {
+        socketOn.current = socket.on("receive-chat-content", (message) => {
+          setMessages((prev) => [...prev, message]);
+        });
+      }
+
+      socket.on("receive-chat-sound", () => {
+        if (chatSoundRef.current) {
+          chatSoundRef.current.play();
         }
       });
+
+      if (!socketTypingChatOn.current) {
+        socketTypingChatOn.current = socket.on("chat-typing", (data) => {
+          if (data.status === true) {
+            setIsTyping(true);
+            setTypingMessage(data.message);
+          } else {
+            setIsTyping(false);
+            setTypingMessage("");
+          }
+        });
+      }
     }
   }, []);
   useEffect(() => {
@@ -56,14 +72,15 @@ const Chat = ({ socket, partner }) => {
     display: "flex",
     width: "100%",
     gap: "10px",
-    maxHeight: "500px",
-    overflow: "scroll",
+    height: "500px",
+    overflowY: "auto",
+    overflowX: "hidden",
     display: "flex",
     flexDirection: "column",
     padding: "10px",
-    "::-webkit-scrollbar": {
-      display: "none",
-    },
+    // "::-webkit-scrollbar": {
+    //   display: "none",
+    // },
   }));
   const ButtonSocialWrapper = styled(Button)(({ theme }) => ({
     backgroundColor: theme.palette.button.default,
@@ -116,8 +133,6 @@ const Chat = ({ socket, partner }) => {
         fontSize: "15px",
       },
       "&--text": {
-        display: "flex",
-        flexWrap: "wrap",
         padding: "10px",
         borderRadius: "0 10px 10px 10px",
         backgroundColor: "#ccc",
@@ -200,9 +215,22 @@ const Chat = ({ socket, partner }) => {
     fontWeight: "700",
     opacity: "0.7",
   });
-
+  const handleScroll = () => {
+    console.log("scroll");
+    clearTimeout(onScrollChat.current);
+    onScrollChat.current = setTimeout(() => {
+      console.log("un - scroll");
+      setIsScroll(false);
+    }, 1000);
+    setIsScroll(true);
+  };
   return (
     <>
+      <audio
+        id="audio"
+        ref={chatSoundRef}
+        src={process.env.TINGMP3_URL}
+      ></audio>
       <Box
         sx={{
           display: "flex",

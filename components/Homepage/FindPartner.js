@@ -1,7 +1,6 @@
 import { Box, Button, Typography, Backdrop } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import axios from "axios";
-import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { Hearts } from "react-loading-icons";
 import { toast } from "react-toastify";
@@ -10,6 +9,8 @@ import Image from "next/image";
 import socketIOClient from "socket.io-client";
 import Chat from "./Chat";
 import Introduce from "./Introduce";
+import { motion } from "framer-motion";
+
 let socket;
 const FindPartner = () => {
   const TimeOutFindPartner = useRef(null);
@@ -20,7 +21,7 @@ const FindPartner = () => {
   const [isInRoom, setIsInRoom] = useState(false);
   const [partner, setPartner] = useState({});
   const [user, setUser] = useState({});
-  console.log("re render");
+
   useEffect(() => {
     socketInitializer();
     if (status === "authenticated") {
@@ -31,6 +32,7 @@ const FindPartner = () => {
         sex: session.user.sex,
         findSex: session.user.findSex,
         city: session.user.city,
+        date: session.user.date,
       };
       setUser(user);
     }
@@ -58,7 +60,6 @@ const FindPartner = () => {
           account: session.user.account,
         }
       );
-      console.log(res.data.message);
 
       setIsError(false);
     } catch (err) {
@@ -72,9 +73,8 @@ const FindPartner = () => {
     socket = socketIOClient.connect(process.env.ENDPOINT_SERVER);
 
     socket.on("find-partner", (data) => {
-      console.log("wwtf");
-      const test = setIsLoading(false);
-      console.log("etst", test);
+      setIsLoading(false);
+
       if (data.status === "fail") {
         toast.error(data.message);
       }
@@ -106,19 +106,23 @@ const FindPartner = () => {
       let message = data.message;
       if (data.user.account === session.user.account) {
         const userPartner = data.partner;
-        console.log(userPartner);
+
         setPartner(userPartner);
         message = message.replace(
           "$name",
-          `Họ tên: ${data.partner.name}, giới tính: ${data.partner.sex}, đang sống ở tỉnh/TP: ${data.partner.city} `
+          `Họ tên: ${data.partner.name}, giới tính: ${data.partner.sex}, ${
+            new Date().getFullYear() - data.partner.date
+          } tuổi, đang sống ở tỉnh/TP: ${data.partner.city} `
         );
       } else {
         const userPartner = data.user;
-        console.log(userPartner);
+
         setPartner(userPartner);
         message = message.replace(
           "$name",
-          `Họ tên: ${data.user.name}, giới tính: ${data.user.sex}, đang sống ở tỉnh/TP: ${data.user.city} `
+          `Họ tên: ${data.user.name}, giới tính: ${data.user.sex}, ${
+            new Date().getFullYear() - data.partner.date
+          } tuổi, đang sống ở tỉnh/TP: ${data.user.city} `
         );
       }
       toast.success(message);
@@ -298,7 +302,11 @@ const FindPartner = () => {
   return (
     <>
       {session && session.user && (
-        <BoxWrapper>
+        <BoxWrapper
+          sx={{
+            height: { xs: "calc(100% - 70px)", md: "100%" },
+          }}
+        >
           {isLoading && (
             <Backdrop
               sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
@@ -394,27 +402,125 @@ const FindPartner = () => {
                   {isInRoom && (
                     <>
                       <Typography
+                        as={motion.div}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
                         sx={{
                           fontWeight: "bold",
-                          fontSize: "20px",
+                          fontSize: "35px",
                           alignSelf: "center",
                         }}
                       >
-                        Bạn {partner.name}
+                        Khu vực tâm sự
                       </Typography>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          width: "100%",
+                          justifyContent: "space-around",
+                          alignItems: "center",
+                          flexDirection: { xs: "column", sm: "row" },
+                          gap: { xs: "20px", sm: "0" },
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "10px",
+                          }}
+                        >
+                          <Typography
+                            as={motion.div}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            sx={{
+                              fontWeight: "bold",
+                              fontSize: "20px",
+                              alignSelf: "center",
+                            }}
+                          >
+                            Bạn {session.user.name}
+                          </Typography>
 
-                      <BoxAvatar>
-                        <Image
-                          src={
-                            partner.sex === "boy"
-                              ? "https://i.imgur.com/yFYUbLZ.png"
-                              : "https://i.imgur.com/Or9WeCe.png"
-                          }
-                          alt="Avatar cute"
-                          width={200}
-                          height={200}
-                        />
-                      </BoxAvatar>
+                          <BoxAvatar
+                            as={motion.div}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                          >
+                            <Image
+                              src={
+                                session.user.sex === "boy"
+                                  ? "https://i.imgur.com/yFYUbLZ.png"
+                                  : "https://i.imgur.com/Or9WeCe.png"
+                              }
+                              alt={session.user.name}
+                              width={200}
+                              height={200}
+                            />
+                          </BoxAvatar>
+                        </Box>
+
+                        <motion.div
+                          animate={{
+                            scale: [1, 2, 2, 1, 1],
+                          }}
+                          transition={{
+                            duration: 2,
+                            repeat: Infinity,
+                          }}
+                          style={{
+                            width: "50px",
+                            height: "50px",
+                          }}
+                        >
+                          <img
+                            src="https://i.imgur.com/cYuOjCa.png"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                            }}
+                          />
+                        </motion.div>
+
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "10px",
+                          }}
+                        >
+                          <Typography
+                            as={motion.div}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            sx={{
+                              fontWeight: "bold",
+                              fontSize: "20px",
+                              alignSelf: "center",
+                            }}
+                          >
+                            Bạn {partner.name}
+                          </Typography>
+
+                          <BoxAvatar
+                            as={motion.div}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                          >
+                            <Image
+                              src={
+                                partner.sex === "boy"
+                                  ? "https://i.imgur.com/yFYUbLZ.png"
+                                  : "https://i.imgur.com/Or9WeCe.png"
+                              }
+                              alt={partner.name}
+                              width={200}
+                              height={200}
+                            />
+                          </BoxAvatar>
+                        </Box>
+                      </Box>
 
                       <ButtonSocialWrapper
                         as={motion.div}

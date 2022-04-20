@@ -106,7 +106,7 @@ const Setting = ({ setIsOpenSetting, isOpenSetting, setDarkMore }) => {
         <DialogTitle id="alert-dialog-title">Settings</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Dark more
+            Dark mode
           </DialogContentText>
           <DialogContentText>
             <MaterialUISwitch

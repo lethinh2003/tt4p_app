@@ -1,21 +1,7 @@
-import {
-  Box,
-  Button,
-  Typography,
-  Backdrop,
-  TextField,
-  IconButton,
-} from "@mui/material";
-import { styled } from "@mui/material/styles";
-import axios from "axios";
-import { motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
-import { Hearts } from "react-loading-icons";
-import { toast } from "react-toastify";
-import { useSession } from "next-auth/react";
-import Image from "next/image";
 import SendIcon from "@mui/icons-material/Send";
-
+import { Box, IconButton, TextField, TextareaAutosize } from "@mui/material";
+import { useRef, useState } from "react";
+import ChatEmotion from "./ChatEmotion";
 const ChatForm = ({ socket }) => {
   const [chatContent, setChatContent] = useState("");
 
@@ -30,37 +16,54 @@ const ChatForm = ({ socket }) => {
     }, 1000);
   };
   const handleClickSubmit = () => {
-    socket.emit("send-chat-content", chatContent);
-    setChatContent("");
-    window.scrollTo(0, 100);
+    if (chatContent) {
+      socket.emit("send-chat-content", chatContent);
+      setChatContent("");
+    }
   };
-
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    handleClickSubmit();
+  };
   return (
     <>
       <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
+          position: "relative",
 
           width: "100%",
           padding: "10px",
           borderTop: "1px solid #ccc",
         }}
       >
-        <TextField
-          placeholder="Type message"
-          value={chatContent}
-          onChange={(e) => handleChangeChatContent(e)}
-          sx={{
-            flex: "1",
-            height: "100%",
-            outline: "none",
+        <form
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            position: "relative",
+
+            width: "100%",
           }}
-          size="small"
-        />
-        <IconButton onClick={() => handleClickSubmit()}>
-          <SendIcon />
-        </IconButton>
+          onSubmit={handleSubmit}
+        >
+          <TextField
+            placeholder="Type message"
+            value={chatContent}
+            onChange={(e) => handleChangeChatContent(e)}
+            sx={{
+              flex: "1",
+              height: "100%",
+              outline: "none",
+            }}
+            size="small"
+          />
+          <ChatEmotion setChatContent={setChatContent} />
+          <IconButton onClick={() => handleClickSubmit()}>
+            <SendIcon />
+          </IconButton>
+        </form>
       </Box>
     </>
   );

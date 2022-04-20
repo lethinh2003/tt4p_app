@@ -191,7 +191,6 @@ const Layout = (props) => {
   useEffect(() => {
     const getTheme = JSON.parse(localStorage.getItem("darkMode")) || false;
     setDarkMore(getTheme);
-    console.log("dark more", getTheme);
   }, []);
 
   //   const { data: session, status } = useSession();
