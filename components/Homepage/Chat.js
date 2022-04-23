@@ -1,20 +1,13 @@
 import {
   Box,
   Button,
-  Typography,
-  Backdrop,
-  TextField,
-  IconButton,
+  Typography
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import axios from "axios";
 import { motion } from "framer-motion";
-import React, { useEffect, useRef, useState } from "react";
-import { Hearts } from "react-loading-icons";
-import { toast } from "react-toastify";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import SendIcon from "@mui/icons-material/Send";
+import React, { useEffect, useRef, useState } from "react";
 import ChatForm from "./ChatForm";
 
 const Chat = ({ socket, partner }) => {

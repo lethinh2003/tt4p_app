@@ -2,10 +2,10 @@ import { Box, Button, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import axios from "axios";
 import { motion } from "framer-motion";
+import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { Hearts } from "react-loading-icons";
 import { toast } from "react-toastify";
-import { signIn, useSession } from "next-auth/react";
 
 const FinalStep = ({ setStep, setInfo, info }) => {
   const currentYears = new Date().getFullYear();

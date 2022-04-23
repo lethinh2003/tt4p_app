@@ -1,8 +1,6 @@
-import { Box, Typography } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
-import { styled } from "@mui/material/styles";
 import { useTheme } from "@emotion/react";
-import { GifBoxRounded } from "@mui/icons-material";
+import { Box, Typography } from "@mui/material";
+import { styled } from "@mui/material/styles";
 import { motion } from "framer-motion";
 const Modal = () => {
   const theme = useTheme();

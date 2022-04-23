@@ -1,30 +1,26 @@
-import {
-  Box,
-  Container,
-  Typography,
-  Button,
-  FormControl,
-  TextField,
-  OutlinedInput,
-  InputAdornment,
-  Select,
-  MenuItem,
-  IconButton,
-} from "@mui/material";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { useEffect, useState, useRef } from "react";
-import { createGlobalStyle } from "styled-components";
-import Image from "next/image";
-import { styled } from "@mui/material/styles";
-import { motion } from "framer-motion";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Controller, useForm } from "react-hook-form";
-import * as Yup from "yup";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import {
+  Box,
+  Button,
+  FormControl,
+  IconButton,
+  InputAdornment,
+  MenuItem,
+  OutlinedInput,
+  Select,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { styled } from "@mui/material/styles";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
+import { motion } from "framer-motion";
+import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { Hearts } from "react-loading-icons";
+import { toast } from "react-toastify";
+import * as Yup from "yup";
 
 const Signup = ({ setStep, setInfo, info }) => {
   const currentYears = new Date().getFullYear();

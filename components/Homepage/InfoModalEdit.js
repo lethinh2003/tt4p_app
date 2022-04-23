@@ -9,8 +9,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import axios from "axios";
-import { motion, AnimateSharedLayout } from "framer-motion";
-import Image from "next/image";
+import { AnimateSharedLayout, motion } from "framer-motion";
 import { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";

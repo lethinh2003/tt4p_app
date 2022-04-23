@@ -1,5 +1,4 @@
 import { Typography } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
 
 const Introduce = () => {
   // const { boy, girl, lgbt } = dataUserWaiting;

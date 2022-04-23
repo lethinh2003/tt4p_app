@@ -8,9 +8,9 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import axios from "axios";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 
 const InfoDetail = ({ setStep, setInfo, info }) => {
   const [city, setCity] = useState([]);

@@ -12,7 +12,6 @@ import {
   Typography,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import axios from "axios";
 import { motion } from "framer-motion";
 import { signIn } from "next-auth/react";
 import { useState } from "react";

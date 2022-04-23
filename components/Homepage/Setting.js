@@ -1,19 +1,15 @@
+import { useTheme } from "@emotion/react";
 import {
   Dialog,
-  Button,
-  DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
   Switch,
 } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
 import { styled } from "@mui/material/styles";
-import { useTheme } from "@emotion/react";
-import { motion } from "framer-motion";
-
-import Popup from "./Popup";
 import useModal from "../../utils/useModal";
+import Popup from "./Popup";
+
 const Setting = ({ setIsOpenSetting, isOpenSetting, setDarkMore }) => {
   const { isShow, toggle } = useModal();
   const theme = useTheme();

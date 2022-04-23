@@ -1,21 +1,18 @@
-import { Box, Button, Typography, Backdrop } from "@mui/material";
+import { Backdrop, Box, Button, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
-import { Hearts } from "react-loading-icons";
-import { toast } from "react-toastify";
+import { motion } from "framer-motion";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
+import { ThreeDots } from "react-loading-icons";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import socketIOClient from "socket.io-client";
+import { getUser } from "../../redux/actions/getUser";
 import Chat from "./Chat";
-import Introduce from "./Introduce";
-import { motion } from "framer-motion";
 import Partner from "./Partner";
 import YourSelf from "./YourSelf";
-import Modal from "./Modal";
-import { useDispatch, useSelector } from "react-redux";
-import { getUser } from "../../redux/actions/getUser";
-import { ThreeDots } from "react-loading-icons";
 
 let socket;
 const FindPartner = () => {
@@ -286,8 +283,8 @@ const FindPartner = () => {
   ];
   return (
     <>
-      {requesting && <ThreeDots fill="#06bcee" />}
-      {data && data.data && (
+      {requesting && !data && <ThreeDots fill="#06bcee" />}
+      {!requesting && data && data.data && (
         <>
           {isLoading && (
             <Backdrop

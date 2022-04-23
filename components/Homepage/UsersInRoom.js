@@ -1,5 +1,5 @@
 import { Typography } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import socketIOClient from "socket.io-client";
 let socket;
 const UsersInRoom = () => {

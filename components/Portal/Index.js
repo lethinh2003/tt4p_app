@@ -1,13 +1,13 @@
 import { Box, Button, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { motion } from "framer-motion";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useState } from "react";
-import InfoDetail from "./InfoDetail";
-import Signup from "./Signup";
-import Login from "./Login";
 import FinalStep from "./FinalStep";
-import { useSession } from "next-auth/react";
+import InfoDetail from "./InfoDetail";
+import Login from "./Login";
+import Signup from "./Signup";
 
 const Index = () => {
   const { data: session, status } = useSession();

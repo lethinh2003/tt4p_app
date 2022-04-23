@@ -1,5 +1,5 @@
 import SendIcon from "@mui/icons-material/Send";
-import { Box, IconButton, TextField, TextareaAutosize } from "@mui/material";
+import { Box, IconButton, TextField } from "@mui/material";
 import { useRef, useState } from "react";
 import ChatEmotion from "./ChatEmotion";
 const ChatForm = ({ socket }) => {

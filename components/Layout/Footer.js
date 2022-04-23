@@ -1,18 +1,12 @@
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
+import MessageOutlinedIcon from "@mui/icons-material/MessageOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import {
-  BottomNavigation,
-  BottomNavigationAction,
-  Button,
-  Box,
-} from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { motion } from "framer-motion";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { AiFillHome } from "react-icons/ai";
-import MessageOutlinedIcon from "@mui/icons-material/MessageOutlined";
-import { motion } from "framer-motion";
 
 const Footer = ({ setIsOpenSetting }) => {
   const router = useRouter();

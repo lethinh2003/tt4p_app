@@ -1,11 +1,11 @@
 import { Box } from "@mui/material";
 import { createTheme, styled, ThemeProvider } from "@mui/material/styles";
+import axios from "axios";
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
 import { createGlobalStyle } from "styled-components";
 import Sidebar from "./Sidebar";
-import axios from "axios";
-import { useSession } from "next-auth/react";
 
 const GlobalStyle = createGlobalStyle`
   body {

@@ -1,15 +1,13 @@
-import { Box, Switch } from "@mui/material";
-import { styled } from "@mui/material/styles";
 import { useTheme } from "@emotion/react";
-import { signOut } from "next-auth/react";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { FaMicrophone } from "react-icons/fa";
-import { GiLoveSong } from "react-icons/gi";
 import MessageOutlinedIcon from "@mui/icons-material/MessageOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import { useEffect, useRef, useState } from "react";
+import { Box, Switch } from "@mui/material";
+import { styled } from "@mui/material/styles";
+import { signOut } from "next-auth/react";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useState } from "react";
 import Setting from "../Homepage/Setting";
 import Footer from "./Footer";
 const Sidebar = ({ setDarkMore }) => {

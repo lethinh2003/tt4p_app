@@ -1,27 +1,13 @@
+import { useTheme } from "@emotion/react";
 import {
-  Dialog,
   Button,
-  DialogActions,
+  Dialog,
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Switch,
   TextField,
-  Box,
-  Select,
-  MenuItem,
 } from "@mui/material";
-import { toast } from "react-toastify";
-import { useDispatch, useSelector } from "react-redux";
-import { getUser } from "../../redux/actions/getUser";
-import { useEffect, useRef, useState } from "react";
 import { styled } from "@mui/material/styles";
-import { useTheme } from "@emotion/react";
-import { motion } from "framer-motion";
-import Popup from "./Popup";
-import useModal from "../../utils/useModal";
-import Image from "next/image";
-import axios from "axios";
 import InfoModalEdit from "./InfoModalEdit";
 
 const InfoModal = ({ isShow, toggle, user }) => {

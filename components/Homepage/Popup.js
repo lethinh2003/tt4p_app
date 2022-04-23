@@ -1,15 +1,13 @@
+import { useTheme } from "@emotion/react";
 import {
-  Dialog,
   Button,
+  Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Switch,
 } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
 import { styled } from "@mui/material/styles";
-import { useTheme } from "@emotion/react";
 
 const Popup = ({ isShow, toggle, handleChangeTheme }) => {
   const theme = useTheme();
