@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
 import { createGlobalStyle } from "styled-components";
 import Sidebar from "./Sidebar";
+import axios from "axios";
+import { useSession } from "next-auth/react";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -18,6 +20,15 @@ const GlobalStyle = createGlobalStyle`
 }
 .MuiBackdrop-root {
   background-color:${({ theme }) => theme.palette.background.overlay} ;
+}
+.outline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  border: 2px solid ${({ theme }) => theme.palette.border.dialog};
+  border-radius: 10px;
 }
 `;
 
@@ -51,6 +62,8 @@ const getDesignTokens = (mode) => ({
             third: "#cb8daf",
             dialog: "#17191f",
             overlay: "#ffffff3d",
+            buttonOption: "#575c5c73",
+            buttonOptionHover: "#00000029",
           }
         : {
             first: "#e1e1e1",
@@ -58,6 +71,8 @@ const getDesignTokens = (mode) => ({
             third: "#cb8daf",
             dialog: "#edf0f7",
             overlay: "#0e12173d",
+            buttonOption: "#fd6b2229",
+            buttonOptionHover: "#fd6b2229",
           }),
     },
     header: {
@@ -193,14 +208,14 @@ const Layout = (props) => {
     setDarkMore(getTheme);
   }, []);
 
-  //   const { data: session, status } = useSession();
-  //   if (session && session.user.access_token) {
-  //     axios.defaults.headers.common[
-  //       "Authorization"
-  //     ] = `Bearer ${session.user.access_token}`;
-  //   } else {
-  //     axios.defaults.headers.common["Authorization"] = null;
-  //   }
+  const { data: session, status } = useSession();
+  if (session && session.user.access_token) {
+    axios.defaults.headers.common[
+      "Authorization"
+    ] = `Bearer ${session.user.access_token}`;
+  } else {
+    axios.defaults.headers.common["Authorization"] = null;
+  }
   //   const [isSidebarMobile, setIsSidebarMobile] = useState(false);
 
   //   const getStatusDarkmode = useSelector((state) => state.getDarkmode);
@@ -247,6 +262,20 @@ const Layout = (props) => {
     left: "90px",
     padding: "20px",
   }));
+  const BoxWrapper = styled(Box)(({ theme }) => ({
+    height: "calc(100% - 70px)",
+    width: "100%",
+
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+
+    gap: "20px",
+    overflow: "auto",
+    "::-webkit-scrollbar": {
+      display: "none",
+    },
+  }));
 
   return (
     <>
@@ -268,7 +297,13 @@ const Layout = (props) => {
                 },
               }}
             >
-              {props.children}
+              <BoxWrapper
+                sx={{
+                  height: { xs: "calc(100% - 70px)", md: "100%" },
+                }}
+              >
+                {props.children}
+              </BoxWrapper>
             </ContainerBoxRightWrapper>
           </ContainerBoxWrapper>
         </ContainerWrapper>

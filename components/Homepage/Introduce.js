@@ -2,6 +2,7 @@ import { Typography } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 
 const Introduce = () => {
+  // const { boy, girl, lgbt } = dataUserWaiting;
   const convertDay = (day) => {
     let weekDay = "";
     let dayNum = day;
@@ -27,6 +28,16 @@ const Introduce = () => {
         Hôm nay là {convertDay(new Date().getDay())}, thời điểm vàng để tìm bạn
         tâm sự nhaaa
       </Typography>
+      {/* <Typography
+        sx={{
+          fontWeight: "bold",
+          fontSize: "25px",
+          alignSelf: "center",
+        }}
+      >
+        Hiện đang có {boy} bạn nam, {girl} bạn nữ, {lgbt} bạn LGBT đang tham gia
+        phòng chat.
+      </Typography> */}
     </>
   );
 };

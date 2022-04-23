@@ -10,10 +10,12 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { styled } from "@mui/material/styles";
 import { useTheme } from "@emotion/react";
-import Popup from "./Popup";
+import { motion } from "framer-motion";
 
+import Popup from "./Popup";
+import useModal from "../../utils/useModal";
 const Setting = ({ setIsOpenSetting, isOpenSetting, setDarkMore }) => {
-  const [isOpenPopup, setIsOpenPopup] = useState(false);
+  const { isShow, toggle } = useModal();
   const theme = useTheme();
   const handleClose = () => {
     setIsOpenSetting(false);
@@ -82,7 +84,7 @@ const Setting = ({ setIsOpenSetting, isOpenSetting, setDarkMore }) => {
     },
   }));
   const handleClickChangeTheme = () => {
-    setIsOpenPopup(true);
+    toggle();
   };
   const handleChangeTheme = () => {
     if (theme.palette.mode === "dark") {
@@ -115,10 +117,10 @@ const Setting = ({ setIsOpenSetting, isOpenSetting, setDarkMore }) => {
               checked={theme.palette.mode === "dark" ? true : false}
             />
           </DialogContentText>
-          {isOpenPopup && (
+          {isShow && (
             <Popup
-              isOpenPopup={isOpenPopup}
-              setIsOpenPopup={setIsOpenPopup}
+              isShow={isShow}
+              toggle={toggle}
               handleChangeTheme={handleChangeTheme}
             />
           )}

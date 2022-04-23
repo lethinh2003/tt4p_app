@@ -11,13 +11,13 @@ import { useEffect, useRef, useState } from "react";
 import { styled } from "@mui/material/styles";
 import { useTheme } from "@emotion/react";
 
-const Popup = ({ setIsOpenPopup, isOpenPopup, handleChangeTheme }) => {
+const Popup = ({ isShow, toggle, handleChangeTheme }) => {
   const theme = useTheme();
   const handleClose = () => {
-    setIsOpenPopup(false);
+    toggle();
   };
   const handleAgree = () => {
-    setIsOpenPopup(false);
+    toggle();
     handleChangeTheme();
   };
   const DialogWrapper = styled(Dialog)(({ theme }) => ({
@@ -39,7 +39,7 @@ const Popup = ({ setIsOpenPopup, isOpenPopup, handleChangeTheme }) => {
   return (
     <DialogWrapper
       fullWidth
-      open={isOpenPopup}
+      open={isShow}
       onClose={handleClose}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"

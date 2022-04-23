@@ -45,3 +45,16 @@ a {
 .Toastify__toast-icon {
   color: #ffffff;
 }
+.three-dots {
+  white-space: nowrap;
+  overflow: hidden !important;
+  text-overflow: ellipsis;
+}
+.underline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right:0;
+ border-top: 2px solid;
+}

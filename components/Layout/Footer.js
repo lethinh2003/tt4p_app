@@ -4,6 +4,7 @@ import {
   BottomNavigation,
   BottomNavigationAction,
   Button,
+  Box,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { signOut } from "next-auth/react";
@@ -11,19 +12,20 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { AiFillHome } from "react-icons/ai";
 import MessageOutlinedIcon from "@mui/icons-material/MessageOutlined";
+import { motion } from "framer-motion";
 
 const Footer = ({ setIsOpenSetting }) => {
   const router = useRouter();
   const [value, setValue] = useState("");
 
-  const handleChange = (event, newValue) => {
-    if (newValue === "home") {
-    } else if (newValue === "setting") {
+  const handleClickItem = (value) => {
+    if (value === "home") {
+    } else if (value === "setting") {
       setIsOpenSetting(true);
-    } else if (newValue === "signout") {
+    } else if (value === "signout") {
       signOut();
     }
-    setValue(newValue);
+    setValue(value);
   };
   useEffect(() => {
     if (router.pathname === "/") {
@@ -51,7 +53,10 @@ const Footer = ({ setIsOpenSetting }) => {
       boxShadow: "0 0 0 0.2rem rgba(0,123,255,.5)",
     },
   });
-  const BottomNavigationComponent = styled(BottomNavigation)(({ theme }) => ({
+  const BottomNavigationComponent = styled(Box)(({ theme }) => ({
+    borderTop: `1px solid ${theme.palette.sidebar.border}`,
+
+    padding: "0 20px",
     position: "fixed",
     bottom: 0,
     right: 0,
@@ -65,56 +70,61 @@ const Footer = ({ setIsOpenSetting }) => {
         ? "1px solid #dcdee0"
         : "1px solid #4b4c4e",
   }));
-  const BottomNavigationActionComponent = styled(BottomNavigationAction)(
-    ({ theme }) => ({
-      fontSize: "40px",
+  const BottomNavigationActionComponent = styled(Box)(({ theme }) => ({
+    cursor: "pointer",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    fontSize: "40px",
+    position: "relative",
+    backgroundColor: theme.palette.mode === "dark" ? "#20262d" : "#eaebec",
+    color: theme.palette.mode === "light" ? "#0e1217" : "#ffffff",
+    borderRadius: "20px",
 
-      "&.Mui-selected": {
-        color: theme.palette.mode === "light" ? "#0e1217" : "#ffffff",
+    height: "100%",
+    width: "calc(100% / 3)",
 
-        backgroundColor: theme.palette.mode === "dark" ? "#20262d" : "#eaebec",
-        borderRadius: "20px",
-        position: "relative",
-
-        "&::before": {
-          position: "absolute",
-          content: `""`,
-          top: 0,
-          backgroundColor:
-            theme.palette.mode === "dark" ? "#ffffff" : "#20262d",
-          width: "50%",
-          height: "2px",
-        },
-      },
-      "&:hover": {
-        backgroundColor: theme.palette.mode === "dark" ? "#20262d" : "#eaebec",
-        borderRadius: "20px",
-      },
-    })
-  );
+    "&:hover": {
+      backgroundColor: theme.palette.mode === "dark" ? "#393e44" : "#eaebec",
+      borderRadius: "20px",
+    },
+  }));
+  const BottomMenu = [
+    {
+      value: "home",
+      icon: <MessageOutlinedIcon />,
+    },
+    {
+      value: "setting",
+      icon: <SettingsOutlinedIcon />,
+    },
+    {
+      value: "signout",
+      icon: <LogoutOutlinedIcon />,
+    },
+  ];
   return (
     <>
       <BottomNavigationComponent
         sx={{
           display: { xs: "flex", md: "none" },
         }}
-        value={value}
-        onChange={handleChange}
       >
-        <BottomNavigationActionComponent
-          value="home"
-          icon={<MessageOutlinedIcon />}
-        />
-
-        <BottomNavigationActionComponent
-          value="setting"
-          icon={<SettingsOutlinedIcon />}
-        />
-
-        <BottomNavigationActionComponent
-          value="signout"
-          icon={<LogoutOutlinedIcon />}
-        />
+        {BottomMenu.map((item, i) => (
+          <BottomNavigationActionComponent
+            key={i}
+            value={item.value}
+            onClick={() => handleClickItem(item.value)}
+          >
+            {item.icon}
+            {item.value === value ? (
+              <motion.div
+                className="underline"
+                layoutId="underline"
+              ></motion.div>
+            ) : null}
+          </BottomNavigationActionComponent>
+        ))}
       </BottomNavigationComponent>
     </>
   );

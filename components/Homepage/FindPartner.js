@@ -10,65 +10,53 @@ import socketIOClient from "socket.io-client";
 import Chat from "./Chat";
 import Introduce from "./Introduce";
 import { motion } from "framer-motion";
+import Partner from "./Partner";
+import YourSelf from "./YourSelf";
+import Modal from "./Modal";
+import { useDispatch, useSelector } from "react-redux";
+import { getUser } from "../../redux/actions/getUser";
+import { ThreeDots } from "react-loading-icons";
 
 let socket;
 const FindPartner = () => {
   const TimeOutFindPartner = useRef(null);
+
   const { data: session, status } = useSession();
   const [isWaitingRoom, setIsWaitingRoom] = useState(false);
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isInRoom, setIsInRoom] = useState(false);
   const [partner, setPartner] = useState({});
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState();
+  const data = useSelector((state) => state.user.data);
+  const requesting = useSelector((state) => state.user.requesting);
+  const errorGetUser = useSelector((state) => state.user.error);
+  const errorMessageGetUser = useSelector((state) => state.user.message);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (status === "authenticated") {
+      dispatch(getUser(session.user.account));
+    }
+  }, [status]);
+  useEffect(() => {
+    if (data && data.data) {
+      setUser(data.data);
+    }
+  }, [data]);
 
   useEffect(() => {
     socketInitializer();
-    if (status === "authenticated") {
-      const user = {
-        account: session.user.account,
-        name: session.user.name,
-        id: session.user.id,
-        sex: session.user.sex,
-        findSex: session.user.findSex,
-        city: session.user.city,
-        date: session.user.date,
-      };
-      setUser(user);
-    }
     return () => {
       socket.disconnect();
       clearTimeout(TimeOutFindPartner.current);
     };
   }, [status]);
   useEffect(() => {
-    if (status === "authenticated") {
-      // socket.emit("check-user-in-room", user);
-      console.log(user);
+    if (errorGetUser) {
+      toast.error(errorMessageGetUser);
     }
-  }, [user]);
-  useEffect(() => {
-    if (status === "authenticated" && !isWaitingRoom) {
-      // checkUserInRoom();
-    }
-  }, [session]);
-  const checkUserInRoom = async () => {
-    try {
-      const res = await axios.post(
-        `${process.env.ENDPOINT_SERVER}/api/v1/users/check-in-room`,
-        {
-          account: session.user.account,
-        }
-      );
+  }, [errorGetUser]);
 
-      setIsError(false);
-    } catch (err) {
-      if (err.response) {
-        setIsError(true);
-        toast.error(err.response.data.message);
-      }
-    }
-  };
   const socketInitializer = async () => {
     socket = socketIOClient.connect(process.env.ENDPOINT_SERVER);
 
@@ -135,7 +123,7 @@ const FindPartner = () => {
       const res = await axios.post(
         `${process.env.ENDPOINT_SERVER}/api/v1/users/check-in-room`,
         {
-          account: session.user.account,
+          account: user.account,
         }
       );
       socket.emit("join-list-users", user);
@@ -144,11 +132,9 @@ const FindPartner = () => {
       );
       setIsLoading(false);
       setIsWaitingRoom(true);
-      // setIsError(false);
     } catch (err) {
       setIsLoading(false);
       if (err.response) {
-        // setIsError(true);
         toast.error(err.response.data.message);
       }
     }
@@ -165,7 +151,6 @@ const FindPartner = () => {
   };
   const handleClickFindPartner = () => {
     setIsLoading(true);
-
     socket.emit("find-partner", user);
   };
 
@@ -301,15 +286,15 @@ const FindPartner = () => {
   ];
   return (
     <>
-      {session && session.user && (
-        <BoxWrapper
-          sx={{
-            height: { xs: "calc(100% - 70px)", md: "100%" },
-          }}
-        >
+      {requesting && <ThreeDots fill="#06bcee" />}
+      {data && data.data && (
+        <>
           {isLoading && (
             <Backdrop
-              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              sx={{
+                color: "#fff",
+                zIndex: (theme) => theme.zIndex.drawer + 1,
+              }}
               open={isLoading}
             >
               <BoxLoading>
@@ -323,46 +308,8 @@ const FindPartner = () => {
               </BoxLoading>
             </Backdrop>
           )}
-          <Introduce socket={socket} />
-          <Typography
-            sx={{
-              fontWeight: "bold",
-              fontSize: "20px",
-              alignSelf: "center",
-            }}
-          >
-            Hii {session.user.name}
-          </Typography>
 
-          <Box
-            sx={{
-              position: "relative",
-            }}
-          >
-            {listAvatarChild.map((item, i) => (
-              <BoxAvatarChild key={i} className={`tt-${i + 1}`}>
-                <Image
-                  src={item.img}
-                  alt="Avatar cute"
-                  width={200}
-                  height={200}
-                />
-              </BoxAvatarChild>
-            ))}
-
-            <BoxAvatar>
-              <Image
-                src={
-                  session.user.sex === "boy"
-                    ? "https://i.imgur.com/yFYUbLZ.png"
-                    : "https://i.imgur.com/Or9WeCe.png"
-                }
-                alt="Avatar cute"
-                width={200}
-                height={200}
-              />
-            </BoxAvatar>
-          </Box>
+          <YourSelf user={user} />
           {!isError && (
             <>
               {!isWaitingRoom && (
@@ -401,135 +348,14 @@ const FindPartner = () => {
 
                   {isInRoom && (
                     <>
-                      <Typography
-                        as={motion.div}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        sx={{
-                          fontWeight: "bold",
-                          fontSize: "35px",
-                          alignSelf: "center",
-                        }}
-                      >
-                        Khu vực tâm sự
-                      </Typography>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          width: "100%",
-                          justifyContent: "space-around",
-                          alignItems: "center",
-                          flexDirection: { xs: "column", sm: "row" },
-                          gap: { xs: "20px", sm: "0" },
-                        }}
-                      >
-                        <Box
-                          sx={{
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: "10px",
-                          }}
-                        >
-                          <Typography
-                            as={motion.div}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            sx={{
-                              fontWeight: "bold",
-                              fontSize: "20px",
-                              alignSelf: "center",
-                            }}
-                          >
-                            Bạn {session.user.name}
-                          </Typography>
-
-                          <BoxAvatar
-                            as={motion.div}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                          >
-                            <Image
-                              src={
-                                session.user.sex === "boy"
-                                  ? "https://i.imgur.com/yFYUbLZ.png"
-                                  : "https://i.imgur.com/Or9WeCe.png"
-                              }
-                              alt={session.user.name}
-                              width={200}
-                              height={200}
-                            />
-                          </BoxAvatar>
-                        </Box>
-
-                        <motion.div
-                          animate={{
-                            scale: [1, 2, 2, 1, 1],
-                          }}
-                          transition={{
-                            duration: 2,
-                            repeat: Infinity,
-                          }}
-                          style={{
-                            width: "50px",
-                            height: "50px",
-                          }}
-                        >
-                          <img
-                            src="https://i.imgur.com/cYuOjCa.png"
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                            }}
-                          />
-                        </motion.div>
-
-                        <Box
-                          sx={{
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: "10px",
-                          }}
-                        >
-                          <Typography
-                            as={motion.div}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            sx={{
-                              fontWeight: "bold",
-                              fontSize: "20px",
-                              alignSelf: "center",
-                            }}
-                          >
-                            Bạn {partner.name}
-                          </Typography>
-
-                          <BoxAvatar
-                            as={motion.div}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                          >
-                            <Image
-                              src={
-                                partner.sex === "boy"
-                                  ? "https://i.imgur.com/yFYUbLZ.png"
-                                  : "https://i.imgur.com/Or9WeCe.png"
-                              }
-                              alt={partner.name}
-                              width={200}
-                              height={200}
-                            />
-                          </BoxAvatar>
-                        </Box>
-                      </Box>
-
-                      <ButtonSocialWrapper
-                        as={motion.div}
-                        whileHover={{ scale: 1.02 }}
-                        type="submit"
-                        onClick={() => handleClickOutChatRoom()}
-                      >
-                        Thoát chat!!
-                      </ButtonSocialWrapper>
+                      <Partner
+                        socket={socket}
+                        partner={partner}
+                        user={user}
+                        isInRoom={isInRoom}
+                        setIsInRoom={setIsInRoom}
+                        setIsWaitingRoom={setIsWaitingRoom}
+                      />
                       <Chat socket={socket} partner={partner} />
                     </>
                   )}
@@ -537,7 +363,7 @@ const FindPartner = () => {
               )}
             </>
           )}
-        </BoxWrapper>
+        </>
       )}
     </>
   );

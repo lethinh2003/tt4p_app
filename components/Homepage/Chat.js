@@ -72,7 +72,7 @@ const Chat = ({ socket, partner }) => {
     display: "flex",
     width: "100%",
     gap: "10px",
-    height: "500px",
+    maxHeight: "500px",
     overflowY: "auto",
     overflowX: "hidden",
     display: "flex",
@@ -257,7 +257,15 @@ const Chat = ({ socket, partner }) => {
             messages.map((item, i) => (
               <React.Fragment key={i}>
                 {item.account !== session.user.account ? (
-                  <BoxChatUserLeft>
+                  <BoxChatUserLeft
+                    as={motion.div}
+                    initial={{
+                      opacity: 0,
+                    }}
+                    animate={{
+                      opacity: 1,
+                    }}
+                  >
                     <BoxAvatar>
                       <Image
                         src={
@@ -280,12 +288,22 @@ const Chat = ({ socket, partner }) => {
                     </Box>
                   </BoxChatUserLeft>
                 ) : (
-                  <BoxChatUserRight>
+                  <BoxChatUserRight
+                    as={motion.div}
+                    initial={{
+                      opacity: 0,
+                    }}
+                    animate={{
+                      opacity: 1,
+                    }}
+                  >
                     <Box className="box-content">
                       <Typography className="box-content--userName">
                         {item.name}
                       </Typography>
-                      <Box className="box-content--text">{item.message}</Box>
+                      <Typography className="box-content--text">
+                        {item.message}
+                      </Typography>
                     </Box>
                     <BoxAvatar>
                       <Image
