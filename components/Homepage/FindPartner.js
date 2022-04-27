@@ -13,17 +13,19 @@ import { getUser } from "../../redux/actions/getUser";
 import Chat from "./Chat";
 import Partner from "./Partner";
 import YourSelf from "./YourSelf";
-
+import useLoading from "../../utils/useLoading";
+import Loading from "../Loading/Loading";
 let socket;
 const FindPartner = () => {
   const TimeOutFindPartner = useRef(null);
-
   const { data: session, status } = useSession();
   const [isWaitingRoom, setIsWaitingRoom] = useState(false);
   const [isError, setIsError] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const { isLoading, setIsLoading } = useLoading();
   const [isInRoom, setIsInRoom] = useState(false);
-  const [partner, setPartner] = useState({});
+  const [partner, setPartner] = useState();
+  const [isHideInfo, setIsHideInfo] = useState(true);
+
   const [user, setUser] = useState();
   const data = useSelector((state) => state.user.data);
   const requesting = useSelector((state) => state.user.requesting);
@@ -40,6 +42,30 @@ const FindPartner = () => {
       setUser(data.data);
     }
   }, [data]);
+  useEffect(() => {
+    const outChatRoom = async () => {
+      if (isWaitingRoom) {
+        if (!isInRoom) {
+          await socket.emit("out-waiting-room");
+          setIsWaitingRoom(false);
+          setIsInRoom(false);
+        } else {
+          await socket.emit("out-chat-room", partner);
+          setIsWaitingRoom(false);
+          setIsInRoom(false);
+        }
+      }
+    };
+    if (socket && isWaitingRoom) {
+      outChatRoom();
+    }
+  }, [requesting]);
+  useEffect(() => {
+    if (partner) {
+      console.log(partner);
+      setIsHideInfo(partner.hideInfo);
+    }
+  }, [partner]);
 
   useEffect(() => {
     socketInitializer();
@@ -87,28 +113,35 @@ const FindPartner = () => {
     });
     socket.on("find-partner-success", (data) => {
       setIsInRoom(true);
-
       let message = data.message;
       if (data.user.account === session.user.account) {
         const userPartner = data.partner;
 
         setPartner(userPartner);
         message = message.replace(
-          "$name",
-          `Họ tên: ${data.partner.name}, giới tính: ${data.partner.sex}, ${
-            new Date().getFullYear() - data.partner.date
-          } tuổi, đang sống ở tỉnh/TP: ${data.partner.city} `
+          message,
+          `Tìm bạn thành công, hãy tâm sự vui vẻ nhé!`
         );
+        // message = message.replace(
+        //   "$name",
+        //   `Họ tên: ${data.partner.name}, giới tính: ${data.partner.sex}, ${
+        //     new Date().getFullYear() - data.partner.date
+        //   } tuổi, đang sống ở tỉnh/TP: ${data.partner.city} `
+        // );
       } else {
         const userPartner = data.user;
 
         setPartner(userPartner);
         message = message.replace(
-          "$name",
-          `Họ tên: ${data.user.name}, giới tính: ${data.user.sex}, ${
-            new Date().getFullYear() - data.partner.date
-          } tuổi, đang sống ở tỉnh/TP: ${data.user.city} `
+          message,
+          `Tìm bạn thành công, hãy tâm sự vui vẻ nhé!`
         );
+        // message = message.replace(
+        //   "$name",
+        //   `Họ tên: ${data.user.name}, giới tính: ${data.user.sex}, ${
+        //     new Date().getFullYear() - data.partner.date
+        //   } tuổi, đang sống ở tỉnh/TP: ${data.user.city} `
+        // );
       }
       toast.success(message);
     });
@@ -286,25 +319,7 @@ const FindPartner = () => {
       {requesting && !data && <ThreeDots fill="#06bcee" />}
       {!requesting && data && data.data && (
         <>
-          {isLoading && (
-            <Backdrop
-              sx={{
-                color: "#fff",
-                zIndex: (theme) => theme.zIndex.drawer + 1,
-              }}
-              open={isLoading}
-            >
-              <BoxLoading>
-                <Image
-                  src={"https://i.imgur.com/VdhhRt3.gif"}
-                  alt="Loading cute"
-                  width={200}
-                  height={150}
-                />
-                <LoadingContent>Loading...</LoadingContent>
-              </BoxLoading>
-            </Backdrop>
-          )}
+          <Loading isLoading={isLoading} />
 
           <YourSelf user={user} />
           {!isError && (
@@ -346,6 +361,8 @@ const FindPartner = () => {
                   {isInRoom && (
                     <>
                       <Partner
+                        isHideInfo={isHideInfo}
+                        setIsHideInfo={setIsHideInfo}
                         socket={socket}
                         partner={partner}
                         user={user}
@@ -353,7 +370,11 @@ const FindPartner = () => {
                         setIsInRoom={setIsInRoom}
                         setIsWaitingRoom={setIsWaitingRoom}
                       />
-                      <Chat socket={socket} partner={partner} />
+                      <Chat
+                        isHideInfo={isHideInfo}
+                        socket={socket}
+                        partner={partner}
+                      />
                     </>
                   )}
                 </>

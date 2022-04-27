@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
 
 const Picker = dynamic(() => import("emoji-picker-react"), { ssr: false });
-const ChatEmotion = ({ setChatContent }) => {
+const ChatEmotion = ({ setChatContent, chatInputRef }) => {
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [isEmotion, setIsEmotion] = useState(false);
   const handleClickEmotion = () => {
@@ -13,6 +13,9 @@ const ChatEmotion = ({ setChatContent }) => {
   const onEmojiClick = (event, emojiObject) => {
     setChosenEmoji(emojiObject);
     setChatContent((prev) => prev + emojiObject.emoji);
+    if (chatInputRef.current) {
+      chatInputRef.current.childNodes[0].childNodes[0].focus();
+    }
   };
 
   return (

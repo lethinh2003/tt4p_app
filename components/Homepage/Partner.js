@@ -2,8 +2,15 @@ import { Box, Button, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import Image from "next/image";
-
+import { toast } from "react-toastify";
+import { useEffect, useRef, useState } from "react";
+import useModal from "../../utils/useModal";
+import RequestInfoDialog from "../Chat/RequestInfoDialog";
+import InfoPartnerAndUser from "../Partner/InfoPartnerAndUser";
+import InfoPartnerDialog from "../Partner/InfoPartnerDialog";
 const Partner = ({
+  isHideInfo,
+  setIsHideInfo,
   isInRoom,
   setIsWaitingRoom,
   setIsInRoom,
@@ -11,6 +18,33 @@ const Partner = ({
   user,
   socket,
 }) => {
+  const socketOn = useRef(null);
+  const socketOnCancelRequestInfoPartner = useRef(null);
+  const { isShow, toggle } = useModal();
+  const { isShow: isShowInfoPartner, toggle: toggleInfoPartner } = useModal();
+  const [countRequestInfo, setCountRequestInfo] = useState(5);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("request-info-partner", () => {
+        toggle();
+      });
+
+      socket.on("notify-request-info-partner", (data) => {
+        if (data.status === "fail") {
+          setCountRequestInfo((prev) => prev - 1);
+        } else if (data.status === "success") {
+          setIsHideInfo(false);
+          setCountRequestInfo(0);
+        }
+      });
+
+      return () => {
+        socket.off("request-info-partner");
+        socket.off("notify-request-info-partner");
+      };
+    }
+  }, [socket]);
   const handleClickOutChatRoom = async () => {
     await socket.emit("out-chat-room", partner);
     setIsWaitingRoom(false);
@@ -56,152 +90,60 @@ const Partner = ({
     },
   }));
 
-  const BoxLoading = styled(Box)({
-    borderRadius: "20px",
-    backgroundColor: "#fff",
-    color: "black",
-    width: "200px",
-    height: "200px",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    flexDirection: "column",
-  });
-  const LoadingContent = styled(Typography)({
-    fontWeight: "700",
-    opacity: "0.7",
-  });
+  const handleClickRequestInfoPartner = () => {
+    if (isHideInfo) {
+      if (countRequestInfo >= 1) {
+        if (partner.hideInfo) {
+          toast.info(
+            "Gửi yêu cầu xem thông tin thành công, vui lòng đợi đối phương đồng ý!"
+          );
+          socket.emit("request-info-partner", partner);
+        } else {
+          console.log(partner);
+        }
+      } else {
+        toast.error(
+          "Bạn đã hết số lần xin info rùi!!!, cuộc vui nào cũng có lúc tàn mà đúng không??. Thử tìm đối tượng mới nhé!"
+        );
+      }
+    } else {
+      toggleInfoPartner();
+    }
+  };
 
   return (
     <>
-      <Typography
+      {isShowInfoPartner && (
+        <InfoPartnerDialog
+          isShow={isShowInfoPartner}
+          toggle={toggleInfoPartner}
+          partner={partner}
+        />
+      )}
+      {isShow && (
+        <RequestInfoDialog
+          isShow={isShow}
+          toggle={toggle}
+          partner={partner}
+          socket={socket}
+        />
+      )}
+
+      <InfoPartnerAndUser
+        user={user}
+        partner={partner}
+        socket={socket}
+        isHideInfo={isHideInfo}
+        setIsHideInfo={setIsHideInfo}
+      />
+      <ButtonSocialWrapper
         as={motion.div}
-        initial={{ opacity: 0 }}
-        transition={{
-          duration: 1,
-        }}
-        animate={{ opacity: 1 }}
-        sx={{
-          fontWeight: "bold",
-          fontSize: "35px",
-          alignSelf: "center",
-        }}
+        whileHover={{ scale: 1.02 }}
+        type="submit"
+        onClick={() => handleClickRequestInfoPartner()}
       >
-        Khu vực tâm sự
-      </Typography>
-      <Box
-        sx={{
-          display: "flex",
-          width: "100%",
-          justifyContent: "space-around",
-          alignItems: "center",
-          flexDirection: { xs: "column", sm: "row" },
-          gap: { xs: "20px", sm: "0" },
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "10px",
-          }}
-        >
-          <Typography
-            as={motion.div}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            sx={{
-              fontWeight: "bold",
-              fontSize: "20px",
-              alignSelf: "center",
-              maxWidth: "200px",
-            }}
-            className="three-dots"
-          >
-            {user.name}
-          </Typography>
-
-          <BoxAvatar
-            as={motion.div}
-            initial={{ opacity: 0, x: "-100%" }}
-            animate={{ opacity: 1, x: 0 }}
-          >
-            <Image
-              src={
-                user.sex === "boy"
-                  ? "https://i.imgur.com/yFYUbLZ.png"
-                  : "https://i.imgur.com/Or9WeCe.png"
-              }
-              alt={user.name}
-              width={200}
-              height={200}
-            />
-          </BoxAvatar>
-        </Box>
-
-        <motion.div
-          animate={{
-            scale: [1, 2, 2, 1, 1],
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-          }}
-          style={{
-            width: "50px",
-            height: "50px",
-          }}
-        >
-          <img
-            src="https://i.imgur.com/cYuOjCa.png"
-            style={{
-              width: "100%",
-              height: "100%",
-            }}
-          />
-        </motion.div>
-
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "10px",
-          }}
-        >
-          <Typography
-            as={motion.div}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            sx={{
-              fontWeight: "bold",
-              fontSize: "20px",
-              alignSelf: "center",
-              maxWidth: "200px",
-            }}
-            className="three-dots"
-          >
-            {partner.name}
-          </Typography>
-
-          <BoxAvatar
-            as={motion.div}
-            initial={{ opacity: 0, x: "100%" }}
-            animate={{ opacity: 1, x: 0 }}
-          >
-            <Image
-              src={
-                partner.sex === "boy"
-                  ? "https://i.imgur.com/yFYUbLZ.png"
-                  : "https://i.imgur.com/Or9WeCe.png"
-              }
-              alt={partner.name}
-              width={200}
-              height={200}
-            />
-          </BoxAvatar>
-        </Box>
-      </Box>
-
+        Thông tin đối phương
+      </ButtonSocialWrapper>
       <ButtonSocialWrapper
         as={motion.div}
         whileHover={{ scale: 1.02 }}

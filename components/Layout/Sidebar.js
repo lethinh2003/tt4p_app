@@ -2,6 +2,7 @@ import { useTheme } from "@emotion/react";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import MessageOutlinedIcon from "@mui/icons-material/MessageOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import PermIdentityOutlinedIcon from "@mui/icons-material/PermIdentityOutlined";
 import { Box, Switch } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { signOut } from "next-auth/react";
@@ -9,11 +10,39 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import Setting from "../Homepage/Setting";
-import Footer from "./Footer";
-const Sidebar = ({ setDarkMore }) => {
-  const [isOpenSetting, setIsOpenSetting] = useState(false);
-
+import BottomMenu from "./BottomMenu";
+import { motion } from "framer-motion";
+import { useDispatch, useSelector } from "react-redux";
+import { getToggleSetting } from "../../redux/actions/getToggleSetting";
+import { useEffect } from "react";
+const Sidebar = () => {
+  const [value, setValue] = useState("");
+  const dispatch = useDispatch();
+  const isOpenSetting = useSelector((state) => state.toggleSetting.on);
   const router = useRouter();
+
+  useEffect(() => {
+    const handleRouteChange = (url, { shallow }) => {
+      console.log(
+        `App is changing to ${url} ${
+          shallow ? "with" : "without"
+        } shallow routing`
+      );
+    };
+
+    router.events.on("routeChangeStart", handleRouteChange);
+
+    // If the component is unmounted, unsubscribe
+    // from the event with the `off` method:
+    return () => {
+      router.events.off("routeChangeStart", handleRouteChange);
+    };
+  }, []);
+  useEffect(() => {
+    if (router.pathname === "/") {
+      setValue("home");
+    }
+  }, [router.pathname]);
   const ItemWrapper = styled(Box)(({ theme }) => ({
     backgroundColor: theme.palette.sidebar.background.default,
     alignItems: "center",
@@ -39,6 +68,7 @@ const Sidebar = ({ setDarkMore }) => {
       gap: "5px",
 
       "&__item": {
+        position: "relative",
         transition: "all 0.2s linear",
         width: "80px",
         height: "80px",
@@ -53,15 +83,9 @@ const Sidebar = ({ setDarkMore }) => {
         "&.active": {
           color: theme.palette.sidebar.activeIcon,
           position: "relative",
-          "&::before": {
-            content: `""`,
-            right: "-5px",
-            backgroundColor: theme.palette.sidebar.activeIcon,
-            width: "2px",
-            position: "absolute",
-
-            height: "100%",
-          },
+        },
+        "&:hover": {
+          backgroundColor: theme.palette.background.menuItemHover,
         },
         "&--icon": {
           fontSize: "37px",
@@ -175,18 +199,34 @@ const Sidebar = ({ setDarkMore }) => {
       }),
     },
   }));
-  const handleClickSwitch = () => {};
-  const theme = useTheme();
 
+  const handleClickItem = (value, link) => {
+    setValue(value);
+    if (value === "signout") {
+      signOut();
+    }
+    if (value === "setting") {
+      dispatch(getToggleSetting(true));
+    }
+  };
+  const SidebarMenu = [
+    {
+      value: "home",
+      link: "/",
+      icon: <MessageOutlinedIcon />,
+    },
+    {
+      value: "setting",
+
+      icon: <SettingsOutlinedIcon />,
+    },
+    {
+      value: "signout",
+      icon: <LogoutOutlinedIcon />,
+    },
+  ];
   return (
     <>
-      {isOpenSetting && (
-        <Setting
-          setDarkMore={setDarkMore}
-          isOpenSetting={isOpenSetting}
-          setIsOpenSetting={setIsOpenSetting}
-        />
-      )}
       <ItemWrapper
         className="ms-sidebar"
         sx={{
@@ -196,32 +236,35 @@ const Sidebar = ({ setDarkMore }) => {
         <div className="ms-sidebar__wrapper">
           <div className="ms-navbar">
             <div className="ms-navbar__item">
-              <Link href="/">
-                <img
-                  src="https://i.imgur.com/U0BdIic.png"
-                  style={{
-                    width: "50px",
-                    height: "50px",
-                  }}
-                />
-              </Link>
+              <img
+                src="https://i.imgur.com/U0BdIic.png"
+                style={{
+                  width: "50px",
+                  height: "50px",
+                }}
+              />
             </div>
-
-            <Link href="/">
+            {SidebarMenu.map((item, i) => (
               <div
+                key={i}
+                onClick={() => handleClickItem(item.value, item.link)}
                 className={
-                  router.pathname === "/"
+                  router.pathname === item.link
                     ? "ms-navbar__item active"
                     : "ms-navbar__item"
                 }
               >
-                <span className="ms-navbar__item--icon">
-                  <MessageOutlinedIcon />
-                </span>
+                <span className="ms-navbar__item--icon">{item.icon}</span>
+                {/* {item.value === value ? (
+                  <motion.div
+                    className="border-sidebar"
+                    layoutId="border-sidebar"
+                  ></motion.div>
+                ) : null} */}
               </div>
-            </Link>
+            ))}
 
-            <div
+            {/* <div
               onClick={() => setIsOpenSetting(true)}
               className={
                 router.pathname === "/settings"
@@ -245,11 +288,11 @@ const Sidebar = ({ setDarkMore }) => {
               <span className="ms-navbar__item--icon">
                 <LogoutOutlinedIcon />
               </span>
-            </div>
+            </div> */}
           </div>
         </div>
       </ItemWrapper>
-      <Footer setIsOpenSetting={setIsOpenSetting} />
+      <BottomMenu />
     </>
   );
 };

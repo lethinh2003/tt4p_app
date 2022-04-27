@@ -27,16 +27,6 @@ const Introduce = () => {
         Hôm nay là {convertDay(new Date().getDay())}, thời điểm vàng để tìm bạn
         tâm sự nhaaa
       </Typography>
-      {/* <Typography
-        sx={{
-          fontWeight: "bold",
-          fontSize: "25px",
-          alignSelf: "center",
-        }}
-      >
-        Hiện đang có {boy} bạn nam, {girl} bạn nữ, {lgbt} bạn LGBT đang tham gia
-        phòng chat.
-      </Typography> */}
     </>
   );
 };

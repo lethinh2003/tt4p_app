@@ -2,11 +2,8 @@ import { Box, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import useModal from "../../utils/useModal";
-import InfoModal from "./InfoModal";
+import { memo } from "react";
 const YourSelf = ({ user }) => {
-  const { isShow, toggle } = useModal();
-
   const BoxAvatar = styled(Box)(({ theme }) => ({
     backgroundColor: "#ccc",
     color: "#fd6b22",
@@ -82,14 +79,11 @@ const YourSelf = ({ user }) => {
       img: "https://i.imgur.com/meWx1dO.png",
     },
   ];
-  const handleClickAvatar = () => {
-    toggle();
-  };
+
   return (
     <>
       {user && (
         <>
-          {isShow && <InfoModal isShow={isShow} toggle={toggle} user={user} />}
           <Typography
             sx={{
               fontWeight: "bold",
@@ -130,7 +124,7 @@ const YourSelf = ({ user }) => {
               </BoxAvatarChild>
             ))}
 
-            <BoxAvatar onClick={() => handleClickAvatar()}>
+            <BoxAvatar>
               <Image
                 src={
                   user.sex === "boy"
@@ -148,4 +142,4 @@ const YourSelf = ({ user }) => {
     </>
   );
 };
-export default YourSelf;
+export default memo(YourSelf);

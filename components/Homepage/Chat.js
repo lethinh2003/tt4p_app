@@ -1,17 +1,14 @@
-import {
-  Box,
-  Button,
-  Typography
-} from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
-import ChatForm from "./ChatForm";
+import ChatForm from "../Chat/ChatForm";
 
-const Chat = ({ socket, partner }) => {
+const Chat = ({ socket, partner, isHideInfo }) => {
   const { data: session, status } = useSession();
+  const [namePartner, setNamePartner] = useState(partner ? partner.name : "");
 
   const [messages, setMessages] = useState([]);
   const [typingMessage, setTypingMessage] = useState("");
@@ -53,6 +50,19 @@ const Chat = ({ socket, partner }) => {
       }
     }
   }, []);
+  useEffect(() => {
+    if (partner) {
+      if (isHideInfo) {
+        const namePartnerArray = partner.name.split("");
+        for (let i = namePartnerArray.length - 1; i > 0; i--) {
+          namePartnerArray[i] = "*";
+        }
+        setNamePartner(namePartnerArray.join(""));
+      } else {
+        setNamePartner(partner.name);
+      }
+    }
+  }, [isHideInfo]);
   useEffect(() => {
     scrollToBottom();
   }, [messages, isTyping]);
@@ -96,6 +106,7 @@ const Chat = ({ socket, partner }) => {
     borderRadius: "10px",
     padding: "10px",
     width: "100%",
+    minWidth: "50px",
     maxWidth: "50px",
     fontWeight: "bold",
     height: "50px",
@@ -116,8 +127,10 @@ const Chat = ({ socket, partner }) => {
   const BoxChatUserLeft = styled(Box)(({ theme }) => ({
     display: "flex",
     gap: "10px",
+    width: "100%",
 
     "& .box-content": {
+      maxWidth: "calc(100% - 70px)",
       display: "flex",
       flexDirection: "column",
       gap: "10px",
@@ -126,6 +139,7 @@ const Chat = ({ socket, partner }) => {
         fontSize: "15px",
       },
       "&--text": {
+        wordWrap: "break-word",
         padding: "10px",
         borderRadius: "0 10px 10px 10px",
         backgroundColor: "#ccc",
@@ -138,8 +152,11 @@ const Chat = ({ socket, partner }) => {
     display: "flex",
     gap: "10px",
     alignSelf: "flex-end",
+    width: "100%",
+    justifyContent: "flex-end",
 
     "& .box-content": {
+      maxWidth: "calc(100% - 70px)",
       display: "flex",
       flexDirection: "column",
       gap: "10px",
@@ -149,6 +166,8 @@ const Chat = ({ socket, partner }) => {
         alignSelf: "flex-end",
       },
       "&--text": {
+        wordWrap: "break-word",
+
         padding: "10px",
         borderRadius: "10px 0 10px 10px",
         backgroundColor: "#6c90eb",
@@ -266,14 +285,14 @@ const Chat = ({ socket, partner }) => {
                             ? "https://i.imgur.com/yFYUbLZ.png"
                             : "https://i.imgur.com/Or9WeCe.png"
                         }
-                        alt={item.name}
+                        alt={namePartner}
                         width={50}
                         height={50}
                       />
                     </BoxAvatar>
                     <Box className="box-content">
                       <Typography className="box-content--userName">
-                        {item.name}
+                        {namePartner}
                       </Typography>
                       <Typography className="box-content--text">
                         {item.message}
@@ -281,15 +300,7 @@ const Chat = ({ socket, partner }) => {
                     </Box>
                   </BoxChatUserLeft>
                 ) : (
-                  <BoxChatUserRight
-                    as={motion.div}
-                    initial={{
-                      opacity: 0,
-                    }}
-                    animate={{
-                      opacity: 1,
-                    }}
-                  >
+                  <BoxChatUserRight>
                     <Box className="box-content">
                       <Typography className="box-content--userName">
                         {item.name}

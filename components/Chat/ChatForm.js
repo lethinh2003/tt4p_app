@@ -6,6 +6,7 @@ const ChatForm = ({ socket }) => {
   const [chatContent, setChatContent] = useState("");
 
   const chatTypingRef = useRef(null);
+  const chatInputRef = useRef(null);
 
   const handleChangeChatContent = (e) => {
     clearTimeout(chatTypingRef.current);
@@ -49,6 +50,7 @@ const ChatForm = ({ socket }) => {
           onSubmit={handleSubmit}
         >
           <TextField
+            ref={chatInputRef}
             placeholder="Type message"
             value={chatContent}
             onChange={(e) => handleChangeChatContent(e)}
@@ -59,7 +61,10 @@ const ChatForm = ({ socket }) => {
             }}
             size="small"
           />
-          <ChatEmotion setChatContent={setChatContent} />
+          <ChatEmotion
+            setChatContent={setChatContent}
+            chatInputRef={chatInputRef}
+          />
           <IconButton onClick={() => handleClickSubmit()}>
             <SendIcon />
           </IconButton>

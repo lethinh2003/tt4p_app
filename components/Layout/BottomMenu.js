@@ -7,15 +7,18 @@ import { motion } from "framer-motion";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getToggleSetting } from "../../redux/actions/getToggleSetting";
 
-const Footer = ({ setIsOpenSetting }) => {
+const Footer = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const [value, setValue] = useState("");
 
   const handleClickItem = (value) => {
     if (value === "home") {
     } else if (value === "setting") {
-      setIsOpenSetting(true);
+      dispatch(getToggleSetting(true));
     } else if (value === "signout") {
       signOut();
     }
@@ -71,7 +74,7 @@ const Footer = ({ setIsOpenSetting }) => {
     alignItems: "center",
     fontSize: "40px",
     position: "relative",
-    backgroundColor: theme.palette.mode === "dark" ? "#20262d" : "#eaebec",
+    backgroundColor: theme.palette.background.menuItem,
     color: theme.palette.mode === "light" ? "#0e1217" : "#ffffff",
     borderRadius: "20px",
 
@@ -79,7 +82,7 @@ const Footer = ({ setIsOpenSetting }) => {
     width: "calc(100% / 3)",
 
     "&:hover": {
-      backgroundColor: theme.palette.mode === "dark" ? "#393e44" : "#eaebec",
+      backgroundColor: theme.palette.background.menuItemHover,
       borderRadius: "20px",
     },
   }));
@@ -111,12 +114,6 @@ const Footer = ({ setIsOpenSetting }) => {
             onClick={() => handleClickItem(item.value)}
           >
             {item.icon}
-            {item.value === value ? (
-              <motion.div
-                className="underline"
-                layoutId="underline"
-              ></motion.div>
-            ) : null}
           </BottomNavigationActionComponent>
         ))}
       </BottomNavigationComponent>

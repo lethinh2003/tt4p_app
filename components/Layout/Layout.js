@@ -5,17 +5,18 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
 import { createGlobalStyle } from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
 import Sidebar from "./Sidebar";
-
+import { getDarkMode } from "../../redux/actions/getDarkMode";
 const GlobalStyle = createGlobalStyle`
   body {
     background-color: ${({ theme }) => theme.palette.background.first};
   }
   ::-webkit-scrollbar-thumb {
-  background-color:  ${({ theme }) => theme.palette.background.first};
+  background-color:  ${({ theme }) => theme.palette.iconColor.default};
 
   &:hover {
-    background-color:  ${({ theme }) => theme.palette.background.first};
+    background-color:  ${({ theme }) => theme.palette.iconColor.hover};
   }
 }
 .MuiBackdrop-root {
@@ -29,6 +30,24 @@ const GlobalStyle = createGlobalStyle`
   right: 0;
   border: 2px solid ${({ theme }) => theme.palette.border.dialog};
   border-radius: 10px;
+}
+.border-sidebar {
+  
+top: 0;
+left: 0;
+bottom: 0;
+    right: 0;
+    position: absolute;
+    background-color: ${({ theme }) => theme.palette.background.menuItem};
+    z-index: -1;
+  &::before {
+    content: "";
+    right: -5px;
+    background-color: ${({ theme }) => theme.palette.border.sidebar};
+    width: 2px;
+    position: absolute;
+    height: 100%;
+  }
 }
 `;
 
@@ -64,6 +83,8 @@ const getDesignTokens = (mode) => ({
             overlay: "#ffffff3d",
             buttonOption: "#575c5c73",
             buttonOptionHover: "#00000029",
+            menuItem: "#20262d",
+            menuItemHover: "#393e44",
           }
         : {
             first: "#e1e1e1",
@@ -73,6 +94,8 @@ const getDesignTokens = (mode) => ({
             overlay: "#0e12173d",
             buttonOption: "#fd6b2229",
             buttonOptionHover: "#fd6b2229",
+            menuItem: "#eaebec",
+            menuItemHover: "#eaebec",
           }),
     },
     header: {
@@ -93,12 +116,25 @@ const getDesignTokens = (mode) => ({
             second: "#c9adc5",
             third: "#cb8daf",
             dialog: "#a8b3cf66",
+            sidebar: "#6176f3",
           }
         : {
             first: "#e1e1e1",
             second: "#c9adc5",
             third: "#cb8daf",
             dialog: "#52586666",
+            sidebar: "#6176f3",
+          }),
+    },
+    iconColor: {
+      ...(mode === "dark"
+        ? {
+            default: "#a8b3cf",
+            hover: "#ffffff",
+          }
+        : {
+            default: "#525866",
+            hover: "black",
           }),
     },
     box: {
@@ -202,10 +238,12 @@ const getDesignTokens = (mode) => ({
   },
 });
 const Layout = (props) => {
-  const [darkMore, setDarkMore] = useState(false);
+  const dispatch = useDispatch();
+  const isDarkMode = useSelector((state) => state.darkMode.on);
+
   useEffect(() => {
     const getTheme = JSON.parse(localStorage.getItem("darkMode")) || false;
-    setDarkMore(getTheme);
+    dispatch(getDarkMode(getTheme));
   }, []);
 
   const { data: session, status } = useSession();
@@ -216,23 +254,8 @@ const Layout = (props) => {
   } else {
     axios.defaults.headers.common["Authorization"] = null;
   }
-  //   const [isSidebarMobile, setIsSidebarMobile] = useState(false);
 
-  //   const getStatusDarkmode = useSelector((state) => state.getDarkmode);
-  //   const dispatch = useDispatch();
-  //   const handleClickSwitch = () => {
-  //     dispatch(getDarkmode(!getStatusDarkmode));
-  //   };
-  //   const handleClickSidebarMobile = () => {
-  //     setIsSidebarMobile(!isSidebarMobile);
-  //   };
-
-  //   useEffect(() => {
-  //     const test = JSON.parse(localStorage.getItem("darkMode")) || false;
-  //     dispatch(getDarkmode(test));
-  //   }, []);
-
-  const theme = createTheme(getDesignTokens(darkMore ? "dark" : "light"));
+  const theme = createTheme(getDesignTokens(isDarkMode ? "dark" : "light"));
   const ContainerWrapper = styled(Box)(({ theme }) => ({
     backgroundImage: `linear-gradient(83deg, ${theme.palette.background.first} 0%, ${theme.palette.background.second} 29%, ${theme.palette.background.third} 100%)`,
     color: theme.palette.text.color.first,
@@ -284,7 +307,7 @@ const Layout = (props) => {
 
         <ContainerWrapper>
           <ContainerBoxWrapper>
-            <Sidebar setDarkMore={setDarkMore} />
+            <Sidebar />
             <ContainerBoxRightWrapper
               sx={{
                 width: {

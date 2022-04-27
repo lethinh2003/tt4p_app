@@ -5,16 +5,11 @@ import { getSession } from "next-auth/react";
 import FindPartner from "../components/Homepage/FindPartner";
 import Introduce from "../components/Homepage/Introduce";
 import UsersInRoom from "../components/Homepage/UsersInRoom";
-import Setting from "../components/Homepage/Setting";
-
 export default function Home() {
   return (
     <>
       <Layout>
-        <Setting />
-        <Introduce />
-        <UsersInRoom />
-        <FindPartner />
+        <h1>Hello</h1>
       </Layout>
     </>
   );

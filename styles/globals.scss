@@ -18,7 +18,17 @@ a {
   margin: 0;
   box-sizing: border-box;
 }
-
+::-webkit-scrollbar {
+  width: 10px;
+  height: 5px;
+}
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 5px;
+}
+::-webkit-scrollbar-track {
+  background: inherit;
+}
 .Toastify__toast-theme--light {
   color: #ffffff;
   border-radius: 15px;
