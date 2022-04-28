@@ -204,7 +204,7 @@ const FindPartner = () => {
     textTransform: "capitalize",
     borderRadius: "10px",
     padding: "10px",
-
+    fontSize: "1.5rem",
     "&:hover": {
       backgroundColor: theme.palette.button.default,
       opacity: 0.8,
@@ -218,7 +218,7 @@ const FindPartner = () => {
     padding: "10px",
     fontWeight: "bold",
     cursor: "pointer",
-
+    fontSize: "1.5rem",
     "&:hover": {
       backgroundColor: theme.palette.button.default,
       opacity: 0.8,
@@ -316,7 +316,7 @@ const FindPartner = () => {
   ];
   return (
     <>
-      {requesting && !data && <ThreeDots fill="#06bcee" />}
+      {requesting && <ThreeDots fill="#06bcee" />}
       {!requesting && data && data.data && (
         <>
           <Loading isLoading={isLoading} />
@@ -325,36 +325,36 @@ const FindPartner = () => {
           {!isError && (
             <>
               {!isWaitingRoom && (
-                <ButtonSocialWrapper
+                <Button
                   as={motion.div}
                   whileHover={{ scale: 1.02 }}
                   type="submit"
                   onClick={() => handleClickJoinWaitingRoom()}
                 >
                   Vào phòng chờ!!
-                </ButtonSocialWrapper>
+                </Button>
               )}
 
               {isWaitingRoom && (
                 <>
                   {!isInRoom && (
                     <>
-                      <ButtonSocialWrapper
+                      <Button
                         as={motion.div}
                         whileHover={{ scale: 1.02 }}
                         type="submit"
                         onClick={() => handleClickFindPartner()}
                       >
                         Tìm bạn thui!!
-                      </ButtonSocialWrapper>
-                      <ButtonSocialWrapper
+                      </Button>
+                      <Button
                         as={motion.div}
                         whileHover={{ scale: 1.02 }}
                         type="submit"
                         onClick={() => handleClickOutWaitingRoom()}
                       >
                         Thoát phòng chờ!!
-                      </ButtonSocialWrapper>
+                      </Button>
                     </>
                   )}
 

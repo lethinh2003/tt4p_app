@@ -20,8 +20,7 @@ const Introduce = () => {
       <Typography
         sx={{
           fontWeight: "bold",
-          fontSize: "35px",
-          alignSelf: "center",
+          fontSize: "2rem",
         }}
       >
         Hôm nay là {convertDay(new Date().getDay())}, thời điểm vàng để tìm bạn

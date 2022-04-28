@@ -8,6 +8,7 @@ import useModal from "../../utils/useModal";
 import RequestInfoDialog from "../Chat/RequestInfoDialog";
 import InfoPartnerAndUser from "../Partner/InfoPartnerAndUser";
 import InfoPartnerDialog from "../Partner/InfoPartnerDialog";
+import ButtonRequestInfoPartner from "../Partner/ButtonRequestInfoPartner";
 const Partner = ({
   isHideInfo,
   setIsHideInfo,
@@ -59,7 +60,7 @@ const Partner = ({
     padding: "10px",
     fontWeight: "bold",
     cursor: "pointer",
-
+    fontSize: "1.5rem",
     "&:hover": {
       backgroundColor: theme.palette.button.default,
       opacity: 0.8,
@@ -136,22 +137,19 @@ const Partner = ({
         isHideInfo={isHideInfo}
         setIsHideInfo={setIsHideInfo}
       />
-      <ButtonSocialWrapper
-        as={motion.div}
-        whileHover={{ scale: 1.02 }}
-        type="submit"
-        onClick={() => handleClickRequestInfoPartner()}
-      >
-        Thông tin đối phương
-      </ButtonSocialWrapper>
-      <ButtonSocialWrapper
+      <ButtonRequestInfoPartner
+        handleClickRequestInfoPartner={handleClickRequestInfoPartner}
+        isHideInfo={isHideInfo}
+        countRequestInfo={countRequestInfo}
+      />
+      <Button
         as={motion.div}
         whileHover={{ scale: 1.02 }}
         type="submit"
         onClick={() => handleClickOutChatRoom()}
       >
         Thoát chat!!
-      </ButtonSocialWrapper>
+      </Button>
     </>
   );
 };

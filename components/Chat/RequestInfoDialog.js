@@ -64,6 +64,7 @@ const RequestInfoDialog = ({ isShow, toggle, partner, socket }) => {
     padding: "10px",
     fontWeight: "bold",
     cursor: "pointer",
+    fontSize: "2rem",
 
     "&:hover": {
       backgroundColor: theme.palette.button.default,
@@ -124,10 +125,10 @@ const RequestInfoDialog = ({ isShow, toggle, partner, socket }) => {
         <TimeCountRequestInfo toggle={toggle} socket={socket} />
       </DialogContent>
       <DialogActions>
-        <ButtonSocialWrapper onClick={handleClose}>Thoát </ButtonSocialWrapper>
-        <ButtonSocialWrapper onClick={handleAgree} autoFocus>
+        <Button onClick={handleClose}>Thoát </Button>
+        <Button onClick={handleAgree} autoFocus>
           Đồng ý
-        </ButtonSocialWrapper>
+        </Button>
       </DialogActions>
     </DialogWrapper>
   );

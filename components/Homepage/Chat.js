@@ -6,6 +6,7 @@ import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import ChatForm from "../Chat/ChatForm";
 
+import convertChat from "../../utils/convertChat";
 const Chat = ({ socket, partner, isHideInfo }) => {
   const { data: session, status } = useSession();
   const [namePartner, setNamePartner] = useState(partner ? partner.name : "");
@@ -26,8 +27,11 @@ const Chat = ({ socket, partner, isHideInfo }) => {
   useEffect(() => {
     if (socket) {
       if (!socketOn.current) {
-        socketOn.current = socket.on("receive-chat-content", (message) => {
-          setMessages((prev) => [...prev, message]);
+        socketOn.current = socket.on("receive-chat-content", (data) => {
+          const newMessage = convertChat(data.message);
+          data.message = newMessage;
+
+          setMessages((prev) => [...prev, data]);
         });
       }
 
@@ -85,20 +89,7 @@ const Chat = ({ socket, partner, isHideInfo }) => {
     //   display: "none",
     // },
   }));
-  const ButtonSocialWrapper = styled(Button)(({ theme }) => ({
-    backgroundColor: theme.palette.button.default,
-    color: "#fff",
-    textTransform: "capitalize",
-    borderRadius: "10px",
-    padding: "10px",
-    fontWeight: "bold",
-    cursor: "pointer",
 
-    "&:hover": {
-      backgroundColor: theme.palette.button.default,
-      opacity: 0.8,
-    },
-  }));
   const BoxAvatar = styled(Box)(({ theme }) => ({
     backgroundColor: "#ccc",
     color: "#fd6b22",
@@ -176,66 +167,7 @@ const Chat = ({ socket, partner, isHideInfo }) => {
       },
     },
   }));
-  const BoxAvatarChild = styled(Box)(({ theme }) => ({
-    backgroundColor: "#ccc",
-    color: "#fd6b22",
-    textTransform: "capitalize",
-    borderRadius: "10px",
-    padding: "10px",
-    width: "50px",
 
-    fontWeight: "bold",
-    height: "50px",
-    borderRadius: "5px",
-    position: "absolute",
-    "&.tt-1": {
-      right: "-75px",
-      top: "24px",
-      backgroundColor: "#e5f99f",
-    },
-    "&.tt-2": {
-      left: "-75px",
-      width: "40px",
-      height: "40px",
-      backgroundColor: "#e5cbd6",
-    },
-    "&.tt-3": {
-      bottom: "33px",
-      left: "-65px",
-      backgroundColor: "#ccf1fa",
-    },
-    "&.tt-4": {
-      backgroundColor: "#ceafcf",
-      bottom: "42px",
-      right: "-76px",
-      width: "40px",
-      height: "40px",
-    },
-  }));
-  const BoxLoading = styled(Box)({
-    borderRadius: "20px",
-    backgroundColor: "#fff",
-    color: "black",
-    width: "200px",
-    height: "200px",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    flexDirection: "column",
-  });
-  const LoadingContent = styled(Typography)({
-    fontWeight: "700",
-    opacity: "0.7",
-  });
-  const handleScroll = () => {
-    console.log("scroll");
-    clearTimeout(onScrollChat.current);
-    onScrollChat.current = setTimeout(() => {
-      console.log("un - scroll");
-      setIsScroll(false);
-    }, 1000);
-    setIsScroll(true);
-  };
   return (
     <>
       <audio
@@ -278,7 +210,11 @@ const Chat = ({ socket, partner, isHideInfo }) => {
                       opacity: 1,
                     }}
                   >
-                    <BoxAvatar>
+                    <BoxAvatar
+                      sx={{
+                        display: { xs: "none", md: "block" },
+                      }}
+                    >
                       <Image
                         src={
                           item.sex === "boy"
@@ -291,7 +227,12 @@ const Chat = ({ socket, partner, isHideInfo }) => {
                       />
                     </BoxAvatar>
                     <Box className="box-content">
-                      <Typography className="box-content--userName">
+                      <Typography
+                        className="box-content--userName"
+                        sx={{
+                          display: { xs: "none", md: "block" },
+                        }}
+                      >
                         {namePartner}
                       </Typography>
                       <Typography className="box-content--text">
@@ -302,14 +243,23 @@ const Chat = ({ socket, partner, isHideInfo }) => {
                 ) : (
                   <BoxChatUserRight>
                     <Box className="box-content">
-                      <Typography className="box-content--userName">
+                      <Typography
+                        className="box-content--userName"
+                        sx={{
+                          display: { xs: "none", md: "block" },
+                        }}
+                      >
                         {item.name}
                       </Typography>
                       <Typography className="box-content--text">
                         {item.message}
                       </Typography>
                     </Box>
-                    <BoxAvatar>
+                    <BoxAvatar
+                      sx={{
+                        display: { xs: "none", md: "block" },
+                      }}
+                    >
                       <Image
                         src={
                           item.sex === "boy"
@@ -325,6 +275,7 @@ const Chat = ({ socket, partner, isHideInfo }) => {
                 )}
               </React.Fragment>
             ))}
+          <div ref={messagesEndRef} />
           {isTyping && (
             <BoxChatUserLeft>
               <BoxAvatar>
@@ -347,8 +298,8 @@ const Chat = ({ socket, partner, isHideInfo }) => {
               </Box>
             </BoxChatUserLeft>
           )}
-          <div ref={messagesEndRef} />
         </BoxWrapper>
+
         <ChatForm socket={socket} />
       </Box>
     </>

@@ -53,7 +53,7 @@ const Footer = () => {
   const BottomNavigationComponent = styled(Box)(({ theme }) => ({
     borderTop: `1px solid ${theme.palette.sidebar.border}`,
 
-    padding: "0 20px",
+    padding: "5px 20px",
     position: "fixed",
     bottom: 0,
     right: 0,
@@ -72,7 +72,7 @@ const Footer = () => {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    fontSize: "40px",
+
     position: "relative",
     backgroundColor: theme.palette.background.menuItem,
     color: theme.palette.mode === "light" ? "#0e1217" : "#ffffff",
@@ -89,15 +89,33 @@ const Footer = () => {
   const BottomMenu = [
     {
       value: "home",
-      icon: <MessageOutlinedIcon />,
+      icon: (
+        <MessageOutlinedIcon
+          sx={{
+            fontSize: "2rem",
+          }}
+        />
+      ),
     },
     {
       value: "setting",
-      icon: <SettingsOutlinedIcon />,
+      icon: (
+        <SettingsOutlinedIcon
+          sx={{
+            fontSize: "2rem",
+          }}
+        />
+      ),
     },
     {
       value: "signout",
-      icon: <LogoutOutlinedIcon />,
+      icon: (
+        <LogoutOutlinedIcon
+          sx={{
+            fontSize: "2rem",
+          }}
+        />
+      ),
     },
   ];
   return (

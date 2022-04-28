@@ -50,7 +50,7 @@ const Index = () => {
     textTransform: "capitalize",
     borderRadius: "10px",
     padding: "10px",
-
+    fontSize: "1.5rem",
     "&:hover": {
       backgroundColor: theme.palette.button.default,
       opacity: 0.8,
@@ -62,7 +62,7 @@ const Index = () => {
     textTransform: "capitalize",
     borderRadius: "10px",
     padding: "10px",
-
+    fontSize: "1.5rem",
     "&:hover": {
       backgroundColor: "#fd6b2229",
       opacity: 0.8,
@@ -103,7 +103,7 @@ const Index = () => {
               width={200}
               height={300}
             />
-            <ButtonWrapper
+            <Button
               as={motion.div}
               sx={{
                 display: "flex",
@@ -116,7 +116,7 @@ const Index = () => {
               onClick={() => setStep(2)}
             >
               Start
-            </ButtonWrapper>
+            </Button>
             <Typography
               sx={{
                 opacity: 0.7,
@@ -159,7 +159,7 @@ const Index = () => {
               width={200}
               height={300}
             />
-            <ButtonSocialWrapper
+            <Button
               as={motion.div}
               sx={{
                 display: "flex",
@@ -172,8 +172,8 @@ const Index = () => {
               onClick={() => setStep(4)}
             >
               Đăng nhập
-            </ButtonSocialWrapper>
-            <ButtonSocialWrapper
+            </Button>
+            <Button
               as={motion.div}
               sx={{
                 display: "flex",
@@ -186,7 +186,7 @@ const Index = () => {
               onClick={() => setStep(3)}
             >
               Người dùng mới
-            </ButtonSocialWrapper>
+            </Button>
           </BoxWrapper>
         )}
         {step == 3 && (
@@ -280,7 +280,7 @@ const Index = () => {
             </Typography>
             <InfoDetail setStep={setStep} setInfo={setInfo} info={info} />
 
-            <ButtonWrapper
+            <Button
               as={motion.div}
               sx={{
                 display: "flex",
@@ -293,7 +293,7 @@ const Index = () => {
               onClick={() => setStep(3)}
             >
               Previous
-            </ButtonWrapper>
+            </Button>
           </BoxWrapper>
         )}
         {step == 6 && (

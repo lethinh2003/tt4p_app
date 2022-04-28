@@ -48,8 +48,7 @@ const InfoPartnerAndUser = ({
     textTransform: "capitalize",
     borderRadius: "10px",
     padding: "10px",
-    width: "100%",
-    maxWidth: "200px",
+    width: "200px",
     fontWeight: "bold",
     height: "200px",
     borderRadius: "50px",
@@ -78,7 +77,7 @@ const InfoPartnerAndUser = ({
         animate={{ opacity: 1 }}
         sx={{
           fontWeight: "bold",
-          fontSize: "35px",
+          fontSize: "2rem",
           alignSelf: "center",
         }}
       >
@@ -90,7 +89,7 @@ const InfoPartnerAndUser = ({
           width: "100%",
           justifyContent: "space-around",
           alignItems: "center",
-          flexDirection: { xs: "column", sm: "row" },
+          flexDirection: { xs: "row", sm: "row" },
           gap: { xs: "20px", sm: "0" },
         }}
       >
@@ -99,6 +98,7 @@ const InfoPartnerAndUser = ({
             display: "flex",
             flexDirection: "column",
             gap: "10px",
+            alignItems: "center",
           }}
         >
           <Typography
@@ -109,7 +109,7 @@ const InfoPartnerAndUser = ({
               fontWeight: "bold",
               fontSize: "20px",
               alignSelf: "center",
-              maxWidth: "200px",
+              maxWidth: { xs: "100px", md: "200px" },
             }}
             className="three-dots"
           >
@@ -117,6 +117,10 @@ const InfoPartnerAndUser = ({
           </Typography>
 
           <BoxAvatar
+            sx={{
+              width: { xs: "100px", md: "200px" },
+              height: { xs: "100px", md: "200px" },
+            }}
             as={motion.div}
             initial={{ opacity: 0, x: "-100%" }}
             animate={{ opacity: 1, x: 0 }}
@@ -161,6 +165,7 @@ const InfoPartnerAndUser = ({
             display: "flex",
             flexDirection: "column",
             gap: "10px",
+            alignItems: "center",
           }}
         >
           <Typography
@@ -171,7 +176,7 @@ const InfoPartnerAndUser = ({
               fontWeight: "bold",
               fontSize: "20px",
               alignSelf: "center",
-              maxWidth: "200px",
+              maxWidth: { xs: "100px", md: "200px" },
             }}
             className="three-dots"
           >
@@ -179,6 +184,10 @@ const InfoPartnerAndUser = ({
           </Typography>
 
           <BoxAvatar
+            sx={{
+              width: { xs: "100px", md: "200px" },
+              height: { xs: "100px", md: "200px" },
+            }}
             as={motion.div}
             initial={{ opacity: 0, x: "100%" }}
             animate={{ opacity: 1, x: 0 }}

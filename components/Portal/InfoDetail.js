@@ -234,9 +234,9 @@ const InfoDetail = ({ setStep, setInfo, info }) => {
           }}
           whileHover={{ scale: 1.02 }}
         >
-          <ButtonSocialWrapper type="submit" onClick={onSubmit}>
+          <Button type="submit" onClick={onSubmit}>
             Next
-          </ButtonSocialWrapper>
+          </Button>
         </Box>
       </form>
     </>

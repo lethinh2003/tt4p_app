@@ -51,33 +51,6 @@ const FinalStep = ({ setStep, setInfo, info }) => {
     }
   };
 
-  const ButtonWrapper = styled(Button)(({ theme }) => ({
-    backgroundColor: theme.palette.button.default,
-    color: "#fff",
-    textTransform: "capitalize",
-    borderRadius: "10px",
-    padding: "10px",
-
-    "&:hover": {
-      backgroundColor: theme.palette.button.default,
-      opacity: 0.8,
-    },
-  }));
-  const ButtonSocialWrapper = styled(Button)(({ theme }) => ({
-    backgroundColor: "#fd6b2229",
-    color: "#fd6b22",
-    textTransform: "capitalize",
-    borderRadius: "10px",
-    padding: "10px",
-    width: "100%",
-    fontWeight: "bold",
-
-    "&:hover": {
-      backgroundColor: "#fd6b2229",
-      opacity: 0.8,
-    },
-  }));
-
   return (
     <>
       <Box
@@ -164,11 +137,11 @@ const FinalStep = ({ setStep, setInfo, info }) => {
           .
         </Typography>
 
-        <ButtonSocialWrapper type="submit" onClick={onSubmit}>
+        <Button type="submit" onClick={onSubmit}>
           Next
-        </ButtonSocialWrapper>
+        </Button>
 
-        <ButtonWrapper onClick={() => setStep(5)}>Previous</ButtonWrapper>
+        <Button onClick={() => setStep(5)}>Previous</Button>
       </Box>
     </>
   );

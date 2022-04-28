@@ -246,24 +246,28 @@ const Login = ({ setStep }) => {
             }}
             whileHover={{ scale: 1.02 }}
           >
-            <ButtonSocialWrapper type="submit" onClick={handleSubmit(onSubmit)}>
+            <Button type="submit" onClick={handleSubmit(onSubmit)}>
               Đăng nhập
-            </ButtonSocialWrapper>
+            </Button>
           </Box>
-          <ButtonWrapper
-            as={motion.div}
+          <Box
             sx={{
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
               fontWeight: "bold",
               cursor: "pointer",
+              width: "100%",
             }}
-            whileHover={{ scale: 1.02 }}
-            onClick={() => setStep(2)}
           >
-            Previous
-          </ButtonWrapper>
+            <Button
+              as={motion.div}
+              whileHover={{ scale: 1.02 }}
+              onClick={() => setStep(2)}
+            >
+              Previous
+            </Button>
+          </Box>
         </form>
       </Box>
     </>

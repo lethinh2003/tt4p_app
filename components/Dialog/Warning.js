@@ -64,7 +64,7 @@ const Warning = ({
     padding: "10px",
     fontWeight: "bold",
     cursor: "pointer",
-
+    fontSize: "1.5rem",
     "&:hover": {
       backgroundColor: theme.palette.button.default,
       opacity: 0.8,
@@ -91,10 +91,10 @@ const Warning = ({
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <ButtonSocialWrapper onClick={handleClose}>Thoát </ButtonSocialWrapper>
-        <ButtonSocialWrapper onClick={handleAgree} autoFocus>
+        <Button onClick={handleClose}>Thoát </Button>
+        <Button onClick={handleAgree} autoFocus>
           Đồng ý
-        </ButtonSocialWrapper>
+        </Button>
       </DialogActions>
     </DialogWrapper>
   );

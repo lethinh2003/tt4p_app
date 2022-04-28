@@ -1,6 +1,7 @@
 import { Backdrop, Box, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import Image from "next/image";
+import { Puff } from "react-loading-icons";
 
 const Loading = ({ isLoading }) => {
   const BoxLoading = styled(Box)({
@@ -30,12 +31,7 @@ const Loading = ({ isLoading }) => {
           open={isLoading}
         >
           <BoxLoading>
-            <Image
-              src={"https://i.imgur.com/VdhhRt3.gif"}
-              alt="Loading cute"
-              width={200}
-              height={150}
-            />
+            <Puff fill="#06bcee" stroke="#1aaed7" />
             <LoadingContent>Loading...</LoadingContent>
           </BoxLoading>
         </Backdrop>

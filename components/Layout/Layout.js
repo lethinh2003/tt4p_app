@@ -52,7 +52,29 @@ bottom: 0;
 `;
 
 const getDesignTokens = (mode) => ({
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          backgroundColor: theme.palette.button.default,
+          color: "#fff",
+          textTransform: "capitalize",
+          borderRadius: "10px",
+          padding: "10px",
+          fontWeight: "bold",
+          cursor: "pointer",
+          fontSize: "1.5rem",
+          "&:hover": {
+            backgroundColor: theme.palette.button.default,
+            opacity: 0.8,
+          },
+        }),
+      },
+    },
+  },
   typography: {
+    fontSize: 20,
+
     fontFamily: [
       "Noto Sans",
       "League Spartan",
@@ -256,11 +278,13 @@ const Layout = (props) => {
   }
 
   const theme = createTheme(getDesignTokens(isDarkMode ? "dark" : "light"));
+
   const ContainerWrapper = styled(Box)(({ theme }) => ({
     backgroundImage: `linear-gradient(83deg, ${theme.palette.background.first} 0%, ${theme.palette.background.second} 29%, ${theme.palette.background.third} 100%)`,
     color: theme.palette.text.color.first,
     minHeight: "100vh",
     width: "100vw",
+    minHeight: "-webkit-fill-available",
   }));
   const ContainerBoxWrapper = styled(Box)(({ theme }) => ({
     backgroundColor: theme.palette.box.background.default,
@@ -283,7 +307,7 @@ const Layout = (props) => {
     height: "100%",
     position: "absolute",
     left: "90px",
-    padding: "20px",
+    padding: "20px 10px",
   }));
   const BoxWrapper = styled(Box)(({ theme }) => ({
     height: "calc(100% - 70px)",
@@ -306,7 +330,12 @@ const Layout = (props) => {
         <GlobalStyle theme={theme} />
 
         <ContainerWrapper>
-          <ContainerBoxWrapper>
+          <ContainerBoxWrapper
+            sx={{
+              borderRadius: { xs: "0px", md: "30px" },
+              height: { xs: "calc(100% - 0px)", md: "calc(100% - 20px)" },
+            }}
+          >
             <Sidebar />
             <ContainerBoxRightWrapper
               sx={{

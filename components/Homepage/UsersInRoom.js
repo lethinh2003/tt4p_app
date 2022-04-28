@@ -33,8 +33,7 @@ const UsersInRoom = () => {
       <Typography
         sx={{
           fontWeight: "bold",
-          fontSize: "25px",
-          alignSelf: "center",
+          fontSize: "2rem",
         }}
       >
         Hiện đang có {boy} bạn nam, {girl} bạn nữ, {lgbt} bạn LGBT đang tham gia

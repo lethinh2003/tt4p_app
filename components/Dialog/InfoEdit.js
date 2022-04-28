@@ -210,14 +210,14 @@ const InfoModalEdit = ({ user, toggle }) => {
           paddingTop: "10px",
         }}
       >
-        <ButtonWrapper
+        <Button
           as={motion.div}
           whileHover={{ scale: 1.02 }}
           type="submit"
           onClick={() => handleClickSubmit()}
         >
           Save
-        </ButtonWrapper>
+        </Button>
       </Box>
     </>
   );

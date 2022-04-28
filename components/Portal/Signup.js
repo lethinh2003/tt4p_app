@@ -311,11 +311,11 @@ const Signup = ({ setStep, setInfo, info }) => {
             }}
             whileHover={{ scale: 1.02 }}
           >
-            <ButtonSocialWrapper type="submit" onClick={handleSubmit(onSubmit)}>
+            <Button type="submit" onClick={handleSubmit(onSubmit)}>
               Next
-            </ButtonSocialWrapper>
+            </Button>
           </Box>
-          <ButtonWrapper
+          <Button
             as={motion.div}
             sx={{
               display: "flex",
@@ -328,7 +328,7 @@ const Signup = ({ setStep, setInfo, info }) => {
             onClick={() => setStep(2)}
           >
             Previous
-          </ButtonWrapper>
+          </Button>
         </form>
       </Box>
     </>
