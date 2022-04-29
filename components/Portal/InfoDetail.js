@@ -33,7 +33,8 @@ const InfoDetail = ({ setStep, setInfo, info }) => {
   useEffect(() => {
     getCities();
   }, []);
-  const onSubmit = () => {
+  const onSubmit = (e) => {
+    e.preventDefault();
     if (mySex && findSex && cityLive) {
       setInfo((prev) => ({
         ...prev,
@@ -103,7 +104,7 @@ const InfoDetail = ({ setStep, setInfo, info }) => {
   });
   const ErrorContent = styled(Typography)({
     fontWeight: "400",
-    fontSize: "0.75rem",
+    fontSize: "1rem",
     lineHeight: 1.66,
     textAlign: "left",
     margin: "4px 14px 0 14px",
@@ -205,7 +206,7 @@ const InfoDetail = ({ setStep, setInfo, info }) => {
             flexDirection: "column",
           }}
         >
-          <LabelInput>Thành phố bạn đang sống</LabelInput>
+          <LabelInput>Tỉnh/Thành phố bạn đang sống</LabelInput>
           <Select
             value={cityLive}
             onChange={(e) => setCityLive(e.target.value)}
@@ -213,8 +214,8 @@ const InfoDetail = ({ setStep, setInfo, info }) => {
             {city &&
               city.length > 0 &&
               city.map((item, i) => (
-                <MenuItem value={item.city} key={i}>
-                  {item.city}
+                <MenuItem value={item.province} key={i}>
+                  {item.province}
                 </MenuItem>
               ))}
           </Select>
@@ -225,6 +226,7 @@ const InfoDetail = ({ setStep, setInfo, info }) => {
         <Box
           as={motion.div}
           sx={{
+            width: "calc(100% - 20px)",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -234,7 +236,13 @@ const InfoDetail = ({ setStep, setInfo, info }) => {
           }}
           whileHover={{ scale: 1.02 }}
         >
-          <Button type="submit" onClick={onSubmit}>
+          <Button
+            sx={{
+              width: "100%",
+            }}
+            type="submit"
+            onClick={(e) => onSubmit(e)}
+          >
             Next
           </Button>
         </Box>

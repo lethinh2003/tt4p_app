@@ -71,6 +71,15 @@ const getDesignTokens = (mode) => ({
         }),
       },
     },
+    MuiPaper: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          width: "100%",
+          margin: "0",
+          maxWidth: "600px",
+        }),
+      },
+    },
   },
   typography: {
     fontSize: 20,
@@ -284,7 +293,7 @@ const Layout = (props) => {
     color: theme.palette.text.color.first,
     minHeight: "100vh",
     width: "100vw",
-    minHeight: "-webkit-fill-available",
+    // minHeight: "-webkit-fill-available",
   }));
   const ContainerBoxWrapper = styled(Box)(({ theme }) => ({
     backgroundColor: theme.palette.box.background.default,

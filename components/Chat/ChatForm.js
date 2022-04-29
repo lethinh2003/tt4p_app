@@ -18,6 +18,7 @@ const ChatForm = ({ socket }) => {
   };
   const handleClickSubmit = () => {
     if (chatContent) {
+      socket.emit("chat-typing", false);
       socket.emit("send-chat-content", chatContent);
       setChatContent("");
     }
@@ -64,6 +65,8 @@ const ChatForm = ({ socket }) => {
           <ChatEmotion
             setChatContent={setChatContent}
             chatInputRef={chatInputRef}
+            chatTypingRef={chatTypingRef}
+            socket={socket}
           />
           <IconButton onClick={() => handleClickSubmit()}>
             <SendIcon />

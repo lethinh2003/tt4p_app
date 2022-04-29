@@ -130,7 +130,7 @@ const Login = ({ setStep }) => {
   });
   const ErrorContent = styled(Typography)({
     fontWeight: "400",
-    fontSize: "0.75rem",
+    fontSize: "1rem",
     lineHeight: 1.66,
     textAlign: "left",
     margin: "4px 14px 0 14px",
@@ -170,7 +170,7 @@ const Login = ({ setStep }) => {
             display: "flex",
             flexDirection: "column",
             width: "100%",
-            gap: "15px",
+            gap: "10px",
           }}
           onSubmit={handleSubmit(onSubmit)}
         >
@@ -237,6 +237,7 @@ const Login = ({ setStep }) => {
           <Box
             as={motion.div}
             sx={{
+              width: "calc(100% - 20px)",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -246,26 +247,14 @@ const Login = ({ setStep }) => {
             }}
             whileHover={{ scale: 1.02 }}
           >
-            <Button type="submit" onClick={handleSubmit(onSubmit)}>
-              Đăng nhập
-            </Button>
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              fontWeight: "bold",
-              cursor: "pointer",
-              width: "100%",
-            }}
-          >
             <Button
-              as={motion.div}
-              whileHover={{ scale: 1.02 }}
-              onClick={() => setStep(2)}
+              sx={{
+                width: "100%",
+              }}
+              type="submit"
+              onClick={handleSubmit(onSubmit)}
             >
-              Previous
+              Đăng nhập
             </Button>
           </Box>
         </form>

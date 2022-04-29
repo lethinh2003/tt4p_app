@@ -156,8 +156,8 @@ const Signup = ({ setStep, setInfo, info }) => {
   });
   const ErrorContent = styled(Typography)({
     fontWeight: "400",
-    fontSize: "0.75rem",
     lineHeight: 1.66,
+    fontSize: "1rem",
     textAlign: "left",
     margin: "4px 14px 0 14px",
     color: "#f44336",
@@ -196,7 +196,7 @@ const Signup = ({ setStep, setInfo, info }) => {
             display: "flex",
             flexDirection: "column",
             width: "100%",
-            gap: "15px",
+            gap: "10px",
           }}
           onSubmit={handleSubmit(onSubmit)}
         >
@@ -302,6 +302,7 @@ const Signup = ({ setStep, setInfo, info }) => {
           <Box
             as={motion.div}
             sx={{
+              width: "calc(100% - 20px)",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -311,24 +312,16 @@ const Signup = ({ setStep, setInfo, info }) => {
             }}
             whileHover={{ scale: 1.02 }}
           >
-            <Button type="submit" onClick={handleSubmit(onSubmit)}>
+            <Button
+              sx={{
+                width: "100%",
+              }}
+              type="submit"
+              onClick={handleSubmit(onSubmit)}
+            >
               Next
             </Button>
           </Box>
-          <Button
-            as={motion.div}
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              fontWeight: "bold",
-              cursor: "pointer",
-            }}
-            whileHover={{ scale: 1.02 }}
-            onClick={() => setStep(2)}
-          >
-            Previous
-          </Button>
         </form>
       </Box>
     </>

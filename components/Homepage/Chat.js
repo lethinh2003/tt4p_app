@@ -5,8 +5,10 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import ChatForm from "../Chat/ChatForm";
+import { ThreeDots } from "react-loading-icons";
 
 import convertChat from "../../utils/convertChat";
+import ChatContent from "../Chat/ChatContent";
 const Chat = ({ socket, partner, isHideInfo }) => {
   const { data: session, status } = useSession();
   const [namePartner, setNamePartner] = useState(partner ? partner.name : "");
@@ -29,6 +31,7 @@ const Chat = ({ socket, partner, isHideInfo }) => {
       if (!socketOn.current) {
         socketOn.current = socket.on("receive-chat-content", (data) => {
           const newMessage = convertChat(data.message);
+          data.vanilaMessage = data.message;
           data.message = newMessage;
 
           setMessages((prev) => [...prev, data]);
@@ -127,14 +130,14 @@ const Chat = ({ socket, partner, isHideInfo }) => {
       gap: "10px",
       "&--userName": {
         fontWeight: "bold",
-        fontSize: "15px",
+        fontSize: "1rem",
       },
       "&--text": {
         wordWrap: "break-word",
         padding: "10px",
         borderRadius: "0 10px 10px 10px",
         backgroundColor: "#ccc",
-        fontSize: "20px",
+        fontSize: "1.3rem",
         color: "black",
       },
     },
@@ -153,7 +156,7 @@ const Chat = ({ socket, partner, isHideInfo }) => {
       gap: "10px",
       "&--userName": {
         fontWeight: "bold",
-        fontSize: "15px",
+        fontSize: "1rem",
         alignSelf: "flex-end",
       },
       "&--text": {
@@ -163,7 +166,7 @@ const Chat = ({ socket, partner, isHideInfo }) => {
         borderRadius: "10px 0 10px 10px",
         backgroundColor: "#6c90eb",
         color: "#ffffff",
-        fontSize: "20px",
+        fontSize: "1.3rem",
       },
     },
   }));
@@ -201,76 +204,22 @@ const Chat = ({ socket, partner, isHideInfo }) => {
             messages.map((item, i) => (
               <React.Fragment key={i}>
                 {item.account !== session.user.account ? (
-                  <BoxChatUserLeft
-                    as={motion.div}
-                    initial={{
-                      opacity: 0,
-                    }}
-                    animate={{
-                      opacity: 1,
-                    }}
-                  >
-                    <BoxAvatar
-                      sx={{
-                        display: { xs: "none", md: "block" },
-                      }}
-                    >
-                      <Image
-                        src={
-                          item.sex === "boy"
-                            ? "https://i.imgur.com/yFYUbLZ.png"
-                            : "https://i.imgur.com/Or9WeCe.png"
-                        }
-                        alt={namePartner}
-                        width={50}
-                        height={50}
-                      />
-                    </BoxAvatar>
-                    <Box className="box-content">
-                      <Typography
-                        className="box-content--userName"
-                        sx={{
-                          display: { xs: "none", md: "block" },
-                        }}
-                      >
-                        {namePartner}
-                      </Typography>
-                      <Typography className="box-content--text">
-                        {item.message}
-                      </Typography>
-                    </Box>
+                  <BoxChatUserLeft>
+                    <ChatContent
+                      item={item}
+                      name={namePartner}
+                      message={item.message}
+                      type={"left"}
+                    />
                   </BoxChatUserLeft>
                 ) : (
                   <BoxChatUserRight>
-                    <Box className="box-content">
-                      <Typography
-                        className="box-content--userName"
-                        sx={{
-                          display: { xs: "none", md: "block" },
-                        }}
-                      >
-                        {item.name}
-                      </Typography>
-                      <Typography className="box-content--text">
-                        {item.message}
-                      </Typography>
-                    </Box>
-                    <BoxAvatar
-                      sx={{
-                        display: { xs: "none", md: "block" },
-                      }}
-                    >
-                      <Image
-                        src={
-                          item.sex === "boy"
-                            ? "https://i.imgur.com/yFYUbLZ.png"
-                            : "https://i.imgur.com/Or9WeCe.png"
-                        }
-                        alt={item.name}
-                        width={50}
-                        height={50}
-                      />
-                    </BoxAvatar>
+                    <ChatContent
+                      item={item}
+                      name={item.name}
+                      message={item.message}
+                      type={"right"}
+                    />
                   </BoxChatUserRight>
                 )}
               </React.Fragment>
@@ -278,24 +227,12 @@ const Chat = ({ socket, partner, isHideInfo }) => {
           <div ref={messagesEndRef} />
           {isTyping && (
             <BoxChatUserLeft>
-              <BoxAvatar>
-                <Image
-                  src={
-                    partner.sex === "boy"
-                      ? "https://i.imgur.com/yFYUbLZ.png"
-                      : "https://i.imgur.com/Or9WeCe.png"
-                  }
-                  alt={partner.name}
-                  width={50}
-                  height={50}
-                />
-              </BoxAvatar>
-              <Box className="box-content">
-                <Typography className="box-content--userName">
-                  {partner.name}
-                </Typography>
-                <Box className="box-content--text">{typingMessage}</Box>
-              </Box>
+              <ChatContent
+                item={partner}
+                name={namePartner}
+                message={<ThreeDots fill="#06bcee" width={"1.5rem"} />}
+                type={"typing"}
+              />
             </BoxChatUserLeft>
           )}
         </BoxWrapper>
