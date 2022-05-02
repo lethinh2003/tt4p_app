@@ -6,7 +6,7 @@ import FindPartner from "../components/Homepage/FindPartner";
 import Introduce from "../components/Homepage/Introduce";
 import UsersInRoom from "../components/Homepage/UsersInRoom";
 import Setting from "../components/Homepage/Setting";
-import AboutMe from "../components/Homepage/Aboutme";
+import AboutMe from "../components/Homepage/AboutMe";
 import Banned from "../components/Dialog/Banned";
 import { useSession } from "next-auth/react";
 import Admin from "../components/Homepage/Admin";
