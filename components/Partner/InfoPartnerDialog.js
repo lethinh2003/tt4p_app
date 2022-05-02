@@ -15,6 +15,9 @@ const InfoPartnerDialog = ({ isShow, toggle, partner }) => {
       backgroundColor: theme.palette.background.dialog,
       borderRadius: "20px",
       border: `1px solid ${theme.palette.border.dialog}`,
+      width: "100%",
+      margin: "0",
+      maxWidth: "600px",
 
       "& .MuiDialogTitle-root": {
         borderBottom: `1px solid ${theme.palette.border.dialog}`,

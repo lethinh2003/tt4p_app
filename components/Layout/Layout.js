@@ -8,6 +8,7 @@ import { createGlobalStyle } from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import Sidebar from "./Sidebar";
 import { getDarkMode } from "../../redux/actions/getDarkMode";
+import Footer from "./Footer";
 const GlobalStyle = createGlobalStyle`
   body {
     background-color: ${({ theme }) => theme.palette.background.first};
@@ -364,6 +365,7 @@ const Layout = (props) => {
                 }}
               >
                 {props.children}
+                <Footer />
               </BoxWrapper>
             </ContainerBoxRightWrapper>
           </ContainerBoxWrapper>

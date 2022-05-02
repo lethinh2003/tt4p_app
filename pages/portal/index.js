@@ -7,6 +7,7 @@ import Index from "../../components/Portal/Index";
 import { styled } from "@mui/material/styles";
 import { ToastContainer, toast } from "react-toastify";
 import { getSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -231,6 +232,12 @@ const getDesignTokens = (mode) => ({
 });
 
 const Portal = (props) => {
+  const { data: session, status } = useSession();
+  useEffect(() => {
+    if (status === "authenticated") {
+      window.location.href = "/";
+    }
+  }, [status]);
   //   const { data: session, status } = useSession();
   //   if (session && session.user.access_token) {
   //     axios.defaults.headers.common[

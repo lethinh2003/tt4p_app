@@ -3,6 +3,7 @@ import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import MessageOutlinedIcon from "@mui/icons-material/MessageOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import PermIdentityOutlinedIcon from "@mui/icons-material/PermIdentityOutlined";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { Box, Switch } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { signOut } from "next-auth/react";
@@ -14,30 +15,18 @@ import BottomMenu from "./BottomMenu";
 import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import { getToggleSetting } from "../../redux/actions/getToggleSetting";
+import { getToggleAboutMe } from "../../redux/actions/getToggleAboutMe";
+import { toast } from "react-toastify";
+
 import { useEffect } from "react";
 const Sidebar = () => {
   const [value, setValue] = useState("");
   const dispatch = useDispatch();
   const isOpenSetting = useSelector((state) => state.toggleSetting.on);
+  const getToggleStatusBanned = useSelector((state) => state.toggleBanned.on);
+
   const router = useRouter();
 
-  useEffect(() => {
-    const handleRouteChange = (url, { shallow }) => {
-      console.log(
-        `App is changing to ${url} ${
-          shallow ? "with" : "without"
-        } shallow routing`
-      );
-    };
-
-    router.events.on("routeChangeStart", handleRouteChange);
-
-    // If the component is unmounted, unsubscribe
-    // from the event with the `off` method:
-    return () => {
-      router.events.off("routeChangeStart", handleRouteChange);
-    };
-  }, []);
   useEffect(() => {
     if (router.pathname === "/") {
       setValue("home");
@@ -102,17 +91,31 @@ const Sidebar = () => {
   const handleClickItem = (value, link) => {
     setValue(value);
     if (value === "signout") {
-      signOut();
-    }
-    if (value === "setting") {
-      dispatch(getToggleSetting(true));
+      if (getToggleStatusBanned) {
+        toast.error("Tài khoản bạn đang bị cấm, chức năng tạm khoá!");
+      } else {
+        signOut();
+      }
+    } else if (value === "setting") {
+      if (getToggleStatusBanned) {
+        toast.error("Tài khoản bạn đang bị cấm, chức năng tạm khoá!");
+      } else {
+        dispatch(getToggleSetting(true));
+      }
+    } else if (value === "about-me") {
+      dispatch(getToggleAboutMe(true));
     }
   };
   const SidebarMenu = [
+    // {
+    //   value: "home",
+    //   link: "/",
+    //   icon: <MessageOutlinedIcon />,
+    // },
     {
-      value: "home",
-      link: "/",
-      icon: <MessageOutlinedIcon />,
+      value: "about-me",
+
+      icon: <InfoOutlinedIcon />,
     },
     {
       value: "setting",

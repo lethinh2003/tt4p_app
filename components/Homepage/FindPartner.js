@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import socketIOClient from "socket.io-client";
 import { getUser } from "../../redux/actions/getUser";
+import { getToggleBanned } from "../../redux/actions/getToggleBanned";
 import useLoading from "../../utils/useLoading";
 import Loading from "../Loading/Loading";
 import Chat from "./Chat";
@@ -16,6 +17,7 @@ import YourSelf from "./YourSelf";
 let socket;
 const FindPartner = () => {
   const TimeOutFindPartner = useRef(null);
+  const TimeIntervalBannedAccount = useRef(null);
   const { data: session, status } = useSession();
   const [isWaitingRoom, setIsWaitingRoom] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -29,6 +31,8 @@ const FindPartner = () => {
   const requesting = useSelector((state) => state.user.requesting);
   const errorGetUser = useSelector((state) => state.user.error);
   const errorMessageGetUser = useSelector((state) => state.user.message);
+  const getToggleStatusBanned = useSelector((state) => state.toggleBanned.on);
+
   const dispatch = useDispatch();
   useEffect(() => {
     if (status === "authenticated") {
@@ -38,6 +42,15 @@ const FindPartner = () => {
   useEffect(() => {
     if (data && data.data) {
       setUser(data.data);
+      if (socket) {
+        socket.emit("join-room-unique-account", data.data.account);
+      }
+      if (data.data.status === false) {
+        dispatch(getToggleBanned(true));
+        if (socket) {
+          socket.disconnect();
+        }
+      }
     }
   }, [data]);
   useEffect(() => {
@@ -72,6 +85,24 @@ const FindPartner = () => {
       clearTimeout(TimeOutFindPartner.current);
     };
   }, [status]);
+  useEffect(() => {
+    if (socket) {
+      socket.on("banned-account", async (status) => {
+        if (isWaitingRoom && !isInRoom) {
+          await socket.emit("out-waiting-room");
+        } else if (isWaitingRoom && isInRoom && partner) {
+          await socket.emit("out-chat-room", partner);
+        }
+        setIsWaitingRoom(false);
+        setIsInRoom(false);
+
+        dispatch(getToggleBanned(!status));
+      });
+      return () => {
+        socket.off("banned-account");
+      };
+    }
+  }, [partner, isWaitingRoom, isInRoom]);
   useEffect(() => {
     if (errorGetUser) {
       toast.error(errorMessageGetUser);
@@ -148,40 +179,48 @@ const FindPartner = () => {
   };
 
   const handleClickJoinWaitingRoom = async () => {
-    try {
-      setIsLoading(true);
-      const res = await axios.post(
-        `${process.env.ENDPOINT_SERVER}/api/v1/users/check-in-room`,
-        {
-          account: user.account,
+    if (getToggleStatusBanned) {
+      toast.error("Tài khoản bạn đang bị cấm, chức năng tạm khoá!");
+    } else {
+      try {
+        setIsLoading(true);
+        const res = await axios.post(
+          `${process.env.ENDPOINT_SERVER}/api/v1/users/check-in-room`,
+          {
+            account: user.account,
+          }
+        );
+        socket.emit("join-list-users", user);
+        toast.info(
+          "Tham gia vào phòng chờ thành công, Lưu ý rằng bạn sẽ nhận được ghép đôi bất cứ lúc nào khi còn đang trong phòng chờ! Bạn hãy nhấn vào Tìm bạn thui để tìm nhaa"
+        );
+        setIsLoading(false);
+        setIsWaitingRoom(true);
+      } catch (err) {
+        setIsLoading(false);
+        if (err.response) {
+          toast.error(err.response.data.message);
         }
-      );
-      socket.emit("join-list-users", user);
-      toast.info(
-        "Tham gia vào phòng chờ thành công, Lưu ý rằng bạn sẽ nhận được ghép đôi bất cứ lúc nào khi còn đang trong phòng chờ! Bạn hãy nhấn vào Tìm bạn thui để tìm nhaa"
-      );
-      setIsLoading(false);
-      setIsWaitingRoom(true);
-    } catch (err) {
-      setIsLoading(false);
-      if (err.response) {
-        toast.error(err.response.data.message);
       }
     }
   };
   const handleClickOutWaitingRoom = async () => {
-    await socket.emit("out-waiting-room");
-    setIsWaitingRoom(false);
-    setIsInRoom(false);
+    if (getToggleStatusBanned) {
+      toast.error("Tài khoản bạn đang bị cấm, chức năng tạm khoá!");
+    } else {
+      await socket.emit("out-waiting-room");
+      setIsWaitingRoom(false);
+      setIsInRoom(false);
+    }
   };
-  const handleClickOutChatRoom = async () => {
-    await socket.emit("out-chat-room", partner);
-    setIsWaitingRoom(false);
-    setIsInRoom(false);
-  };
+
   const handleClickFindPartner = () => {
-    setIsLoading(true);
-    socket.emit("find-partner", user);
+    if (getToggleStatusBanned) {
+      toast.error("Tài khoản bạn đang bị cấm, chức năng tạm khoá!");
+    } else {
+      setIsLoading(true);
+      socket.emit("find-partner", user);
+    }
   };
 
   return (
@@ -192,7 +231,7 @@ const FindPartner = () => {
           <Loading isLoading={isLoading} />
 
           <YourSelf user={user} />
-          {!isError && (
+          {!isError && !getToggleStatusBanned && (
             <>
               {!isWaitingRoom && (
                 <Button

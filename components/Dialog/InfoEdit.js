@@ -122,7 +122,7 @@ const InfoModalEdit = ({ user, toggle }) => {
           `${process.env.ENDPOINT_SERVER}/api/v1/users/update`,
           {
             name: nameRef.current.childNodes[0].childNodes[0].value,
-            sex: sex,
+
             findSex: findSex,
             city: myCity,
           }
@@ -158,12 +158,7 @@ const InfoModalEdit = ({ user, toggle }) => {
       >
         {sexOption &&
           sexOption.map((item, i) => (
-            <ItemSex
-              isSelected={sex == item.key}
-              key={i}
-              item={item}
-              onClick={() => handleChangeSex(item.key)}
-            />
+            <ItemSex isSelected={sex == item.key} key={i} item={item} />
           ))}
       </Box>
       <DialogContentText>Tìm bạn</DialogContentText>

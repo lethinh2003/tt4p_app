@@ -1,6 +1,8 @@
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import MessageOutlinedIcon from "@mui/icons-material/MessageOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+
 import { Box, Button } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { motion } from "framer-motion";
@@ -9,18 +11,31 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getToggleSetting } from "../../redux/actions/getToggleSetting";
+import { getToggleAboutMe } from "../../redux/actions/getToggleAboutMe";
+import { toast } from "react-toastify";
 
 const Footer = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [value, setValue] = useState("");
+  const getToggleStatusBanned = useSelector((state) => state.toggleBanned.on);
 
   const handleClickItem = (value) => {
     if (value === "home") {
     } else if (value === "setting") {
-      dispatch(getToggleSetting(true));
+      if (getToggleStatusBanned) {
+        toast.error("Tài khoản bạn đang bị cấm, chức năng tạm khoá!");
+      } else {
+        dispatch(getToggleSetting(true));
+      }
     } else if (value === "signout") {
-      signOut();
+      if (getToggleStatusBanned) {
+        toast.error("Tài khoản bạn đang bị cấm, chức năng tạm khoá!");
+      } else {
+        signOut();
+      }
+    } else if (value === "about-me") {
+      dispatch(getToggleAboutMe(true));
     }
     setValue(value);
   };
@@ -87,10 +102,20 @@ const Footer = () => {
     },
   }));
   const BottomMenu = [
+    // {
+    //   value: "home",
+    //   icon: (
+    //     <MessageOutlinedIcon
+    //       sx={{
+    //         fontSize: "2rem",
+    //       }}
+    //     />
+    //   ),
+    // },
     {
-      value: "home",
+      value: "about-me",
       icon: (
-        <MessageOutlinedIcon
+        <InfoOutlinedIcon
           sx={{
             fontSize: "2rem",
           }}

@@ -99,8 +99,6 @@ const Partner = ({
             "Gửi yêu cầu xem thông tin thành công, vui lòng đợi đối phương đồng ý!"
           );
           socket.emit("request-info-partner", partner);
-        } else {
-          console.log(partner);
         }
       } else {
         toast.error(

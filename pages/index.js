@@ -6,15 +6,27 @@ import FindPartner from "../components/Homepage/FindPartner";
 import Introduce from "../components/Homepage/Introduce";
 import UsersInRoom from "../components/Homepage/UsersInRoom";
 import Setting from "../components/Homepage/Setting";
-
+import AboutMe from "../components/Homepage/Aboutme";
+import Banned from "../components/Dialog/Banned";
+import { useSession } from "next-auth/react";
+import Admin from "../components/Homepage/Admin";
 export default function Home() {
+  const { data: session, status } = useSession();
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      window.location.href = "/portal";
+    }
+  }, [status]);
   return (
     <>
       <Layout>
+        <Banned />
+        <AboutMe />
         <Setting />
         <Introduce />
         <UsersInRoom />
         <FindPartner />
+        {session && session.user.role === "admin" && <Admin />}
       </Layout>
     </>
   );
