@@ -13,7 +13,6 @@ var jwt = require("jsonwebtoken");
 export default NextAuth({
   session: {
     strategy: "jwt",
-    // maxAge: 60,
   },
   providers: [
     GoogleProvider({

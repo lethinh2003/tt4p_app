@@ -27,6 +27,7 @@ const StepSix = ({ setStep, setInfo, info }) => {
       const res = await axios.post(
         `${process.env.ENDPOINT_SERVER}/api/v1/users/sign-up`,
         {
+          email: info.email,
           account: info.account,
           name: info.name,
           sex: info.mySex,
@@ -144,7 +145,8 @@ const StepSix = ({ setStep, setInfo, info }) => {
               fontSize: "20px",
             }}
           >
-            Họ tên: {info.name}, sinh năm {info.date}, giới tính{" "}
+            Tài khoản: {info.account}, email: {info.email}, họ tên: {info.name},
+            sinh năm {info.date}, giới tính{" "}
             {info.mySex === "boy"
               ? "trai"
               : info.mySex === "girl"

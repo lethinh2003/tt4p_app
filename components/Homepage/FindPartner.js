@@ -1,7 +1,7 @@
 import { Button } from "@mui/material";
 import axios from "axios";
 import { motion } from "framer-motion";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 import { ThreeDots } from "react-loading-icons";
 import { useDispatch, useSelector } from "react-redux";
@@ -198,7 +198,12 @@ const FindPartner = () => {
         setIsWaitingRoom(true);
       } catch (err) {
         setIsLoading(false);
+        console.log(err.response.data.message);
         if (err.response) {
+          if (err.response.data.message.name === "TokenExpiredError") {
+            toast.error("Tài khoản hết hạn! Vui lòng đăng nhập lại!");
+            signOut();
+          }
           toast.error(err.response.data.message);
         }
       }

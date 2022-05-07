@@ -122,7 +122,8 @@ const FinalStep = ({ setStep, setInfo, info }) => {
             fontSize: "20px",
           }}
         >
-          Họ tên: {info.name}, sinh năm {info.date}, giới tính{" "}
+          Tài khoản: {info.account}, email: {info.email}, họ tên: {info.name},
+          sinh năm {info.date}, giới tính{" "}
           {info.mySex === "boy"
             ? "Trai"
             : info.mySex === "girl"

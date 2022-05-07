@@ -13,6 +13,8 @@ import { getToggleSetting } from "../../redux/actions/getToggleSetting";
 import ThemeEdit from "../Dialog/ThemeEdit";
 import InfoModalEdit from "../Dialog/InfoEdit";
 import HideInfoEdit from "../Dialog/HideInfoEdit";
+import InfoEditEmail from "../Dialog/InfoEditEmail";
+
 const Setting = () => {
   const { data: session, status } = useSession();
 
@@ -57,6 +59,7 @@ const Setting = () => {
         <DialogContent>
           <ThemeEdit />
           {data && data.data && <HideInfoEdit user={data.data} />}
+          {data && data.data && <InfoEditEmail user={data.data} />}
           {data && data.data && <InfoModalEdit user={data.data} />}
         </DialogContent>
       </DialogWrapper>

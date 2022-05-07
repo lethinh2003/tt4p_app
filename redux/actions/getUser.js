@@ -4,6 +4,9 @@ import {
   GET_USER_ERROR,
 } from "./constants";
 import axios from "axios";
+import { signOut } from "next-auth/react";
+import { toast } from "react-toastify";
+
 export const getUser = (account) => async (dispatch) => {
   try {
     dispatch({ type: GET_USER_REQUEST });
@@ -22,5 +25,11 @@ export const getUser = (account) => async (dispatch) => {
       type: GET_USER_ERROR,
       message: err.response ? err.response.data.message : err,
     });
+    if (err.response) {
+      if (err.response.data.message.name === "TokenExpiredError") {
+        toast.error("Tài khoản hết hạn! Vui lòng đăng nhập lại!");
+        signOut();
+      }
+    }
   }
 };

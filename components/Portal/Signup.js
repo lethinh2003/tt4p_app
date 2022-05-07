@@ -61,6 +61,10 @@ const Signup = ({ setStep, setInfo, info }) => {
     name: Yup.string()
       .required("Name is required")
       .min(2, "Min-length 2, please re-enter"),
+    email: Yup.string()
+      .email("Email invalid")
+      .required("Email is required")
+      .min(5, "Min-length 5, please re-enter"),
 
     password: Yup.string()
       .required("Password is required")
@@ -85,6 +89,7 @@ const Signup = ({ setStep, setInfo, info }) => {
           `${process.env.ENDPOINT_SERVER}/api/v1/users/check-user`,
           {
             account: data.account,
+            email: data.email,
           }
         );
 
@@ -93,6 +98,7 @@ const Signup = ({ setStep, setInfo, info }) => {
           account: data.account,
           name: data.name,
           password: data.password,
+          email: data.email,
           date,
         }));
 
@@ -259,6 +265,29 @@ const Signup = ({ setStep, setInfo, info }) => {
             <ErrorContent>
               {errors.password ? errors.password.message : ""}
             </ErrorContent>
+          </FormControl>
+          <FormControl
+            variant="standard"
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <LabelInput>Email</LabelInput>
+            <Controller
+              name="email"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  size="small"
+                  fullWidth
+                  error={errors.email ? true : false}
+                  helperText={errors.email ? errors.email.message : ""}
+                  {...field}
+                />
+              )}
+              defaultValue={info.email ? info.email : ""}
+            />
           </FormControl>
           <FormControl
             variant="standard"

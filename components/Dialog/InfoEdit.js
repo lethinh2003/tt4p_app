@@ -15,64 +15,24 @@ import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { getUser } from "../../redux/actions/getUser";
 import { getToggleSetting } from "../../redux/actions/getToggleSetting";
+import { signOut } from "next-auth/react";
+import InfoEditCity from "./InfoEditCity";
 import ItemSex from "./InforEditSex";
 import Loading from "../Loading/Loading";
 import useLoading from "../../utils/useLoading";
 import useCity from "../../utils/useCity";
+
 const InfoModalEdit = ({ user, toggle }) => {
-  const dispatch = useDispatch();
   const { city } = useCity();
+
+  const dispatch = useDispatch();
   const { isLoading, setIsLoading } = useLoading();
   const [myCity, setMyCity] = useState(user.city ? user.city : "");
+  const [bio, setBio] = useState(user.bio ? user.bio : "");
   const [name, setName] = useState(user.name ? user.name : "");
   const [sex, setSex] = useState(user.sex ? user.sex : "");
   const [findSex, setFindSex] = useState(user.findSex ? user.findSex : "");
-  let nameRef = useRef(null);
-  const theme = useTheme();
 
-  const ButtonOptionWrapper = styled(Button)(({ theme }) => ({
-    backgroundColor: theme.palette.background.buttonOption,
-    width: "50px",
-    height: "50px",
-    borderRadius: "10px",
-    padding: "10px",
-    cursor: "pointer",
-
-    "&:hover": {
-      backgroundColor: theme.palette.background.buttonOptionHover,
-      opacity: 0.8,
-    },
-    "&.active": {
-      border: "2px solid",
-    },
-  }));
-  const ButtonSocialWrapper = styled(Button)(({ theme }) => ({
-    backgroundColor: "#fd6b2229",
-    color: "#fd6b22",
-    textTransform: "capitalize",
-    borderRadius: "10px",
-    padding: "10px",
-    width: "100%",
-    fontWeight: "bold",
-
-    "&:hover": {
-      backgroundColor: "#fd6b2229",
-      opacity: 0.8,
-    },
-  }));
-  const ButtonWrapper = styled(Button)(({ theme }) => ({
-    backgroundColor: theme.palette.button.default,
-    color: "#fff",
-    textTransform: "capitalize",
-    borderRadius: "10px",
-    padding: "10px",
-    cursor: "pointer",
-
-    "&:hover": {
-      backgroundColor: theme.palette.button.default,
-      opacity: 0.8,
-    },
-  }));
   const sexOption = [
     {
       key: "boy",
@@ -105,7 +65,7 @@ const InfoModalEdit = ({ user, toggle }) => {
     const checkCityUser = checkCity(myCity);
     if (!checkCityUser) {
       toast.error("Vui lòng nhập tỉnh/TP hợp lệ");
-    } else if (nameRef.current.childNodes[0].childNodes[0].value.length < 2) {
+    } else if (name.length < 2) {
       toast.error("Vui lòng nhập tên hợp lệ");
     } else if (!checkSex(sex) || !checkSex(findSex)) {
       toast.error("Vui lòng nhập giới tính hợp lệ");
@@ -121,8 +81,8 @@ const InfoModalEdit = ({ user, toggle }) => {
         const updateUser = await axios.post(
           `${process.env.ENDPOINT_SERVER}/api/v1/users/update`,
           {
-            name: nameRef.current.childNodes[0].childNodes[0].value,
-
+            name: name,
+            bio: bio,
             findSex: findSex,
             city: myCity,
           }
@@ -133,6 +93,10 @@ const InfoModalEdit = ({ user, toggle }) => {
       } catch (err) {
         setIsLoading(false);
         if (err.response) {
+          if (err.response.data.message.name === "TokenExpiredError") {
+            toast.error("Tài khoản hết hạn! Vui lòng đăng nhập lại!");
+            signOut();
+          }
           toast.error(err.response.data.message);
         }
       }
@@ -146,7 +110,20 @@ const InfoModalEdit = ({ user, toggle }) => {
       <DialogContentText>Năm sinh</DialogContentText>
       <TextField size="small" fullWidth defaultValue={user.date} disabled />
       <DialogContentText>Họ tên</DialogContentText>
-      <TextField size="small" fullWidth defaultValue={name} ref={nameRef} />
+      <TextField
+        size="small"
+        fullWidth
+        defaultValue={name}
+        onChange={(e) => setName(e.target.value)}
+      />
+      <DialogContentText>Giới thiệu bản thân</DialogContentText>
+      <TextField
+        size="small"
+        fullWidth
+        defaultValue={bio}
+        onChange={(e) => setBio(e.target.value)}
+        placeholder={"Hãy giới thiệu bản thân"}
+      />
       <DialogContentText>Giới tính</DialogContentText>
       <Box
         sx={{
@@ -183,21 +160,7 @@ const InfoModalEdit = ({ user, toggle }) => {
         </AnimateSharedLayout>
       </Box>
 
-      <DialogContentText>Đang sống ở</DialogContentText>
-
-      <Select
-        fullWidth
-        value={myCity}
-        onChange={(e) => setMyCity(e.target.value)}
-      >
-        {city &&
-          city.length > 0 &&
-          city.map((item, i) => (
-            <MenuItem value={item.province} key={i}>
-              {item.province}
-            </MenuItem>
-          ))}
-      </Select>
+      <InfoEditCity setMyCity={setMyCity} myCity={myCity} />
       <Box
         sx={{
           display: "flex",
