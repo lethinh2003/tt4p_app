@@ -10,7 +10,6 @@ const StepFive = ({ setStep, setInfo, info }) => {
   const { data: session, status } = useSession();
 
   const BoxWrapper = styled(Box)(({ theme }) => ({
-    height: "100%",
     width: "100%",
 
     display: "flex",
@@ -28,7 +27,7 @@ const StepFive = ({ setStep, setInfo, info }) => {
         transition={{ duration: 0.5 }}
       >
         <Box>
-          <IconButton onClick={() => setStep(3)}>
+          <IconButton onClick={() => setStep("signup")}>
             <ArrowBackIosNewIcon />
           </IconButton>
         </Box>

@@ -5,26 +5,26 @@ import { toast } from "react-toastify";
 import Layout from "../../components/Portal/Layout";
 import { styled } from "@mui/material/styles";
 import { Box, Button, Typography } from "@mui/material";
-
-const ActiveEmail = () => {
+import ResetPass from "../../components/Auth/ResetPass";
+const ResetPassword = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [info, setInfo] = useState("");
   const router = useRouter();
-  const { tokenActiveEmail } = router.query;
-  console.log(tokenActiveEmail);
+  const { tokenResetPassword } = router.query;
+  console.log(tokenResetPassword);
   useEffect(() => {
-    if (tokenActiveEmail) {
-      checkMailToken();
+    if (tokenResetPassword) {
+      checkToken();
     }
-  }, [tokenActiveEmail]);
-  const checkMailToken = async () => {
+  }, [tokenResetPassword]);
+  const checkToken = async () => {
     try {
       setIsLoading(true);
       const res = await axios.get(
-        `${process.env.ENDPOINT_SERVER}/api/v1/users/active-email/${tokenActiveEmail}`
+        `${process.env.ENDPOINT_SERVER}/api/v1/users/reset-password/${tokenResetPassword}`
       );
+      setInfo(res.data.data);
       setIsLoading(false);
-      toast.success(res.data.message);
-      window.location.href = "/";
     } catch (err) {
       setIsLoading(false);
       if (err.response) {
@@ -110,13 +110,16 @@ const ActiveEmail = () => {
                 alignSelf: "center",
               }}
             >
-              Kích hoạt tài khoản
+              Khôi phục mật khẩu tài khoản
             </Typography>
             {isLoading && <Typography>Yêu cầu đang được thực hiện</Typography>}
+            {info && (
+              <ResetPass info={info} tokenResetPassword={tokenResetPassword} />
+            )}
           </Box>
         </ContainerWrapper>
       </Layout>
     </>
   );
 };
-export default ActiveEmail;
+export default ResetPassword;

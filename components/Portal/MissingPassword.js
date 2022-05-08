@@ -1,16 +1,5 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import {
-  Box,
-  Button,
-  FormControl,
-  IconButton,
-  InputAdornment,
-  OutlinedInput,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, FormControl, TextField, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import { signIn } from "next-auth/react";
@@ -18,10 +7,11 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Hearts } from "react-loading-icons";
 import { toast } from "react-toastify";
+import axios from "axios";
+
 import * as Yup from "yup";
 
-const Login = ({ setStep }) => {
-  const [showPassword, setShowPassword] = useState(false);
+const MissingPassword = ({ setStep }) => {
   const [isLoading, setIsLoading] = useState(false);
   const variants = {
     open: { opacity: 1 },
@@ -34,17 +24,11 @@ const Login = ({ setStep }) => {
 
   // form validation rules
   const validationSchema = Yup.object().shape({
-    account: Yup.string()
-      .required("Account is required")
+    info: Yup.string()
+      .required("Info Acount is required")
       .min(5, "Min-length 5, please re-enter")
-      .trim("Account invalid")
-      .matches(/^\S*$/, "Account invalid")
-      .strict(true),
-
-    password: Yup.string()
-      .required("Password is required")
-      .trim("Password invalid")
-      .matches(/^\S*$/, "Password invalid")
+      .trim("Info Acount invalid")
+      .matches(/^\S*$/, "Info Account invalid")
       .strict(true),
   });
   const formOptions = { resolver: yupResolver(validationSchema) };
@@ -59,20 +43,16 @@ const Login = ({ setStep }) => {
   const onSubmit = async (data) => {
     try {
       setIsLoading(true);
-
-      const result = await signIn("login", {
-        account: data.account,
-        password: data.password,
-        redirect: false,
-      });
+      const res = await axios.post(
+        `${process.env.ENDPOINT_SERVER}/api/v1/users/missing-password/`,
+        {
+          info_account: data.info,
+        }
+      );
 
       setIsLoading(false);
-      if (result.error) {
-        return toast.error(result.error);
-      }
 
-      toast.success("Đăng nhập thành công, chúc bạn tham gia vui vẻ");
-      window.location.reload();
+      toast.success(res.data.message);
     } catch (err) {
       setIsLoading(false);
       if (err.response) {
@@ -180,76 +160,23 @@ const Login = ({ setStep }) => {
               flexDirection: "column",
             }}
           >
-            <LabelInput>Tài khoản</LabelInput>
+            <LabelInput>Thông Tin Tài khoản</LabelInput>
             <Controller
-              name="account"
+              name="info"
               control={control}
               render={({ field }) => (
                 <TextField
                   size="small"
                   fullWidth
-                  error={errors.account ? true : false}
-                  helperText={errors.account ? errors.account.message : ""}
+                  error={errors.info ? true : false}
+                  helperText={errors.info ? errors.info.message : ""}
                   {...field}
                 />
               )}
               defaultValue={""}
             />
           </FormControl>
-          <FormControl
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: "10px",
-                justifyContent: "space-between",
-              }}
-            >
-              <LabelInput>Password</LabelInput>
-              <LabelInput
-                onClick={() => setStep("missing_password")}
-                sx={{
-                  cursor: "pointer",
-                }}
-              >
-                Quên mật khẩu?
-              </LabelInput>
-            </Box>
 
-            <Controller
-              name="password"
-              control={control}
-              render={({ field }) => (
-                <OutlinedInput
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={() => setShowPassword(!showPassword)}
-                        edge="end"
-                      >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                  type={showPassword ? "text" : "password"}
-                  size="small"
-                  fullWidth
-                  error={errors.password ? true : false}
-                  {...field}
-                />
-              )}
-              defaultValue={""}
-            />
-            <ErrorContent>
-              {errors.password ? errors.password.message : ""}
-            </ErrorContent>
-          </FormControl>
           <Box
             as={motion.div}
             sx={{
@@ -270,7 +197,7 @@ const Login = ({ setStep }) => {
               type="submit"
               onClick={handleSubmit(onSubmit)}
             >
-              Đăng nhập
+              Lấy lại mật khẩu
             </Button>
           </Box>
         </form>
@@ -278,4 +205,4 @@ const Login = ({ setStep }) => {
     </>
   );
 };
-export default Login;
+export default MissingPassword;

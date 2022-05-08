@@ -8,19 +8,18 @@ import {
   IconButton,
   InputAdornment,
   OutlinedInput,
-  TextField,
   Typography,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import axios from "axios";
 import { motion } from "framer-motion";
-import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Hearts } from "react-loading-icons";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
-
-const Login = ({ setStep }) => {
+import convertTime from "../../utils/convertTime";
+const ResetPass = ({ tokenResetPassword, info }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const variants = {
@@ -34,13 +33,6 @@ const Login = ({ setStep }) => {
 
   // form validation rules
   const validationSchema = Yup.object().shape({
-    account: Yup.string()
-      .required("Account is required")
-      .min(5, "Min-length 5, please re-enter")
-      .trim("Account invalid")
-      .matches(/^\S*$/, "Account invalid")
-      .strict(true),
-
     password: Yup.string()
       .required("Password is required")
       .trim("Password invalid")
@@ -59,24 +51,19 @@ const Login = ({ setStep }) => {
   const onSubmit = async (data) => {
     try {
       setIsLoading(true);
-
-      const result = await signIn("login", {
-        account: data.account,
-        password: data.password,
-        redirect: false,
-      });
-
+      const res = await axios.post(
+        `${process.env.ENDPOINT_SERVER}/api/v1/users/reset-password/${tokenResetPassword}`,
+        {
+          password: data.password,
+        }
+      );
       setIsLoading(false);
-      if (result.error) {
-        return toast.error(result.error);
-      }
-
-      toast.success("Đăng nhập thành công, chúc bạn tham gia vui vẻ");
-      window.location.reload();
+      toast.success(res.data.message);
     } catch (err) {
       setIsLoading(false);
       if (err.response) {
         toast.error(err.response.data.message);
+        window.location.href = "/";
       }
     }
   };
@@ -164,6 +151,19 @@ const Login = ({ setStep }) => {
         animate={!isLoading ? "open" : "closed"}
         variants={variants}
       >
+        {info && (
+          <>
+            <Typography>Xin chào {info.account}</Typography>
+            {info.updatedPasswordAt ? (
+              <Typography>
+                Lần cuối thay đổi mật khẩu của bạn là lúc:{" "}
+                {convertTime(info.updatedPasswordAt)}
+              </Typography>
+            ) : (
+              <Typography>Đây là lần đầu bạn thay đổi mật khẩu.</Typography>
+            )}
+          </>
+        )}
         <form
           style={{
             display: "flex",
@@ -173,29 +173,6 @@ const Login = ({ setStep }) => {
           }}
           onSubmit={handleSubmit(onSubmit)}
         >
-          <FormControl
-            variant="standard"
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <LabelInput>Tài khoản</LabelInput>
-            <Controller
-              name="account"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  size="small"
-                  fullWidth
-                  error={errors.account ? true : false}
-                  helperText={errors.account ? errors.account.message : ""}
-                  {...field}
-                />
-              )}
-              defaultValue={""}
-            />
-          </FormControl>
           <FormControl
             sx={{
               display: "flex",
@@ -210,15 +187,7 @@ const Login = ({ setStep }) => {
                 justifyContent: "space-between",
               }}
             >
-              <LabelInput>Password</LabelInput>
-              <LabelInput
-                onClick={() => setStep("missing_password")}
-                sx={{
-                  cursor: "pointer",
-                }}
-              >
-                Quên mật khẩu?
-              </LabelInput>
+              <LabelInput>New Password</LabelInput>
             </Box>
 
             <Controller
@@ -270,7 +239,7 @@ const Login = ({ setStep }) => {
               type="submit"
               onClick={handleSubmit(onSubmit)}
             >
-              Đăng nhập
+              Khôi phục
             </Button>
           </Box>
         </form>
@@ -278,4 +247,4 @@ const Login = ({ setStep }) => {
     </>
   );
 };
-export default Login;
+export default ResetPass;

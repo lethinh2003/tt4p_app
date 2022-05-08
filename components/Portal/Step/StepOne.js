@@ -7,7 +7,6 @@ import { useState } from "react";
 
 const StepOne = ({ setStep }) => {
   const BoxWrapper = styled(Box)(({ theme }) => ({
-    height: "100%",
     width: "100%",
 
     display: "flex",
@@ -204,7 +203,7 @@ const StepOne = ({ setStep }) => {
             cursor: "pointer",
           }}
           whileHover={{ scale: 1.02 }}
-          onClick={() => setStep(2)}
+          onClick={() => setStep("login_signup")}
         >
           Bắt đầu
         </Button>

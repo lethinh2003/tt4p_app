@@ -102,7 +102,7 @@ const Signup = ({ setStep, setInfo, info }) => {
           date,
         }));
 
-        setStep(5);
+        setStep("signup_detail");
         setIsLoading(false);
       }
     } catch (err) {
@@ -123,7 +123,6 @@ const Signup = ({ setStep, setInfo, info }) => {
     left: "50%",
   }));
   const BoxWrapper = styled(Box)(({ theme }) => ({
-    height: "100%",
     width: "100%",
     display: "flex",
     flexDirection: "column",

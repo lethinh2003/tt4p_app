@@ -55,7 +55,6 @@ const StepSix = ({ setStep, setInfo, info }) => {
   };
 
   const BoxWrapper = styled(Box)(({ theme }) => ({
-    height: "100%",
     width: "100%",
     display: "flex",
     flexDirection: "column",
@@ -109,7 +108,7 @@ const StepSix = ({ setStep, setInfo, info }) => {
           }}
         >
           <Box>
-            <IconButton onClick={() => setStep(5)}>
+            <IconButton onClick={() => setStep("signup_detail")}>
               <ArrowBackIosNewIcon />
             </IconButton>
           </Box>

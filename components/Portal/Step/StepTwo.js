@@ -9,7 +9,6 @@ const StepTwo = ({ setStep }) => {
   const { data: session, status } = useSession();
 
   const BoxWrapper = styled(Box)(({ theme }) => ({
-    height: "100%",
     width: "100%",
     margin: "20px 0px",
     display: "flex",
@@ -27,7 +26,7 @@ const StepTwo = ({ setStep }) => {
         transition={{ duration: 0.5 }}
       >
         <Box>
-          <IconButton onClick={() => setStep(1)}>
+          <IconButton onClick={() => setStep("index")}>
             <ArrowBackIosNewIcon />
           </IconButton>
         </Box>
@@ -170,7 +169,7 @@ const StepTwo = ({ setStep }) => {
             cursor: "pointer",
           }}
           whileHover={{ scale: 1.02 }}
-          onClick={() => setStep(4)}
+          onClick={() => setStep("login")}
         >
           Đăng nhập
         </Button>
@@ -185,7 +184,7 @@ const StepTwo = ({ setStep }) => {
             cursor: "pointer",
           }}
           whileHover={{ scale: 1.02 }}
-          onClick={() => setStep(3)}
+          onClick={() => setStep("signup")}
         >
           Người dùng mới
         </Button>

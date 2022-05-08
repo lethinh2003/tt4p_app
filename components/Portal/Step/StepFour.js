@@ -10,7 +10,6 @@ const StepFour = ({ setStep }) => {
   const { data: session, status } = useSession();
 
   const BoxWrapper = styled(Box)(({ theme }) => ({
-    height: "100%",
     width: "100%",
 
     display: "flex",
@@ -28,7 +27,7 @@ const StepFour = ({ setStep }) => {
         transition={{ duration: 0.5 }}
       >
         <Box>
-          <IconButton onClick={() => setStep(2)}>
+          <IconButton onClick={() => setStep("login_signup")}>
             <ArrowBackIosNewIcon />
           </IconButton>
         </Box>

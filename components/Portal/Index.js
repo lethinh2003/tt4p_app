@@ -1,23 +1,18 @@
 import { Box, Button, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { motion } from "framer-motion";
 import { useSession } from "next-auth/react";
-import Image from "next/image";
 import { useState } from "react";
-import FinalStep from "./FinalStep";
-import InfoDetail from "./InfoDetail";
-import Login from "./Login";
-import Signup from "./Signup";
-import StepOne from "./Step/StepOne";
-import StepTwo from "./Step/StepTwo";
-import StepThree from "./Step/StepThree";
-import StepFour from "./Step/StepFour";
 import StepFive from "./Step/StepFive";
+import StepFour from "./Step/StepFour";
+import StepOne from "./Step/StepOne";
 import StepSix from "./Step/StepSix";
+import StepThree from "./Step/StepThree";
+import StepTwo from "./Step/StepTwo";
+import StepMissingPassword from "./Step/StepMissingPassword";
 const Index = () => {
   const { data: session, status } = useSession();
 
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState("index");
   const [info, setInfo] = useState({});
 
   const ContainerWrapper = styled(Box)(({ theme }) => ({
@@ -34,7 +29,6 @@ const Index = () => {
     boxShadow: `0px 4px 6px 2px ${theme.palette.box.shadow.default}`,
   }));
   const BoxWrapper = styled(Box)(({ theme }) => ({
-    height: "100%",
     width: "100%",
     maxHeight: "calc(100% - 40px)",
     display: "flex",
@@ -89,18 +83,21 @@ const Index = () => {
             padding: "20px 10px",
           }}
         >
-          {step == 1 && <StepOne setStep={setStep} />}
-          {step == 2 && <StepTwo setStep={setStep} />}
-          {step == 3 && (
+          {step == "index" && <StepOne setStep={setStep} />}
+          {step == "login_signup" && <StepTwo setStep={setStep} />}
+          {step == "signup" && (
             <StepThree setStep={setStep} setInfo={setInfo} info={info} />
           )}
-          {step == 4 && <StepFour setStep={setStep} />}
-          {step == 5 && (
+          {step == "login" && <StepFour setStep={setStep} />}
+          {step == "signup_detail" && (
             <StepFive setStep={setStep} setInfo={setInfo} info={info} />
           )}
 
-          {step == 6 && (
+          {step == "signup_confirm" && (
             <StepSix setStep={setStep} setInfo={setInfo} info={info} />
+          )}
+          {step == "missing_password" && (
+            <StepMissingPassword setStep={setStep} />
           )}
         </Box>
       </ContainerWrapper>

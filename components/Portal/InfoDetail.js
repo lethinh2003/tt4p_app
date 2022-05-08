@@ -42,7 +42,7 @@ const InfoDetail = ({ setStep, setInfo, info }) => {
         findSex: findSex,
         cityLive: cityLive,
       }));
-      setStep(6);
+      setStep("signup_confirm");
     } else {
       setError((prev) => ({
         ...prev,

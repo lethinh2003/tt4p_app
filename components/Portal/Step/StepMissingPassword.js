@@ -1,14 +1,10 @@
-import { Box, Button, Typography, IconButton } from "@mui/material";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import { Box, IconButton, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { motion } from "framer-motion";
-import { useSession } from "next-auth/react";
-import { useState } from "react";
-import Signup from "../Signup";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import MissingPassword from "../MissingPassword";
 
-const StepThree = ({ setStep, setInfo, info }) => {
-  const { data: session, status } = useSession();
-
+const StepMissingPassword = ({ setStep }) => {
   const BoxWrapper = styled(Box)(({ theme }) => ({
     width: "100%",
 
@@ -27,7 +23,7 @@ const StepThree = ({ setStep, setInfo, info }) => {
         transition={{ duration: 0.5 }}
       >
         <Box>
-          <IconButton onClick={() => setStep("login_signup")}>
+          <IconButton onClick={() => setStep("login")}>
             <ArrowBackIosNewIcon />
           </IconButton>
         </Box>
@@ -38,7 +34,7 @@ const StepThree = ({ setStep, setInfo, info }) => {
             alignSelf: "center",
           }}
         >
-          Thông tin của bạn
+          Quên mật khẩu
         </Typography>
         <Typography
           sx={{
@@ -46,12 +42,12 @@ const StepThree = ({ setStep, setInfo, info }) => {
             fontSize: "14px",
           }}
         >
-          Vui lòng mô tả chính xác thông tin của bạn, để chúng tôi có thể tìm
-          chính xác partner cho bạn nhé
+          Vui lòng nhập thông tin tài khoản hoặc email của bạn để lấy lại mật
+          khẩu.
         </Typography>
-        <Signup setStep={setStep} setInfo={setInfo} info={info} />
+        <MissingPassword setStep={setStep} />
       </BoxWrapper>
     </>
   );
 };
-export default StepThree;
+export default StepMissingPassword;
