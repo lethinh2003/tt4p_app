@@ -1,51 +1,71 @@
-import { useTheme } from "@emotion/react";
-import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
-import MessageOutlinedIcon from "@mui/icons-material/MessageOutlined";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import PermIdentityOutlinedIcon from "@mui/icons-material/PermIdentityOutlined";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import { Box, Switch } from "@mui/material";
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
+import { Avatar, Box, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
-import Setting from "../Homepage/Setting";
-import BottomMenu from "./BottomMenu";
-import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { AiFillHome, AiFillMessage, AiTwotoneSetting } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
-import { getToggleSetting } from "../../redux/actions/getToggleSetting";
-import { getToggleAboutMe } from "../../redux/actions/getToggleAboutMe";
-import { toast } from "react-toastify";
-
-import { useEffect } from "react";
+import Account from "../Sidebar/Account";
+import BottomMenu from "./BottomMenu";
 const Sidebar = () => {
-  const [value, setValue] = useState("");
-  const dispatch = useDispatch();
-  const isOpenSetting = useSelector((state) => state.toggleSetting.on);
-  const getToggleStatusBanned = useSelector((state) => state.toggleBanned.on);
-
   const router = useRouter();
 
-  useEffect(() => {
-    if (router.pathname === "/") {
-      setValue("home");
-    }
-  }, [router.pathname]);
+  const AvatarProfile = styled(Avatar)(({ theme }) => ({
+    "&.MuiAvatar-root": {
+      border: `3px solid ${theme.palette.border.feeds}`,
+    },
+  }));
+  const BoxNav = styled(Box)(({ theme }) => ({
+    cursor: "pointer",
+    width: "100%",
+    height: "50px",
+    display: "flex",
+    gap: "10px",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    paddingLeft: "20px",
+    transition: "all 0.2s linear",
+    "& .title": {
+      fontSize: "1.7rem",
+      fontWeight: "bold",
+      color: theme.palette.text.color.second,
+      "&.active": {
+        color: theme.palette.text.color.first,
+      },
+    },
+
+    "& .icon": {
+      fontSize: "2.5rem",
+      fontWeight: "bold",
+      color: theme.palette.text.color.second,
+      "&.active": {
+        color: theme.palette.text.color.active,
+      },
+    },
+    "&.box": {
+      "&.active": {
+        boxShadow: "1px 7px 11px 0px #ebeef982",
+      },
+    },
+    "&:hover": {
+      boxShadow: "1px 7px 11px 0px #ebeef982",
+    },
+  }));
   const ItemWrapper = styled(Box)(({ theme }) => ({
     backgroundColor: theme.palette.sidebar.background.default,
     alignItems: "center",
     zIndex: 97,
-    width: "90px",
+    width: "250px",
     position: "fixed",
     display: "flex",
     flexDirection: "column",
     height: "100%",
     transform: "translateX(0)",
-    borderRight: `1px solid ${theme.palette.sidebar.border}`,
 
+    boxShadow: `2px 2px 9px 0px ${theme.palette.sidebar.boxShadow}`,
     "& .ms-sidebar__wrapper": {
-      padding: "0 5px",
+      padding: "0 0px",
       display: "flex",
       flexDirection: "column",
       width: "100%",
@@ -54,7 +74,7 @@ const Sidebar = () => {
     "& .ms-navbar": {
       display: "flex",
       flexDirection: "column",
-      gap: "5px",
+      gap: "20px",
 
       "&__item": {
         fontSize: "2rem",
@@ -88,45 +108,33 @@ const Sidebar = () => {
     },
   }));
 
-  const handleClickItem = (value, link) => {
-    setValue(value);
-    if (value === "signout") {
-      if (getToggleStatusBanned) {
-        toast.error("Tài khoản bạn đang bị cấm, chức năng tạm khoá!");
-      } else {
-        signOut();
-      }
-    } else if (value === "setting") {
-      if (getToggleStatusBanned) {
-        toast.error("Tài khoản bạn đang bị cấm, chức năng tạm khoá!");
-      } else {
-        dispatch(getToggleSetting(true));
-      }
-    } else if (value === "about-me") {
-      dispatch(getToggleAboutMe(true));
-    }
-  };
   const SidebarMenu = [
-    // {
-    //   value: "home",
-    //   link: "/",
-    //   icon: <MessageOutlinedIcon />,
-    // },
     {
-      value: "about-me",
-
-      icon: <InfoOutlinedIcon />,
+      title: "Home",
+      value: "/",
+      link: "/",
+      icon: <AiFillHome />,
     },
     {
-      value: "setting",
-
-      icon: <SettingsOutlinedIcon />,
+      title: "Message",
+      value: "/chat",
+      link: "/chat",
+      icon: <AiFillMessage />,
     },
     {
-      value: "signout",
-      icon: <LogoutOutlinedIcon />,
+      title: "Profile",
+      value: "/profile",
+      link: "/profile",
+      icon: <AccountBoxIcon />,
+    },
+    {
+      title: "Settings",
+      value: "/settings",
+      link: "/settings",
+      icon: <AiTwotoneSetting />,
     },
   ];
+
   return (
     <>
       <ItemWrapper
@@ -137,34 +145,68 @@ const Sidebar = () => {
       >
         <div className="ms-sidebar__wrapper">
           <div className="ms-navbar">
-            <div className="ms-navbar__item">
+            <div
+              className="ms-navbar__item"
+              style={{
+                width: "100%",
+              }}
+            >
               <img
-                src="https://i.imgur.com/U0BdIic.png"
+                src="https://i.imgur.com/nspNdtm.png"
                 style={{
-                  width: "50px",
+                  objectFit: "contain",
+                  width: "100%",
                   height: "50px",
                 }}
               />
             </div>
-            {SidebarMenu.map((item, i) => (
-              <div
-                key={i}
-                onClick={() => handleClickItem(item.value, item.link)}
-                className={
-                  router.pathname === item.link
-                    ? "ms-navbar__item active"
-                    : "ms-navbar__item"
-                }
+            <Box>
+              <Typography
+                sx={{
+                  fontSize: "1.7rem",
+                  fontWeight: "bold",
+                  paddingLeft: "20px",
+                  paddingBottom: "20px",
+                }}
               >
-                <span className="ms-navbar__item--icon">{item.icon}</span>
-                {/* {item.value === value ? (
-                  <motion.div
-                    className="border-sidebar"
-                    layoutId="border-sidebar"
-                  ></motion.div>
-                ) : null} */}
-              </div>
-            ))}
+                Menu
+              </Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "10px",
+                }}
+              >
+                {SidebarMenu.map((item, i) => (
+                  <Link href={item.link} key={i}>
+                    <BoxNav
+                      className={
+                        router.pathname === item.link ? "box active" : "box"
+                      }
+                    >
+                      <div
+                        className={
+                          router.pathname === item.link ? "icon active" : "icon"
+                        }
+                      >
+                        {item.icon}
+                      </div>
+                      <Typography
+                        className={
+                          router.pathname === item.link
+                            ? "title active"
+                            : "title"
+                        }
+                      >
+                        {item.title}
+                      </Typography>
+                    </BoxNav>
+                  </Link>
+                ))}
+              </Box>
+            </Box>
+            <Account />
 
             {/* <div
               onClick={() => setIsOpenSetting(true)}

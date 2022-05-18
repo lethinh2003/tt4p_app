@@ -10,6 +10,7 @@ import AboutMe from "../components/Homepage/AboutMe";
 import Banned from "../components/Dialog/Banned";
 import { useSession } from "next-auth/react";
 import Admin from "../components/Homepage/Admin";
+import Feeds from "../components/Homepage/Feeds";
 export default function Home() {
   const { data: session, status } = useSession();
   useEffect(() => {
@@ -20,13 +21,15 @@ export default function Home() {
   return (
     <>
       <Layout>
+        <Feeds />
+
         <Banned />
         <AboutMe />
         <Setting />
-        <Introduce />
-        <UsersInRoom />
-        <FindPartner />
-        {session && session.user.role === "admin" && <Admin />}
+        {/* <Introduce /> */}
+        {/* <UsersInRoom /> */}
+        {/* <FindPartner /> */}
+        {/* {session && session.user.role === "admin" && <Admin />} */}
       </Layout>
     </>
   );
