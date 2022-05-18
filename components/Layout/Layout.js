@@ -2,13 +2,14 @@ import { Box } from "@mui/material";
 import { createTheme, styled, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import { createGlobalStyle } from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
-import Sidebar from "./Sidebar";
 import { getDarkMode } from "../../redux/actions/getDarkMode";
 import Footer from "./Footer";
+import Sidebar from "./Sidebar";
+import MenuRight from "./MenuRight";
 const GlobalStyle = createGlobalStyle`
   body {
     background-color: ${({ theme }) => theme.palette.background.first};
@@ -59,6 +60,7 @@ const getDesignTokens = (mode) => ({
         root: ({ theme }) => ({
           backgroundColor: theme.palette.button.default,
           color: "#fff",
+          height: "40px",
           textTransform: "capitalize",
           borderRadius: "10px",
           padding: "10px",
@@ -149,6 +151,8 @@ const getDesignTokens = (mode) => ({
             third: "#cb8daf",
             dialog: "#a8b3cf66",
             sidebar: "#6176f3",
+            feeds: "#ffffff",
+            menuright_option: "#d8e4f2",
           }
         : {
             first: "#e1e1e1",
@@ -156,6 +160,8 @@ const getDesignTokens = (mode) => ({
             third: "#cb8daf",
             dialog: "#52586666",
             sidebar: "#6176f3",
+            feeds: "#ffffff",
+            menuright_option: "#d8e4f2",
           }),
     },
     iconColor: {
@@ -181,7 +187,7 @@ const getDesignTokens = (mode) => ({
           }
         : {
             background: {
-              default: "#ffffff",
+              default: "#f0f5fd",
             },
             shadow: {
               default: "#d1d1d1",
@@ -211,11 +217,22 @@ const getDesignTokens = (mode) => ({
             background: {
               default: "#ffffff",
             },
+            boxShadow: "#cccccc12",
             border: "#ccc",
             activeIcon: "#6176f3",
             normalIcon: "#999",
           }),
     },
+    feeds: {
+      ...(mode === "dark"
+        ? {
+            boxShadow: "#c3cddbab;",
+          }
+        : {
+            boxShadow: "#c3cddbab;",
+          }),
+    },
+
     musicplayer: {
       ...(mode === "dark"
         ? {
@@ -249,7 +266,8 @@ const getDesignTokens = (mode) => ({
         ? {
             color: {
               first: "#ffffff",
-              second: "#ccc",
+              second: "#a4b6e1",
+              active: "#a974ff",
             },
             fontSize: {
               first: "16px",
@@ -258,8 +276,9 @@ const getDesignTokens = (mode) => ({
           }
         : {
             color: {
-              first: "#0e1217",
-              second: "#ccc",
+              first: "#25396f",
+              second: "#a4b6e1",
+              active: "#a974ff",
             },
             fontSize: {
               first: "16px",
@@ -299,7 +318,7 @@ const Layout = (props) => {
   const ContainerBoxWrapper = styled(Box)(({ theme }) => ({
     backgroundColor: theme.palette.box.background.default,
     // height: "600px",
-    maxWidth: "800px",
+    // maxWidth: "800px",
     width: "100%",
     height: "calc(100% - 20px)",
     position: "absolute",
@@ -343,31 +362,39 @@ const Layout = (props) => {
           <ContainerBoxWrapper
             sx={{
               borderRadius: { xs: "0px", md: "30px" },
-              height: { xs: "calc(100% - 0px)", md: "calc(100% - 20px)" },
+              height: { xs: "calc(100% - 0px)", md: "calc(100% - 0px)" },
             }}
           >
             <Sidebar />
+
             <ContainerBoxRightWrapper
               sx={{
                 width: {
                   xs: "100%",
-                  md: "calc(100% - 90px)",
+                  md: "calc(100% - 250px - 400px)",
                 },
                 left: {
                   xs: "0",
-                  md: "90px",
+                  md: "250px",
+                },
+                right: {
+                  xs: "0",
+                  md: "400px",
                 },
               }}
             >
               <BoxWrapper
                 sx={{
                   height: { xs: "calc(100% - 70px)", md: "100%" },
+                  borderRight: (theme) =>
+                    `1px solid ${theme.palette.border.dialog}`,
                 }}
               >
                 {props.children}
                 <Footer />
               </BoxWrapper>
             </ContainerBoxRightWrapper>
+            <MenuRight />
           </ContainerBoxWrapper>
         </ContainerWrapper>
         <ToastContainer

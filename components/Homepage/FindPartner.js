@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import axios from "axios";
 import { motion } from "framer-motion";
 import { signOut, useSession } from "next-auth/react";
@@ -16,6 +16,7 @@ import Partner from "./Partner";
 import YourSelf from "./YourSelf";
 let socket;
 const FindPartner = () => {
+  const TimeIntervalFindPartner = useRef(null);
   const TimeOutFindPartner = useRef(null);
   const TimeIntervalBannedAccount = useRef(null);
   const { data: session, status } = useSession();
@@ -53,6 +54,9 @@ const FindPartner = () => {
       }
     }
   }, [data]);
+  useEffect(() => {
+    return () => clearInterval(TimeIntervalFindPartner.current);
+  }, []);
   useEffect(() => {
     const outChatRoom = async () => {
       if (isWaitingRoom) {
@@ -116,7 +120,7 @@ const FindPartner = () => {
       setIsLoading(false);
 
       if (data.status === "fail") {
-        toast.error(data.message);
+        // toast.error(data.message);
       }
     });
 
@@ -141,6 +145,7 @@ const FindPartner = () => {
       socket.emit("receive-disconnected-for-partner", data);
     });
     socket.on("find-partner-success", (data) => {
+      clearInterval(TimeIntervalFindPartner.current);
       if (session && session.user) {
         setIsInRoom(true);
         let message = data.message;
@@ -194,11 +199,14 @@ const FindPartner = () => {
         toast.info(
           "Tham gia vào phòng chờ thành công, Lưu ý rằng bạn sẽ nhận được ghép đôi bất cứ lúc nào khi còn đang trong phòng chờ! Bạn hãy nhấn vào Tìm bạn thui để tìm nhaa"
         );
+        TimeIntervalFindPartner.current = setInterval(() => {
+          socket.emit("find-partner", user);
+        }, 1000);
         setIsLoading(false);
         setIsWaitingRoom(true);
       } catch (err) {
         setIsLoading(false);
-        console.log(err.response.data.message);
+
         if (err.response) {
           if (err.response.data.message.name === "TokenExpiredError") {
             toast.error("Tài khoản hết hạn! Vui lòng đăng nhập lại!");
@@ -210,6 +218,7 @@ const FindPartner = () => {
     }
   };
   const handleClickOutWaitingRoom = async () => {
+    clearInterval(TimeIntervalFindPartner.current);
     if (getToggleStatusBanned) {
       toast.error("Tài khoản bạn đang bị cấm, chức năng tạm khoá!");
     } else {
@@ -253,14 +262,15 @@ const FindPartner = () => {
                 <>
                   {!isInRoom && (
                     <>
-                      <Button
+                      {/* <Button
                         as={motion.div}
                         whileHover={{ scale: 1.02 }}
                         type="submit"
                         onClick={() => handleClickFindPartner()}
                       >
                         Tìm bạn thui!!
-                      </Button>
+                      </Button> */}
+                      <Typography>Đang tìm bạn...</Typography>
                       <Button
                         as={motion.div}
                         whileHover={{ scale: 1.02 }}
