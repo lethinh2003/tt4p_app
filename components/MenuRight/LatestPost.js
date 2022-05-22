@@ -13,8 +13,13 @@ import { RiHeartsFill } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { useSession } from "next-auth/react";
 import { getPostActivity } from "../../redux/actions/getPostActivity";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { memo } from "react";
+
 const LatestPost = () => {
+  console.log("render-latest");
+  const requestApiRef = useRef(null);
+
   const { data: session, status } = useSession();
 
   const dispatch = useDispatch();
@@ -29,8 +34,8 @@ const LatestPost = () => {
   );
 
   useEffect(() => {
-    if (status === "authenticated") {
-      dispatch(getPostActivity(session.user.id));
+    if (status === "authenticated" && !requestApiRef.current) {
+      requestApiRef.current = dispatch(getPostActivity(session.user.id));
     }
   }, [status]);
 
@@ -227,7 +232,7 @@ const LatestPost = () => {
                   padding: "20px",
                 }}
               >
-                {latestActivityPost.post[0].content}
+                {latestActivityPost.post[0].title}
               </Box>
               <Box
                 sx={{

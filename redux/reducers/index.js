@@ -7,9 +7,11 @@ import getToggleBannedReducer from "./getToggleBannedReducer";
 import getAllUsersReducer from "./getAllUsersReducer";
 import getPostActivityReducer from "./getPostActivityReducer";
 import getPostHeartsReducer from "./getPostHeartsReducer";
+import getListFollowingsReducer from "./getListFollowingsReducer";
 
 const reducers = combineReducers({
   user: getUserReducer,
+  useFollowing: getListFollowingsReducer,
   postActivity: getPostActivityReducer,
   postHearts: getPostHeartsReducer,
   allUsers: getAllUsersReducer,

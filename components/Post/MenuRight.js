@@ -3,15 +3,44 @@ import { styled } from "@mui/material/styles";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import SuggestFriends from "../MenuRight/SuggestFriends";
-import BottomMenu from "./BottomMenu";
-import LatestPost from "../MenuRight/LatestPost";
-import OptionMenu from "../MenuRight/OptionMenu";
-import { memo } from "react";
-const MenuRight = () => {
-  const dispatch = useDispatch();
-  console.log("render-right");
+import TableOfContent from "./TableOfContent";
+import FeaturesPost from "./FeaturesPost";
+const MenuRight = ({ item }) => {
+  const BoxNav = styled(Box)(({ theme }) => ({
+    width: "100%",
+    height: "50px",
+    display: "flex",
+    gap: "10px",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    paddingLeft: "20px",
+    transition: "all 0.2s linear",
+    "& .title": {
+      fontSize: "1.7rem",
+      fontWeight: "bold",
+      color: "#98a1b5",
+      "&.active": {
+        color: "inherit",
+      },
+    },
 
+    "& .icon": {
+      fontSize: "2.5rem",
+      fontWeight: "bold",
+      color: "#98a1b5",
+      "&.active": {
+        color: "#a974ff",
+      },
+    },
+    "&.box": {
+      "&.active": {
+        boxShadow: "1px 7px 11px 0px #cccccc82",
+      },
+    },
+    "&:hover": {
+      boxShadow: "1px 7px 11px 0px #cccccc82",
+    },
+  }));
   const ItemWrapper = styled(Box)(({ theme }) => ({
     right: 0,
     bottom: 0,
@@ -30,6 +59,7 @@ const MenuRight = () => {
       display: "flex",
       flexDirection: "column",
       width: "100%",
+      height: "100%",
       overflowY: "auto",
       "::-webkit-scrollbar": {
         display: "block",
@@ -90,14 +120,12 @@ const MenuRight = () => {
       >
         <div className="ms-sidebar__wrapper">
           <div className="ms-navbar">
-            <OptionMenu />
-            <SuggestFriends />
-            <LatestPost />
+            <TableOfContent item={item} />
+            <FeaturesPost item={item} />
           </div>
         </div>
       </ItemWrapper>
-      <BottomMenu />
     </>
   );
 };
-export default memo(MenuRight);
+export default MenuRight;

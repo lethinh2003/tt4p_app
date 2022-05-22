@@ -10,6 +10,7 @@ import { useDispatch } from "react-redux";
 import checkHeartedPost from "../../utils/checkHeartedPost";
 import { getPostActivity } from "../../redux/actions/getPostActivity";
 import { getPostHearts } from "../../redux/actions/getPostHearts";
+import { motion } from "framer-motion";
 
 const ItemHearts = ({ item }) => {
   const dispatch = useDispatch();
@@ -21,11 +22,14 @@ const ItemHearts = ({ item }) => {
   );
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
-    if (item && item.hearts.length > 0) {
-      const resultCheckHeart = checkHeartedPost(session.user.id, item.hearts);
-      setIsHearted(resultCheckHeart);
+    if (status === "authenticated") {
+      if (item && item.hearts.length > 0) {
+        console.log(item.hearts);
+        const resultCheckHeart = checkHeartedPost(session.user.id, item.hearts);
+        setIsHearted(resultCheckHeart);
+      }
     }
-  }, [item]);
+  }, [item, status]);
 
   const AvatarProfile = styled(Avatar)(({ theme }) => ({
     "&.MuiAvatar-root": {
@@ -51,16 +55,17 @@ const ItemHearts = ({ item }) => {
         }
       );
 
-      const getHeartsPost = await axios.get(
-        `${process.env.ENDPOINT_SERVER}/api/v1/posts/${item._id}`
-      );
+      // const getHeartsPost = await axios.get(
+      //   `${process.env.ENDPOINT_SERVER}/api/v1/posts/${item._id}`
+      // );
 
       setIsLoading(false);
       if (res.data.message === "create_success") {
         setIsHearted(true);
-        setHearts(getHeartsPost.data.data.hearts_count);
+        // setHearts(getHeartsPost.data.data.hearts_count);
+        setHearts((prev) => prev + 1);
         dispatch(getPostActivity(session.user.id));
-        dispatch(getPostHearts(session.user.id));
+        // dispatch(getPostHearts(session.user.id));
       } else if (res.data.message === "delete_success") {
         await axios.post(
           `${process.env.ENDPOINT_SERVER}/api/v1/posts/activities/${session.user.id}`,
@@ -70,8 +75,9 @@ const ItemHearts = ({ item }) => {
         );
 
         setIsHearted(false);
-        setHearts(getHeartsPost.data.data.hearts_count);
-        dispatch(getPostHearts(session.user.id));
+        // setHearts(getHeartsPost.data.data.hearts_count);
+        setHearts((prev) => prev - 1);
+        // dispatch(getPostHearts(session.user.id));
       }
     } catch (err) {
       setIsLoading(false);
@@ -83,6 +89,9 @@ const ItemHearts = ({ item }) => {
   return (
     <>
       <Box
+        as={motion.div}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.9 }}
         sx={{
           cursor: "pointer",
           display: "flex",

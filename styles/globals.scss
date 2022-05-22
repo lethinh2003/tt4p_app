@@ -75,3 +75,11 @@ a {
 //   max-width: 600px;
 
 // }
+.content-html {
+  & .image > img  {
+    max-width: 100%;
+  }
+  & img {
+    max-width: 100%;
+  }
+}

@@ -43,7 +43,7 @@ const Account = () => {
             sx={{
               fontSize: "1.7rem",
               fontWeight: "bold",
-              paddingLeft: "20px",
+              paddingLeft: "40px",
               paddingBottom: "20px",
             }}
           >
@@ -54,7 +54,7 @@ const Account = () => {
               display: "flex",
               justifyContent: "flex-start",
               alignItems: "center",
-              paddingLeft: "20px",
+              paddingLeft: "40px",
               width: "100%",
               gap: "10px",
             }}

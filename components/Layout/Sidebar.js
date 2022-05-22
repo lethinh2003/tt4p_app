@@ -8,6 +8,8 @@ import { AiFillHome, AiFillMessage, AiTwotoneSetting } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import Account from "../Sidebar/Account";
 import BottomMenu from "./BottomMenu";
+import { motion } from "framer-motion";
+
 const Sidebar = () => {
   const router = useRouter();
 
@@ -24,7 +26,7 @@ const Sidebar = () => {
     gap: "10px",
     alignItems: "center",
     justifyContent: "flex-start",
-    paddingLeft: "20px",
+    paddingLeft: "40px",
     transition: "all 0.2s linear",
     "& .title": {
       fontSize: "1.7rem",
@@ -56,7 +58,7 @@ const Sidebar = () => {
     backgroundColor: theme.palette.sidebar.background.default,
     alignItems: "center",
     zIndex: 97,
-    width: "250px",
+    width: "280px",
     position: "fixed",
     display: "flex",
     flexDirection: "column",
@@ -95,7 +97,7 @@ const Sidebar = () => {
           position: "relative",
         },
         "&:hover": {
-          backgroundColor: theme.palette.background.menuItemHover,
+          // backgroundColor: theme.palette.background.menuItemHover,
         },
         "&--icon": {
           width: "1em",
@@ -152,11 +154,11 @@ const Sidebar = () => {
               }}
             >
               <img
-                src="https://i.imgur.com/nspNdtm.png"
+                src="https://i.imgur.com/A0OAtU5.png"
                 style={{
                   objectFit: "contain",
                   width: "100%",
-                  height: "50px",
+                  height: "80px",
                 }}
               />
             </div>
@@ -165,7 +167,7 @@ const Sidebar = () => {
                 sx={{
                   fontSize: "1.7rem",
                   fontWeight: "bold",
-                  paddingLeft: "20px",
+                  paddingLeft: "40px",
                   paddingBottom: "20px",
                 }}
               >
@@ -181,6 +183,9 @@ const Sidebar = () => {
                 {SidebarMenu.map((item, i) => (
                   <Link href={item.link} key={i}>
                     <BoxNav
+                      as={motion.div}
+                      whileHover={{ scale: 1.01 }}
+                      whileTap={{ scale: 0.9 }}
                       className={
                         router.pathname === item.link ? "box active" : "box"
                       }
