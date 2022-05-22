@@ -1,16 +1,27 @@
 import { Avatar, Box, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AiFillMessage } from "react-icons/ai";
 import { RiHeartsFill } from "react-icons/ri";
 import axios from "axios";
 import { toast } from "react-toastify";
 import ItemHearts from "./ItemHearts";
+import { motion } from "framer-motion";
+import Link from "next/link";
 
 const Item = ({ item, i }) => {
+  const timeoutRef = useRef(null);
   const { data: session, status } = useSession();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    timeoutRef.current = setTimeout(() => {
+      setIsLoading(false);
+    }, 200 * i);
+    return () => {
+      clearTimeout(timeoutRef.current.current);
+    };
+  }, []);
 
   const AvatarProfile = styled(Avatar)(({ theme }) => ({
     "&.MuiAvatar-root": {
@@ -22,32 +33,46 @@ const Item = ({ item, i }) => {
     <>
       <Box
         key={i}
+        as={motion.div}
+        initial={{ opacity: 0 }}
+        transition={{
+          duration: 0.25,
+          delay: i * 0.1,
+        }}
+        animate={{ opacity: 1 }}
         sx={{
           display: "flex",
           flexDirection: "column",
           gap: "30px",
         }}
       >
-        <Box
-          sx={{
-            height: "250px",
-            border: (theme) => `3px solid ${theme.palette.border.feeds}`,
-            backgroundColor: item.color ? item.color : "#ccc",
-            borderRadius: "30px",
-            overflow: "hidden",
-            boxShadow: (theme) =>
-              `0px 3px 20px 6px${theme.palette.feeds.boxShadow}`,
-            display: "flex",
-            fontSize: "3rem",
-            color: "#ffffff",
-            justifyContent: "center",
-            alignItems: "center",
-            fontWeight: "bold",
-            padding: "20px",
-          }}
-        >
-          {item.content}
-          {/* <div
+        <Link href={`/posts/${item.slug}`}>
+          <Box
+            as={motion.div}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.9 }}
+            sx={{
+              cursor: "pointer",
+              height: "250px",
+              border: (theme) => `3px solid ${theme.palette.border.feeds}`,
+              backgroundColor: item.color ? item.color : "#ccc",
+              borderRadius: "30px",
+              overflow: "hidden",
+              boxShadow: (theme) =>
+                `0px 3px 20px 6px${theme.palette.feeds.boxShadow}`,
+              display: "flex",
+              fontSize: "3rem",
+              color: "#ffffff",
+              justifyContent: "center",
+              alignItems: "center",
+              fontWeight: "bold",
+              padding: "20px",
+              filter: isLoading ? "blur(5px)" : "blur(0px)",
+              pointerEvents: isLoading ? "none" : "visible",
+            }}
+          >
+            {item.title}
+            {/* <div
                   style={{
                     width: "100%",
                     height: "100%",
@@ -61,7 +86,8 @@ const Item = ({ item, i }) => {
                     objectFit="cover"
                   />
                 </div> */}
-        </Box>
+          </Box>
+        </Link>
         <Box
           sx={{
             display: "flex",

@@ -1,10 +1,5 @@
-import Head from "next/head";
-import { useEffect, useRef, useState } from "react";
-import Layout from "../components/Layout/Layout";
 import { getSession } from "next-auth/react";
-import FindPartner from "../components/Homepage/FindPartner";
-import Introduce from "../components/Homepage/Introduce";
-import UsersInRoom from "../components/Homepage/UsersInRoom";
+import Layout from "../components/Layout/Layout";
 export default function Home() {
   return (
     <>

@@ -1,15 +1,18 @@
 import { Avatar, Box, Skeleton, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import axios from "axios";
+import { motion } from "framer-motion";
 import { useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import Item from "../Feeds/Item";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 const Feeds = () => {
   const { data: session, status } = useSession();
 
   const timeRefLoadingFeeds = useRef(null);
+  const [currentPage, setCurrentPage] = useState(1);
   const [posts, setPosts] = useState([]);
   const [filter, setFilter] = useState("all");
   const [isLoading, setIsLoading] = useState(false);
@@ -23,7 +26,7 @@ const Feeds = () => {
     try {
       setIsLoading(true);
       const res = await axios.get(
-        `${process.env.ENDPOINT_SERVER}/api/v1/posts?sort=${filter}`
+        `${process.env.ENDPOINT_SERVER}/api/v1/posts?sort=${filter}&results=100`
       );
       setIsLoading(false);
       setPosts(res.data.data);
@@ -34,6 +37,24 @@ const Feeds = () => {
       }
     }
   };
+
+  const handleUpdateNewPage = async () => {
+    try {
+      console.log("hihi");
+      const res = await axios.get(
+        `${process.env.ENDPOINT_SERVER}/api/v1/posts?sort=${filter}&page=${currentPage}&result=10`
+      );
+
+      setCurrentPage((prev) => prev + 1);
+
+      setPosts([...posts, ...res.data.data]);
+    } catch (err) {
+      if (err.response) {
+        toast.error(err.response.data.message);
+      }
+    }
+  };
+
   const AvatarProfile = styled(Avatar)(({ theme }) => ({
     "&.MuiAvatar-root": {
       border: `3px solid ${theme.palette.border.feeds}`,
@@ -68,28 +89,7 @@ const Feeds = () => {
     },
   }));
   const handleClickFilter = (key) => {
-    if (posts.length > 0 && !isLoading) {
-      // clearTimeout(timeRefLoadingFeeds.current);
-      // const coppyPosts = [...posts];
-      // if (key === "popular") {
-      //   coppyPosts.sort((a, b) => b.hearts.length - a.hearts.length);
-      //   console.log(coppyPosts);
-      // } else if (key === "latest") {
-      //   coppyPosts.sort(
-      //     (a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt)
-      //   );
-      //   console.log(coppyPosts);
-      // } else if (key === "all") {
-      //   coppyPosts.sort(
-      //     (a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt)
-      //   );
-      //   console.log(coppyPosts);
-      // }
-      // setIsLoading(true);
-      // timeRefLoadingFeeds.current = setTimeout(() => {
-      //   setIsLoading(false);
-      //   setPosts(coppyPosts);
-      // }, 1000);
+    if (posts.length >= 0 && !isLoading) {
       setFilter(key);
     }
   };
@@ -130,6 +130,9 @@ const Feeds = () => {
             {category.map((item, i) => (
               <TitleFeeds
                 key={i}
+                as={motion.div}
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.9 }}
                 onClick={() => handleClickFilter(item.key)}
                 className={item.key === filter ? "active" : null}
               >
@@ -138,6 +141,7 @@ const Feeds = () => {
             ))}
           </Box>
         </Box>
+
         <Box
           sx={{
             display: "grid",
@@ -265,9 +269,10 @@ const Feeds = () => {
               ))}
             </>
           )}
+
           {!isLoading &&
             posts.length > 0 &&
-            posts.map((item, i) => <Item key={i} item={item} />)}
+            posts.map((item, i) => <Item key={i} i={i} item={item} />)}
         </Box>
       </Box>
     </>

@@ -3,6 +3,7 @@ import { styled } from "@mui/material/styles";
 import { FiSearch } from "react-icons/fi";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import CreateIcon from "@mui/icons-material/Create";
+import Link from "next/link";
 const OptionMenu = () => {
   const AvatarProfile = styled(Avatar)(({ theme }) => ({
     "&.MuiAvatar-root": {
@@ -11,11 +12,7 @@ const OptionMenu = () => {
   }));
   return (
     <>
-      <Box
-        sx={{
-          padding: "30px 0px",
-        }}
-      >
+      <Box sx={{}}>
         <Box
           sx={{
             width: "100%",
@@ -95,27 +92,29 @@ const OptionMenu = () => {
                 />
               </Badge>
             </Box>
-            <Box
-              sx={{
-                width: "70px",
-                height: "70px",
-                border: (theme) =>
-                  `2px solid ${theme.palette.border.menuright_option}`,
-                borderRadius: "50%",
-                display: "flex",
-
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <CreateIcon
+            <Link href="/posts/create">
+              <Box
                 sx={{
-                  fontSize: "2.5rem",
-                  fontWeight: "bold",
-                  color: "#98a1b5",
+                  width: "70px",
+                  height: "70px",
+                  border: (theme) =>
+                    `2px solid ${theme.palette.border.menuright_option}`,
+                  borderRadius: "50%",
+                  display: "flex",
+
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
-              />
-            </Box>
+              >
+                <CreateIcon
+                  sx={{
+                    fontSize: "2.5rem",
+                    fontWeight: "bold",
+                    color: "#98a1b5",
+                  }}
+                />
+              </Box>
+            </Link>
           </Box>
         </Box>
       </Box>

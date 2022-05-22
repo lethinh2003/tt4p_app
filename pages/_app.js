@@ -5,7 +5,11 @@ import { SessionProvider } from "next-auth/react";
 import Head from "next/head";
 import { Provider } from "react-redux";
 import { store } from "../redux/reducers/store";
+import DefaultLayout from "../components/Layout/DefaultLayout";
+import ThemeLayout from "../components/Layout/ThemeLayout";
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
+  const Layout = DefaultLayout;
+
   return (
     <SessionProvider session={session} refetchOnWindowFocus={false}>
       <Provider store={store}>
@@ -41,9 +45,11 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
           <meta property="og:image:width" content="1280" />
           <meta property="og:image:height" content="720" />
         </Head>
-        <Component {...pageProps}>
-          <ToastContainer />
-        </Component>
+        <ThemeLayout>
+          <Layout>
+            <Component {...pageProps}></Component>
+          </Layout>
+        </ThemeLayout>
       </Provider>
     </SessionProvider>
   );
