@@ -181,6 +181,7 @@ const Item = ({
           {item.rep_comments.length > 0 &&
             item.rep_comments.map((item, i) => (
               <RepCommentItem
+                key={i}
                 createCommentBoxRef={createCommentBoxRef}
                 item={item}
                 socket={socket}
