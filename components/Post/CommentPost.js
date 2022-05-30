@@ -1,15 +1,23 @@
 import { Typography, Box, Skeleton, Button } from "@mui/material";
 import axios from "axios";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { toast } from "react-toastify";
 import CreateComment from "./CommentPost/CreateComment";
 import Item from "./CommentPost/Item";
 import Loading from "./CommentPost/Loading";
 import { Oval } from "react-loading-icons";
-
+import socketIOClient from "socket.io-client";
+let socket;
 const CommentPost = (props) => {
+  const requestApiRef = useRef(null);
+  const createCommentBoxRef = useRef(null);
+
+  const [editCommentData, setEditCommentData] = useState("");
+  const [replyCommentData, setReplyCommentData] = useState("");
+  const [buttonLoadmore, setButtonLoadmore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
   const [valueFilter, setValueFilter] = useState("latest");
   const [dataComments, setDataComments] = useState([]);
   const [resultsNum, setResultsNum] = useState(5);
@@ -18,8 +26,47 @@ const CommentPost = (props) => {
 
   const { item } = props;
   useEffect(() => {
+    socketInitializer();
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+  const setEditComment = (data) => {
+    if (replyCommentData) {
+      setReplyCommentData("");
+    }
+    setEditCommentData(data);
+  };
+  const setReplyComment = (data) => {
+    if (editCommentData) {
+      setEditCommentData("");
+    }
+    setReplyCommentData(data);
+  };
+  useEffect(() => {
+    if (socket) {
+      socket.on("create-post-comment", (data) => {
+        reloadPostComments();
+      });
+
+      if (status === "authenticated") {
+        socket.emit("join-post-room", item);
+
+        socket.on("typing-post-comment", (value) => {
+          setIsTyping(value);
+        });
+      }
+    }
+    return () => {
+      socket.off();
+    };
+  }, [dataComments]);
+  const socketInitializer = async () => {
+    socket = socketIOClient.connect(process.env.ENDPOINT_SERVER);
+  };
+  useEffect(() => {
     if (status === "authenticated") {
-      getPostComments();
+      requestApiRef.current = getPostComments();
     }
   }, [valueFilter, resultsPage]);
   const getPostComments = async () => {
@@ -28,6 +75,11 @@ const CommentPost = (props) => {
       const res = await axios.get(
         `${process.env.ENDPOINT_SERVER}/api/v1/posts/comments/${item._id}?sort=${valueFilter}&results=${resultsNum}&page=${resultsPage}`
       );
+      if (res.data.results < resultsNum) {
+        setButtonLoadmore(false);
+      } else {
+        setButtonLoadmore(true);
+      }
       if (resultsPage === 1) {
         setDataComments(res.data.data);
       } else {
@@ -35,8 +87,32 @@ const CommentPost = (props) => {
       }
 
       setIsLoading(false);
+      return "ok";
     } catch (err) {
       setIsLoading(false);
+      if (err.response) {
+        toast.error(err.response.data.message);
+      }
+    }
+  };
+  const reloadPostComments = async () => {
+    try {
+      const res = await axios.get(
+        `${process.env.ENDPOINT_SERVER}/api/v1/posts/comments/${item._id}?sort=${valueFilter}&results=${resultsNum}&page=${resultsPage}`
+      );
+      if (res.data.results < resultsNum) {
+        setButtonLoadmore(false);
+      } else {
+        setButtonLoadmore(true);
+      }
+      if (resultsPage === 1) {
+        setDataComments(res.data.data);
+      } else {
+        setDataComments((prev) => [...prev, ...res.data.data]);
+      }
+
+      return "ok";
+    } catch (err) {
       if (err.response) {
         toast.error(err.response.data.message);
       }
@@ -128,7 +204,6 @@ const CommentPost = (props) => {
 
           <Box
             sx={{
-              overflowY: "auto",
               border: (theme) => `3px solid ${theme.palette.border.feeds}`,
               gap: "5px",
               borderRadius: "10px",
@@ -143,9 +218,18 @@ const CommentPost = (props) => {
               fontWeight: "bold",
               padding: "20px",
               flexDirection: "column",
+              position: "relative",
             }}
           >
-            <CreateComment item={item} />
+            <CreateComment
+              createCommentBoxRef={createCommentBoxRef}
+              replyCommentData={replyCommentData}
+              setReplyComment={setReplyComment}
+              editCommentData={editCommentData}
+              setEditComment={setEditComment}
+              item={item}
+              socket={socket}
+            />
             {isLoading && (
               <>
                 {Array.from({ length: 5 }).map((item, i) => (
@@ -153,29 +237,61 @@ const CommentPost = (props) => {
                 ))}
               </>
             )}
+            {isTyping && (
+              <Typography
+                sx={{
+                  color: (theme) => theme.palette.text.color.first,
+                  fontSize: "1.7rem",
+                }}
+              >
+                Ai đó đang nhập bình luận
+              </Typography>
+            )}
+            {!isLoading && dataComments.length === 0 && (
+              <Typography
+                sx={{
+                  color: (theme) => theme.palette.text.color.first,
+                  fontSize: "1.7rem",
+                }}
+              >
+                Hãy là người đầu tiên bình luận
+              </Typography>
+            )}
             {!isLoading &&
               dataComments.length > 0 &&
-              dataComments.map((item, i) => <Item item={item} key={i} />)}
-            <Button
-              sx={{
-                width: "100px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "5px",
-                pointerEvents: isLoading ? "none" : "visible",
-                opacity: isLoading ? 0.6 : 1,
-              }}
-              onClick={() => handleClickLoadmore()}
-            >
-              {isLoading && (
-                <>
-                  <Oval width={20} />
-                  Loading
-                </>
-              )}
-              {!isLoading && <>Load more</>}
-            </Button>
+              dataComments.map((item, i) => (
+                <Item
+                  socket={socket}
+                  setReplyComment={setReplyComment}
+                  createCommentBoxRef={createCommentBoxRef}
+                  setEditComment={setEditComment}
+                  item={item}
+                  key={i}
+                />
+              ))}
+            {buttonLoadmore && (
+              <Button
+                sx={{
+                  width: "100px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "5px",
+                  pointerEvents: isLoading ? "none" : "visible",
+                  opacity: isLoading ? 0.6 : 1,
+                  alignSelf: "center",
+                }}
+                onClick={() => handleClickLoadmore()}
+              >
+                {isLoading && (
+                  <>
+                    <Oval width={20} />
+                    Loading
+                  </>
+                )}
+                {!isLoading && <>Load more</>}
+              </Button>
+            )}
           </Box>
         </>
       )}

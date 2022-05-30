@@ -34,12 +34,12 @@ const Item = ({ item, i }) => {
       <Box
         key={i}
         as={motion.div}
-        initial={{ opacity: 0 }}
+        initial={{ opacity: 1, filter: "blur(5px)" }}
         transition={{
-          duration: 0.25,
-          delay: i * 0.1,
+          duration: 0.05,
+          delay: i * 0.005,
         }}
-        animate={{ opacity: 1 }}
+        animate={{ opacity: 1, filter: "blur(0px)" }}
         sx={{
           display: "flex",
           flexDirection: "column",
@@ -59,7 +59,7 @@ const Item = ({ item, i }) => {
               borderRadius: "30px",
               overflow: "hidden",
               boxShadow: (theme) =>
-                `0px 3px 20px 6px${theme.palette.feeds.boxShadow}`,
+                `0px 3px 20px 6px ${theme.palette.feeds.boxShadow}`,
               display: "flex",
               fontSize: "3rem",
               color: "#ffffff",
@@ -67,8 +67,8 @@ const Item = ({ item, i }) => {
               alignItems: "center",
               fontWeight: "bold",
               padding: "20px",
-              filter: isLoading ? "blur(5px)" : "blur(0px)",
-              pointerEvents: isLoading ? "none" : "visible",
+              // filter: isLoading ? "blur(5px)" : "blur(0px)",
+              // pointerEvents: isLoading ? "none" : "visible",
             }}
           >
             {item.title}

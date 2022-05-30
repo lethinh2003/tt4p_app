@@ -3,7 +3,8 @@ const initialState = [];
 const getListFollowingsReducer = (state = initialState, payload) => {
   switch (payload.type) {
     case GET_LIST_FOLLOWINGS:
-      return [...state, ...payload.data];
+      console.log(payload.data);
+      return state;
     default:
       return state;
   }

@@ -54,6 +54,7 @@ const SuggestFriends = () => {
     <>
       <Box
         sx={{
+          width: "100%",
           padding: "30px 0px",
           borderBottom: (theme) => `1px solid ${theme.palette.border.dialog}`,
         }}

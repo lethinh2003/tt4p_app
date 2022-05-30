@@ -1,11 +1,9 @@
 import { getSession, useSession } from "next-auth/react";
 import { useEffect } from "react";
+import HomePage from "../../components/Chat/HomePage";
 import Banned from "../../components/Dialog/Banned";
 import AboutMe from "../../components/Homepage/AboutMe";
-import FindPartner from "../../components/Homepage/FindPartner";
-import Introduce from "../../components/Homepage/Introduce";
 import Setting from "../../components/Homepage/Setting";
-import UsersInRoom from "../../components/Homepage/UsersInRoom";
 import Layout from "../../components/Layout/Layout";
 export default function Home() {
   const { data: session, status } = useSession();
@@ -20,9 +18,7 @@ export default function Home() {
         <Banned />
         <AboutMe />
         <Setting />
-        <Introduce />
-        <UsersInRoom />
-        <FindPartner />
+        <HomePage />
       </Layout>
     </>
   );

@@ -27,36 +27,36 @@ const Chat = ({ socket, partner, isHideInfo }) => {
 
   const messagesEndRef = useRef(null);
   useEffect(() => {
-    if (socket) {
-      if (!socketOn.current) {
-        socketOn.current = socket.on("receive-chat-content", (data) => {
-          const newMessage = convertChat(data.message);
-          data.vanilaMessage = data.message;
-          data.message = newMessage;
+    socket.on("receive-chat-content", (data) => {
+      const newMessage = convertChat(data.message);
+      data.vanilaMessage = data.message;
+      data.message = newMessage;
+      console.log(data);
 
-          setMessages((prev) => [...prev, data]);
-        });
+      setMessages((prev) => [...prev, data]);
+    });
+
+    socket.on("receive-chat-sound", () => {
+      if (chatSoundRef.current) {
+        // chatSoundRef.current.play();
       }
+    });
 
-      socket.on("receive-chat-sound", () => {
-        if (chatSoundRef.current) {
-          chatSoundRef.current.play();
-        }
-      });
-
-      if (!socketTypingChatOn.current) {
-        socketTypingChatOn.current = socket.on("chat-typing", (data) => {
-          if (data.status === true) {
-            setIsTyping(true);
-            setTypingMessage(data.message);
-          } else {
-            setIsTyping(false);
-            setTypingMessage("");
-          }
-        });
+    socket.on("chat-typing", (data) => {
+      if (data.status === true) {
+        setIsTyping(true);
+        setTypingMessage(data.message);
+      } else {
+        setIsTyping(false);
+        setTypingMessage("");
       }
-    }
-  }, []);
+    });
+    return () => {
+      socket.off("receive-chat-content");
+      socket.off("receive-chat-sound");
+      socket.off("chat-typing");
+    };
+  }, [socket]);
   useEffect(() => {
     if (partner) {
       if (isHideInfo) {

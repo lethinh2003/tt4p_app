@@ -1,4 +1,4 @@
-import { Avatar, Box, Skeleton, Typography } from "@mui/material";
+import { Avatar, Box, Skeleton, Typography, Button } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import axios from "axios";
 import { motion } from "framer-motion";
@@ -7,12 +7,16 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import Item from "../Feeds/Item";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { Oval } from "react-loading-icons";
 
 const Feeds = () => {
   const { data: session, status } = useSession();
+  const [buttonLoadmore, setButtonLoadmore] = useState(false);
 
+  const test = useRef(null);
   const timeRefLoadingFeeds = useRef(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [resultsOnPage, setResultsOnPage] = useState(5);
   const [posts, setPosts] = useState([]);
   const [filter, setFilter] = useState("all");
   const [isLoading, setIsLoading] = useState(false);
@@ -20,14 +24,27 @@ const Feeds = () => {
     if (status === "authenticated") {
       getAllPosts();
     }
-    return () => clearTimeout(timeRefLoadingFeeds.current);
   }, [filter]);
+
   const getAllPosts = async () => {
     try {
       setIsLoading(true);
-      const res = await axios.get(
-        `${process.env.ENDPOINT_SERVER}/api/v1/posts?sort=${filter}&results=100`
+      setCurrentPage(1);
+      let res;
+
+      res = await axios.get(
+        `${process.env.ENDPOINT_SERVER}/api/v1/posts?sort=${filter}&pageSize=${resultsOnPage}`
       );
+
+      if (res.data.results < resultsOnPage) {
+        setButtonLoadmore(false);
+      } else {
+        if (filter === "following" || filter === "popular") {
+          setCurrentPage((prev) => prev + 1);
+        }
+        setButtonLoadmore(true);
+      }
+      console.log(res.data.data);
       setIsLoading(false);
       setPosts(res.data.data);
     } catch (err) {
@@ -40,13 +57,28 @@ const Feeds = () => {
 
   const handleUpdateNewPage = async () => {
     try {
-      console.log("hihi");
-      const res = await axios.get(
-        `${process.env.ENDPOINT_SERVER}/api/v1/posts?sort=${filter}&page=${currentPage}&result=10`
-      );
-
-      setCurrentPage((prev) => prev + 1);
-
+      console.log(currentPage);
+      let res;
+      if (filter === "latest" || filter === "all") {
+        res = await axios.get(
+          `${process.env.ENDPOINT_SERVER}/api/v1/posts?sort=${filter}&postId=${
+            posts[posts.length - 1]._id
+          }&pageSize=${resultsOnPage}`
+        );
+      } else {
+        res = await axios.get(
+          `${process.env.ENDPOINT_SERVER}/api/v1/posts?sort=${filter}&page=${currentPage}&pageSize=${resultsOnPage}`
+        );
+      }
+      console.log("data moi", res.data.data);
+      if (res.data.results < resultsOnPage) {
+        setButtonLoadmore(false);
+      } else {
+        if (filter === "following" || filter === "popular") {
+          setCurrentPage((prev) => prev + 1);
+        }
+        setButtonLoadmore(true);
+      }
       setPosts([...posts, ...res.data.data]);
     } catch (err) {
       if (err.response) {
@@ -96,6 +128,7 @@ const Feeds = () => {
   return (
     <>
       <Box
+        ref={test}
         sx={{
           width: "100%",
           maxWidth: "calc(100% - 60px)",
@@ -145,7 +178,7 @@ const Feeds = () => {
         <Box
           sx={{
             display: "grid",
-            gridTemplateColumns: "repeat(2, 1fr)",
+            gridTemplateColumns: { xs: "repeat(1, 1fr)", md: "repeat(2, 1fr)" },
             gap: "30px",
           }}
         >
@@ -274,6 +307,29 @@ const Feeds = () => {
             posts.length > 0 &&
             posts.map((item, i) => <Item key={i} i={i} item={item} />)}
         </Box>
+        {buttonLoadmore && (
+          <Button
+            sx={{
+              width: "100px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "5px",
+              pointerEvents: isLoading ? "none" : "visible",
+              opacity: isLoading ? 0.6 : 1,
+              alignSelf: "center",
+            }}
+            onClick={() => handleUpdateNewPage()}
+          >
+            {isLoading && (
+              <>
+                <Oval width={20} />
+                Loading
+              </>
+            )}
+            {!isLoading && <>Load more</>}
+          </Button>
+        )}
       </Box>
     </>
   );

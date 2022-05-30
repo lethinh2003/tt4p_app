@@ -51,8 +51,8 @@ const UsersInRoom = () => {
           fontSize: "2rem",
         }}
       >
-        Hiện đang có {boy} bạn nam, {girl} bạn nữ, {lgbt} bạn LGBT đang tham gia
-        phòng chat.
+        Hiện đang có {boy} bạn nam, {girl} bạn nữ, {lgbt} bạn LGBT đang trong
+        phòng chờ random vip.
       </Typography>
       {/* <Box
         sx={{

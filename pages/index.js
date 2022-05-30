@@ -1,3 +1,4 @@
+import { Box } from "@mui/material";
 import { getSession, useSession } from "next-auth/react";
 import { useEffect } from "react";
 import Banned from "../components/Dialog/Banned";
@@ -6,6 +7,7 @@ import Feeds from "../components/Homepage/Feeds";
 import Setting from "../components/Homepage/Setting";
 import Layout from "../components/Layout/Layout";
 import MenuRight from "../components/Layout/MenuRight";
+import SuggestFriends from "../components/MenuRight/SuggestFriends";
 const Home = () => {
   const { data: session, status } = useSession();
   console.log("render-index");
@@ -19,6 +21,15 @@ const Home = () => {
     <>
       <Layout>
         <MenuRight />
+        <Box
+          sx={{
+            width: "100%",
+            padding: "0px 20px",
+            display: { xs: "block", md: "none" },
+          }}
+        >
+          <SuggestFriends />
+        </Box>
         <Feeds />
 
         <Banned />

@@ -84,58 +84,68 @@ const YourSelf = ({ user }) => {
     <>
       {user && (
         <>
-          <Typography
-            sx={{
-              fontWeight: "bold",
-              fontSize: "20px",
-              alignSelf: "center",
-            }}
-          >
-            Hii {user.name}
-          </Typography>
-
           <Box
             sx={{
-              position: "relative",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "10px",
+              width: "100%",
             }}
           >
-            {listAvatarChild.map((item, i) => (
-              <BoxAvatarChild
-                as={motion.div}
-                animate={{
-                  y: i === 0 ? [0, 10, 0] : i === 1 ? [0, -10, 0] : 0,
-                  x: i === 2 ? [0, 10, 0] : i === 3 ? [0, -10, 0] : 0,
-                  scale: [1, 1.02, 1],
-                }}
-                transition={{
-                  repeat: Infinity,
-                  duration: 1.5,
-                  delay: i * 0.03,
-                }}
-                key={i}
-                className={`tt-${i + 1}`}
-              >
+            <Typography
+              sx={{
+                fontWeight: "bold",
+                fontSize: "20px",
+                alignSelf: "center",
+              }}
+            >
+              Hii {user.name}
+            </Typography>
+
+            <Box
+              sx={{
+                position: "relative",
+              }}
+            >
+              {listAvatarChild.map((item, i) => (
+                <BoxAvatarChild
+                  as={motion.div}
+                  animate={{
+                    y: i === 0 ? [0, 10, 0] : i === 1 ? [0, -10, 0] : 0,
+                    x: i === 2 ? [0, 10, 0] : i === 3 ? [0, -10, 0] : 0,
+                    scale: [1, 1.02, 1],
+                  }}
+                  transition={{
+                    repeat: Infinity,
+                    duration: 1.5,
+                    delay: i * 0.03,
+                  }}
+                  key={i}
+                  className={`tt-${i + 1}`}
+                >
+                  <Image
+                    src={item.img}
+                    alt="Avatar cute"
+                    width={200}
+                    height={200}
+                  />
+                </BoxAvatarChild>
+              ))}
+
+              <BoxAvatar>
                 <Image
-                  src={item.img}
-                  alt="Avatar cute"
+                  src={
+                    user.sex === "boy"
+                      ? "https://i.imgur.com/yFYUbLZ.png"
+                      : "https://i.imgur.com/Or9WeCe.png"
+                  }
+                  alt={user.name}
                   width={200}
                   height={200}
                 />
-              </BoxAvatarChild>
-            ))}
-
-            <BoxAvatar>
-              <Image
-                src={
-                  user.sex === "boy"
-                    ? "https://i.imgur.com/yFYUbLZ.png"
-                    : "https://i.imgur.com/Or9WeCe.png"
-                }
-                alt={user.name}
-                width={200}
-                height={200}
-              />
-            </BoxAvatar>
+              </BoxAvatar>
+            </Box>
           </Box>
         </>
       )}
