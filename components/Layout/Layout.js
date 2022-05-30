@@ -73,6 +73,7 @@ const Layout = (props) => {
                 md: "400px",
               },
             }}
+            className="layout"
           >
             <BoxWrapper
               ref={hihi}

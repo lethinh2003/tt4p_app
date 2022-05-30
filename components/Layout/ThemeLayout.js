@@ -141,6 +141,17 @@ const getDesignTokens = (mode) => ({
             }),
       },
     },
+    bottomMenu: {
+      background: {
+        ...(mode === "light"
+          ? {
+              default: "#323435",
+            }
+          : {
+              default: "#ffffff",
+            }),
+      },
+    },
     border: {
       ...(mode === "dark"
         ? {

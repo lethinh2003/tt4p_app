@@ -12,6 +12,16 @@ import { motion } from "framer-motion";
 
 const Sidebar = () => {
   const router = useRouter();
+  const getRouterValue = () => {
+    let result;
+    if (router.pathname.startsWith("/posts") || router.pathname === "/") {
+      result = "home";
+    } else if (router.pathname.startsWith("/chat")) {
+      result = "message";
+    }
+    return result;
+  };
+  const [value, setValue] = useState(getRouterValue());
 
   const AvatarProfile = styled(Avatar)(({ theme }) => ({
     "&.MuiAvatar-root": {
@@ -113,25 +123,25 @@ const Sidebar = () => {
   const SidebarMenu = [
     {
       title: "Home",
-      value: "/",
+      value: "home",
       link: "/",
       icon: <AiFillHome />,
     },
     {
       title: "Message",
-      value: "/chat",
+      value: "message",
       link: "/chat",
       icon: <AiFillMessage />,
     },
     {
       title: "Profile",
-      value: "/profile",
+      value: "profile",
       link: "/profile",
       icon: <AccountBoxIcon />,
     },
     {
       title: "Settings",
-      value: "/settings",
+      value: "settings",
       link: "/settings",
       icon: <AiTwotoneSetting />,
     },
@@ -186,22 +196,18 @@ const Sidebar = () => {
                       as={motion.div}
                       whileHover={{ scale: 1.01 }}
                       whileTap={{ scale: 0.9 }}
-                      className={
-                        router.pathname === item.link ? "box active" : "box"
-                      }
+                      className={value === item.value ? "box active" : "box"}
                     >
                       <div
                         className={
-                          router.pathname === item.link ? "icon active" : "icon"
+                          value === item.value ? "icon active" : "icon"
                         }
                       >
                         {item.icon}
                       </div>
                       <Typography
                         className={
-                          router.pathname === item.link
-                            ? "title active"
-                            : "title"
+                          value === item.value ? "title active" : "title"
                         }
                       >
                         {item.title}

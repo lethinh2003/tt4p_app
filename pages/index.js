@@ -8,6 +8,7 @@ import Setting from "../components/Homepage/Setting";
 import Layout from "../components/Layout/Layout";
 import MenuRight from "../components/Layout/MenuRight";
 import SuggestFriends from "../components/MenuRight/SuggestFriends";
+import SidebarMobile from "../components/Layout/SidebarMobile";
 const Home = () => {
   const { data: session, status } = useSession();
   console.log("render-index");
@@ -21,6 +22,15 @@ const Home = () => {
     <>
       <Layout>
         <MenuRight />
+        <Box
+          sx={{
+            width: "100%",
+            padding: "10px 20px",
+            display: { xs: "block", md: "none" },
+          }}
+        >
+          <SidebarMobile />
+        </Box>
         <Box
           sx={{
             width: "100%",

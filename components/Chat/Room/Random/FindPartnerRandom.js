@@ -14,8 +14,7 @@ import Loading from "../Loading/Loading";
 import Chat from "./Chat";
 import Partner from "./Partner";
 import YourSelf from "./YourSelf";
-import CountUp from "react-countup";
-
+import CountFindPartner from "../../CountFindPartner";
 let socket;
 const FindPartnerRandom = () => {
   const TimeIntervalFindPartner = useRef(null);
@@ -266,34 +265,9 @@ const FindPartnerRandom = () => {
                 <>
                   {!isInRoom && (
                     <>
-                      <Box
-                        sx={{
-                          cursor: "pointer",
-                          minWidth: "80px",
-                          border: (theme) =>
-                            `3px solid ${theme.palette.border.feeds}`,
-
-                          borderRadius: "10px",
-                          overflow: "hidden",
-                          boxShadow: (theme) =>
-                            `0px 3px 20px 6px ${theme.palette.feeds.boxShadow}`,
-                          display: "flex",
-                          fontSize: "3rem",
-                          color: "#ffffff",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          fontWeight: "bold",
-                          padding: "20px",
-
-                          color: (theme) => theme.palette.text.color.second,
-                        }}
-                      >
-                        <CountUp
-                          end={30}
-                          duration={50}
-                          onEnd={() => handleTimeoutFindPartner()}
-                        />
-                      </Box>
+                      <CountFindPartner
+                        handleTimeoutFindPartner={handleTimeoutFindPartner}
+                      />
                       <Button
                         as={motion.div}
                         whileHover={{ scale: 1.02 }}

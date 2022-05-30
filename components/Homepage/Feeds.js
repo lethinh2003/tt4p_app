@@ -20,6 +20,7 @@ const Feeds = () => {
   const [posts, setPosts] = useState([]);
   const [filter, setFilter] = useState("all");
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingLoadMore, setIsLoadingLoadMore] = useState(false);
   useEffect(() => {
     if (status === "authenticated") {
       getAllPosts();
@@ -57,7 +58,7 @@ const Feeds = () => {
 
   const handleUpdateNewPage = async () => {
     try {
-      console.log(currentPage);
+      setIsLoadingLoadMore(true);
       let res;
       if (filter === "latest" || filter === "all") {
         res = await axios.get(
@@ -80,7 +81,9 @@ const Feeds = () => {
         setButtonLoadmore(true);
       }
       setPosts([...posts, ...res.data.data]);
+      setIsLoadingLoadMore(false);
     } catch (err) {
+      setIsLoadingLoadMore(false);
       if (err.response) {
         toast.error(err.response.data.message);
       }
@@ -315,19 +318,19 @@ const Feeds = () => {
               alignItems: "center",
               justifyContent: "center",
               gap: "5px",
-              pointerEvents: isLoading ? "none" : "visible",
-              opacity: isLoading ? 0.6 : 1,
+              pointerEvents: isLoadingLoadMore ? "none" : "visible",
+              opacity: isLoadingLoadMore ? 0.6 : 1,
               alignSelf: "center",
             }}
             onClick={() => handleUpdateNewPage()}
           >
-            {isLoading && (
+            {isLoadingLoadMore && (
               <>
                 <Oval width={20} />
                 Loading
               </>
             )}
-            {!isLoading && <>Load more</>}
+            {!isLoadingLoadMore && <>Load more</>}
           </Button>
         )}
       </Box>

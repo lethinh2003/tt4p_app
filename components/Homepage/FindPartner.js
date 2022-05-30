@@ -13,8 +13,9 @@ import useLoading from "../../utils/useLoading";
 import Loading from "../Loading/Loading";
 import Chat from "./Chat";
 import YourSelf from "./YourSelf";
-import CountUp from "react-countup";
+
 import Partner from "./Partner";
+import CountFindPartner from "../Chat/CountFindPartner";
 let socket;
 const FindPartner = () => {
   const { data: session, status } = useSession();
@@ -248,34 +249,10 @@ const FindPartner = () => {
                 <>
                   {!isInRoom && (
                     <>
-                      <Box
-                        sx={{
-                          cursor: "pointer",
-                          minWidth: "80px",
-                          border: (theme) =>
-                            `3px solid ${theme.palette.border.feeds}`,
+                      <CountFindPartner
+                        handleTimeoutFindPartner={handleTimeoutFindPartner}
+                      />
 
-                          borderRadius: "10px",
-                          overflow: "hidden",
-                          boxShadow: (theme) =>
-                            `0px 3px 20px 6px ${theme.palette.feeds.boxShadow}`,
-                          display: "flex",
-                          fontSize: "3rem",
-                          color: "#ffffff",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          fontWeight: "bold",
-                          padding: "20px",
-
-                          color: (theme) => theme.palette.text.color.second,
-                        }}
-                      >
-                        <CountUp
-                          end={30}
-                          duration={50}
-                          onEnd={() => handleTimeoutFindPartner()}
-                        />
-                      </Box>
                       <Button
                         as={motion.div}
                         whileHover={{ scale: 1.02 }}
