@@ -2,6 +2,7 @@
 const nextConfig = {
   optimizeFonts: false,
   env: {
+    NODE_ENV: process.env.NODE_ENV,
     ENDPOINT_SERVER: process.env.ENDPOINT_SERVER,
     MONGODB_URL: process.env.MONGODB_URL,
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,

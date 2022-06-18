@@ -13,6 +13,7 @@ var jwt = require("jsonwebtoken");
 export default NextAuth({
   session: {
     strategy: "jwt",
+    maxAge: 90 * 24 * 60 * 60,
   },
   providers: [
     GoogleProvider({
@@ -106,7 +107,6 @@ export default NextAuth({
       session.user.findSex = token.findSex;
       session.user.city = token.city;
       session.user.date = token.date;
-
       return session;
     },
     async jwt({ token, user, account, profile, isNewUser }) {
@@ -119,7 +119,7 @@ export default NextAuth({
           },
           process.env.NEXTAUTH_SECRET,
           {
-            expiresIn: 60 * 60 * 24 * 30, ///Expire default jwt next-auth
+            expiresIn: 90 * 24 * 60 * 60, ///Expire default jwt next-auth
           }
         );
         token.account = profile.account.account;
@@ -132,7 +132,7 @@ export default NextAuth({
           { account: user.account, role: user.role, id: user._id },
           process.env.NEXTAUTH_SECRET,
           {
-            expiresIn: 60 * 60 * 24 * 30, ///Expire default jwt next-auth
+            expiresIn: 90 * 24 * 60 * 60, ///Expire default jwt next-auth
           }
         );
         token.account = user.account;
@@ -145,6 +145,7 @@ export default NextAuth({
         token.id = user._id;
         token.avatar = user.avatar;
         token.access_token = generateToken;
+        console.log("token nek", user.access_token);
       }
       return token;
     },
