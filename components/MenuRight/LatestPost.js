@@ -215,9 +215,10 @@ const LatestPost = () => {
                   width: "150px",
                   height: "120px",
                   border: (theme) => `3px solid ${theme.palette.border.feeds}`,
-                  backgroundColor: latestActivityPost.post[0].color
-                    ? latestActivityPost.post[0].color
-                    : "#ccc",
+                  backgroundColor:
+                    latestActivityPost && latestActivityPost.post[0].color
+                      ? latestActivityPost.post[0].color
+                      : "#ccc",
                   boxShadow: (theme) =>
                     `0px 3px 20px 6px${theme.palette.feeds.boxShadow}`,
 

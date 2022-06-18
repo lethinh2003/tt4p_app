@@ -26,25 +26,23 @@ const Partner = ({
   const [countRequestInfo, setCountRequestInfo] = useState(5);
 
   useEffect(() => {
-    if (socket) {
-      socket.on("request-info-partner", () => {
-        toggle();
-      });
+    socket.on("request-info-partner", () => {
+      toggle();
+    });
 
-      socket.on("notify-request-info-partner", (data) => {
-        if (data.status === "fail") {
-          setCountRequestInfo((prev) => prev - 1);
-        } else if (data.status === "success") {
-          setIsHideInfo(false);
-          setCountRequestInfo(0);
-        }
-      });
+    socket.on("notify-request-info-partner", (data) => {
+      if (data.status === "fail") {
+        setCountRequestInfo((prev) => prev - 1);
+      } else if (data.status === "success") {
+        setIsHideInfo(false);
+        setCountRequestInfo(0);
+      }
+    });
 
-      return () => {
-        socket.off("request-info-partner");
-        socket.off("notify-request-info-partner");
-      };
-    }
+    return () => {
+      socket.off("request-info-partner");
+      socket.off("notify-request-info-partner");
+    };
   }, [socket]);
   const handleClickOutChatRoom = async () => {
     await socket.emit("out-chat-room", partner);

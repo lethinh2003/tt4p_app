@@ -1,20 +1,19 @@
 import { Box, Typography } from "@mui/material";
-import React, { useState, useEffect } from "react";
-import { ImAngry2 } from "react-icons/im";
-import { IoHeartSharp } from "react-icons/io5";
-import { SiIconify } from "react-icons/si";
-import { motion } from "framer-motion";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { motion } from "framer-motion";
 import { useSession } from "next-auth/react";
+import React, { useEffect, useState } from "react";
+import { ImAngry2 } from "react-icons/im";
+import { toast } from "react-toastify";
 const Dislike = ({ item }) => {
   const { data: session, status } = useSession();
   const [isHearted, setIsHearted] = useState(false);
-  const [hearts, setHearts] = useState(item ? item.dislikes.length : 0);
+  const [hearts, setHearts] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     if (status === "authenticated") {
       if (item && item.dislikes.length >= 0) {
+        setHearts(item.dislikes.length);
         const resultCheckHeart = checkHeartedPost(
           session.user.id,
           item.dislikes

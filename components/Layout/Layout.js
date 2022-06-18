@@ -1,8 +1,11 @@
 import { Box } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import Sidebar from "./Sidebar";
+import { useRef, useEffect } from "react";
 
 const Layout = (props) => {
+  const hihi = useRef(null);
+
   const ContainerWrapper = styled(Box)(({ theme }) => ({
     backgroundImage: `linear-gradient(83deg, ${theme.palette.background.first} 0%, ${theme.palette.background.second} 29%, ${theme.palette.background.third} 100%)`,
     color: theme.palette.text.color.first,
@@ -70,12 +73,16 @@ const Layout = (props) => {
                 md: "400px",
               },
             }}
+            className="layout"
           >
             <BoxWrapper
+              ref={hihi}
               sx={{
                 height: { xs: "calc(100% - 70px)", md: "100%" },
-                borderRight: (theme) =>
-                  `1px solid ${theme.palette.border.dialog}`,
+                borderRight: (theme) => ({
+                  xs: null,
+                  md: `1px solid ${theme.palette.border.dialog}`,
+                }),
               }}
             >
               {props.children}

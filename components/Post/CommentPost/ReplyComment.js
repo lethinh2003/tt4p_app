@@ -1,22 +1,22 @@
 import { Box, Typography } from "@mui/material";
-import React, { useState } from "react";
-import { ImAngry2 } from "react-icons/im";
-import { IoHeartSharp } from "react-icons/io5";
-import { SiIconify } from "react-icons/si";
-const ReplyComment = ({}) => {
-  const [chosenEmoji, setChosenEmoji] = useState(null);
-  const [isEmotion, setIsEmotion] = useState(false);
-  const handleClickEmotion = () => {
-    setIsEmotion(!isEmotion);
-  };
-  const onEmojiClick = (event, emojiObject) => {
-    setChosenEmoji(emojiObject);
-
-    if (chatInputRef.current) {
-      chatInputRef.current.childNodes[0].childNodes[0].focus();
+import React from "react";
+const ReplyComment = ({ item, setReplyComment, createCommentBoxRef }) => {
+  const handleClickReply = (item) => {
+    const data = {
+      account: item.user[0].account,
+      name: item.user[0].name,
+      content: item.content,
+      commentId: item._id,
+      postId: item.post[0]._id,
+    };
+    setReplyComment(data);
+    if (createCommentBoxRef.current) {
+      createCommentBoxRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
     }
   };
-
   return (
     <>
       <Box
@@ -28,9 +28,11 @@ const ReplyComment = ({}) => {
       >
         <Typography
           sx={{
+            cursor: "pointer",
             color: (theme) => theme.palette.text.color.first,
             fontWeight: 600,
           }}
+          onClick={() => handleClickReply(item)}
         >
           Reply
         </Typography>

@@ -96,7 +96,6 @@ const MenuRight = () => {
           </div>
         </div>
       </ItemWrapper>
-      <BottomMenu />
     </>
   );
 };

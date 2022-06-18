@@ -69,7 +69,7 @@ const Item = ({ item, key }) => {
 
   return (
     <>
-      {item._id !== dataUser._id && (
+      {item._id !== dataUser.data._id && (
         <Box
           sx={{
             display: "flex",

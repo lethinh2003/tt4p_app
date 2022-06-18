@@ -2,7 +2,9 @@ import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import MessageOutlinedIcon from "@mui/icons-material/MessageOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-
+import { AiFillHome, AiFillMessage, AiTwotoneSetting } from "react-icons/ai";
+import { FaSignOutAlt } from "react-icons/fa";
+import { memo } from "react";
 import { Box, Button } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { motion } from "framer-motion";
@@ -16,12 +18,24 @@ import { toast } from "react-toastify";
 
 const Footer = () => {
   const router = useRouter();
+  const getRouterValue = () => {
+    let result;
+    if (router.pathname.startsWith("/posts") || router.pathname === "/") {
+      result = "home";
+    } else if (router.pathname.startsWith("/chat")) {
+      result = "message";
+    }
+    return result;
+  };
   const dispatch = useDispatch();
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(getRouterValue());
   const getToggleStatusBanned = useSelector((state) => state.toggleBanned.on);
 
   const handleClickItem = (value) => {
     if (value === "home") {
+      router.push("/");
+    } else if (value === "message") {
+      router.push("/chat");
     } else if (value === "setting") {
       if (getToggleStatusBanned) {
         toast.error("Tài khoản bạn đang bị cấm, chức năng tạm khoá!");
@@ -39,11 +53,13 @@ const Footer = () => {
     }
     setValue(value);
   };
-  useEffect(() => {
-    if (router.pathname === "/") {
-      setValue("home");
-    }
-  }, [router.pathname]);
+  // useEffect(() => {
+  //   if (router.pathname.startsWith("/posts") || router.pathname === "/") {
+  //     setValue("home");
+  //   } else if (router.pathname.startsWith("/chat")) {
+  //     setValue("message");
+  //   }
+  // }, []);
   const SocialButton = styled(Button)({
     minWidth: "50px",
     height: "50px",
@@ -67,14 +83,16 @@ const Footer = () => {
   });
   const BottomNavigationComponent = styled(Box)(({ theme }) => ({
     borderTop: `1px solid ${theme.palette.sidebar.border}`,
-
+    margin: "10px 20px",
+    borderRadius: "20px",
     padding: "5px 20px",
     position: "fixed",
     bottom: 0,
     right: 0,
     left: 0,
-    backgroundColor: theme.palette.header.background.default,
-    height: "70px",
+    backgroundColor: theme.palette.bottomMenu.background.default,
+
+    height: "90px",
     zIndex: 1002,
     gap: "10px",
     borderTop:
@@ -89,23 +107,40 @@ const Footer = () => {
     alignItems: "center",
 
     position: "relative",
-    backgroundColor: theme.palette.background.menuItem,
-    color: theme.palette.mode === "light" ? "#0e1217" : "#ffffff",
+
+    color: theme.palette.mode === "light" ? "#ffffff" : "#ffffff",
     borderRadius: "20px",
+    maxWidth: "calc(100% / 4)",
+    width: "100%",
 
     height: "100%",
-    width: "calc(100% / 3)",
-
+    fontSize: "3rem",
     "&:hover": {
-      backgroundColor: theme.palette.background.menuItemHover,
+      // backgroundColor: theme.palette.background.menuItemHover,
+      color: "#20b8fb",
       borderRadius: "20px",
     },
   }));
   const BottomMenu = [
+    {
+      value: "home",
+      key: "/",
+      icon: <AiFillHome />,
+    },
     // {
-    //   value: "home",
+    //   value: "about-me",
     //   icon: (
-    //     <MessageOutlinedIcon
+    //     <InfoOutlinedIcon
+    //       sx={{
+    //         fontSize: "2rem",
+    //       }}
+    //     />
+    //   ),
+    // },
+    // {
+    //   value: "setting",
+    //   icon: (
+    //     <SettingsOutlinedIcon
     //       sx={{
     //         fontSize: "2rem",
     //       }}
@@ -113,34 +148,19 @@ const Footer = () => {
     //   ),
     // },
     {
-      value: "about-me",
-      icon: (
-        <InfoOutlinedIcon
-          sx={{
-            fontSize: "2rem",
-          }}
-        />
-      ),
+      value: "message",
+      key: "/chat",
+      icon: <AiFillMessage />,
     },
     {
       value: "setting",
-      icon: (
-        <SettingsOutlinedIcon
-          sx={{
-            fontSize: "2rem",
-          }}
-        />
-      ),
+      key: "/setting",
+      icon: <AiTwotoneSetting />,
     },
     {
       value: "signout",
-      icon: (
-        <LogoutOutlinedIcon
-          sx={{
-            fontSize: "2rem",
-          }}
-        />
-      ),
+      key: "/signout",
+      icon: <FaSignOutAlt />,
     },
   ];
   return (
@@ -152,6 +172,12 @@ const Footer = () => {
       >
         {BottomMenu.map((item, i) => (
           <BottomNavigationActionComponent
+            as={motion.div}
+            sx={{
+              color: value === item.value ? "#20b8fb" : "#ffffff",
+            }}
+            whileHover={{ scale: 1.3 }}
+            whileTap={{ scale: 0.9 }}
             key={i}
             value={item.value}
             onClick={() => handleClickItem(item.value)}
@@ -163,4 +189,4 @@ const Footer = () => {
     </>
   );
 };
-export default Footer;
+export default memo(Footer);

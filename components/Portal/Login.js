@@ -64,15 +64,16 @@ const Login = ({ setStep }) => {
         account: data.account,
         password: data.password,
         redirect: false,
+        callbackUrl: "/",
       });
 
       setIsLoading(false);
       if (result.error) {
         return toast.error(result.error);
       }
-
       toast.success("Đăng nhập thành công, chúc bạn tham gia vui vẻ");
-      window.location.reload();
+
+      // window.location.reload();
     } catch (err) {
       setIsLoading(false);
       if (err.response) {

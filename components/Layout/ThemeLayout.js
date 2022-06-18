@@ -7,6 +7,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import { createGlobalStyle } from "styled-components";
 import { getDarkMode } from "../../redux/actions/getDarkMode";
+import { getCookie } from "cookies-next";
+import cookieCutter from "cookie-cutter";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -138,6 +140,17 @@ const getDesignTokens = (mode) => ({
             }
           : {
               default: "#0e1217",
+            }),
+      },
+    },
+    bottomMenu: {
+      background: {
+        ...(mode === "light"
+          ? {
+              default: "#323435",
+            }
+          : {
+              default: "#ffffff",
             }),
       },
     },
@@ -295,7 +308,8 @@ const ThemeLayout = (props) => {
   }, []);
 
   const { data: session, status } = useSession();
-  if (session && session.user.access_token) {
+
+  if (session && session.user) {
     axios.defaults.headers.common[
       "Authorization"
     ] = `Bearer ${session.user.access_token}`;

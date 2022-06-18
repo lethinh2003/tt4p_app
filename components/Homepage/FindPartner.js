@@ -1,4 +1,4 @@
-import { Button, Typography } from "@mui/material";
+import { Button, Typography, Box } from "@mui/material";
 import axios from "axios";
 import { motion } from "framer-motion";
 import { signOut, useSession } from "next-auth/react";
@@ -12,21 +12,25 @@ import { getToggleBanned } from "../../redux/actions/getToggleBanned";
 import useLoading from "../../utils/useLoading";
 import Loading from "../Loading/Loading";
 import Chat from "./Chat";
-import Partner from "./Partner";
 import YourSelf from "./YourSelf";
+
+import Partner from "./Partner";
+import CountFindPartner from "../Chat/CountFindPartner";
 let socket;
 const FindPartner = () => {
+  const { data: session, status } = useSession();
+  const socketDisconnectNoti = useRef(null);
+  const socketDisconnectPartner = useRef(null);
   const TimeIntervalFindPartner = useRef(null);
+
   const TimeOutFindPartner = useRef(null);
   const TimeIntervalBannedAccount = useRef(null);
-  const { data: session, status } = useSession();
   const [isWaitingRoom, setIsWaitingRoom] = useState(false);
   const [isError, setIsError] = useState(false);
   const { isLoading, setIsLoading } = useLoading();
   const [isInRoom, setIsInRoom] = useState(false);
   const [partner, setPartner] = useState();
   const [isHideInfo, setIsHideInfo] = useState(true);
-
   const [user, setUser] = useState();
   const data = useSelector((state) => state.user.data);
   const requesting = useSelector((state) => state.user.requesting);
@@ -41,40 +45,115 @@ const FindPartner = () => {
     }
   }, [status]);
   useEffect(() => {
-    if (data && data.data) {
-      setUser(data.data);
-      if (socket) {
-        socket.emit("join-room-unique-account", data.data.account);
-      }
-      if (data.data.status === false) {
-        dispatch(getToggleBanned(true));
-        if (socket) {
-          socket.disconnect();
-        }
-      }
-    }
-  }, [data]);
-  useEffect(() => {
-    return () => clearInterval(TimeIntervalFindPartner.current);
+    socket = socketIOClient.connect(process.env.ENDPOINT_SERVER);
+    return () => {
+      socket.disconnect();
+    };
   }, []);
   useEffect(() => {
-    const outChatRoom = async () => {
-      if (isWaitingRoom) {
-        if (!isInRoom) {
-          await socket.emit("out-waiting-room");
-          setIsWaitingRoom(false);
-          setIsInRoom(false);
-        } else {
-          await socket.emit("out-chat-room", partner);
-          setIsWaitingRoom(false);
-          setIsInRoom(false);
-        }
-      }
+    return () => {
+      clearTimeout(TimeOutFindPartner.current);
+      clearInterval(TimeIntervalFindPartner.current);
     };
-    if (socket && isWaitingRoom) {
-      outChatRoom();
+  }, []);
+  useEffect(() => {
+    socket.on("find-partner", (data) => {
+      setIsLoading(false);
+      if (data.status === "fail") {
+        // toast.error(data.message);
+      }
+    });
+
+    socket.on("disconnected-for-partner", () => {
+      setIsWaitingRoom(false);
+      setIsInRoom(false);
+    });
+    socket.on("send-disconnected-for-partner", (roomRandom) => {
+      socket.emit("receive-disconnected-for-partner", roomRandom);
+    });
+    socket.on("join-room-for-partner", ({ partner }) => {
+      socket.emit("join-room-for-partner", partner);
+    });
+    socket.on("find-partner-success", (data) => {
+      let { partner, message } = data;
+      console.log(data);
+      clearInterval(TimeIntervalFindPartner.current);
+      setIsInRoom(true);
+      setPartner(partner);
+      message = message.replace(
+        message,
+        `Tìm bạn thành công, hãy tâm sự vui vẻ nhé!`
+      );
+      toast.success(message);
+    });
+    socket.on("send-noti-disconnected-for-partner", (message) => {
+      console.log("message: ", message);
+      toast.info(message);
+    });
+    socket.on("out-chat-room-for-partner", (partner) => {
+      console.log("vcl nha thinh l");
+      socket.emit("out-chat-room", partner);
+      setIsWaitingRoom(false);
+      setIsInRoom(false);
+    });
+
+    socket.on("banned-account", async (status) => {
+      if (isWaitingRoom && !isInRoom) {
+        await socket.emit("out-waiting-room");
+      } else if (isWaitingRoom && isInRoom && partner) {
+        await socket.emit("out-chat-room", partner);
+      }
+      setIsWaitingRoom(false);
+      setIsInRoom(false);
+      dispatch(getToggleBanned(!status));
+    });
+
+    console.log("mounted", socket);
+    return () => {
+      socket.off("find-partner");
+      socket.off("join-room-for-partner");
+      socket.off("disconnected-for-partner");
+      socket.off("send-disconnected-for-partner");
+      socket.off("join-room-for-partner");
+      socket.off("find-partner-success");
+      socket.off("send-noti-disconnected-for-partner");
+      socket.off("out-chat-room-for-partner");
+      socket.off("banned-account");
+
+      console.log("unmounted", socket);
+    };
+  }, [socket]);
+
+  useEffect(() => {
+    if (data && data.data && socket) {
+      setUser(data.data);
+      socket.emit("join-room-unique-account", data.data.account);
+      if (data.data.status === false) {
+        dispatch(getToggleBanned(true));
+        socket.disconnect();
+      }
     }
-  }, [requesting]);
+  }, [data, socket]);
+
+  // useEffect(() => {
+  //   const outChatRoom = async () => {
+  //     if (isWaitingRoom) {
+  //       if (!isInRoom) {
+  //         await socket.emit("out-waiting-room");
+  //         setIsWaitingRoom(false);
+  //         setIsInRoom(false);
+  //       } else {
+  //         await socket.emit("out-chat-room", partner);
+  //         setIsWaitingRoom(false);
+  //         setIsInRoom(false);
+  //       }
+  //     }
+  //   };
+  //   if (socket && isWaitingRoom) {
+  //     outChatRoom();
+  //   }
+  // }, [requesting]);
+
   useEffect(() => {
     if (partner) {
       console.log(partner);
@@ -83,105 +162,10 @@ const FindPartner = () => {
   }, [partner]);
 
   useEffect(() => {
-    socketInitializer();
-    return () => {
-      socket.disconnect();
-      clearTimeout(TimeOutFindPartner.current);
-    };
-  }, [status]);
-  useEffect(() => {
-    if (socket) {
-      socket.on("banned-account", async (status) => {
-        if (isWaitingRoom && !isInRoom) {
-          await socket.emit("out-waiting-room");
-        } else if (isWaitingRoom && isInRoom && partner) {
-          await socket.emit("out-chat-room", partner);
-        }
-        setIsWaitingRoom(false);
-        setIsInRoom(false);
-
-        dispatch(getToggleBanned(!status));
-      });
-      return () => {
-        socket.off("banned-account");
-      };
-    }
-  }, [partner, isWaitingRoom, isInRoom]);
-  useEffect(() => {
     if (errorGetUser) {
       toast.error(errorMessageGetUser);
     }
   }, [errorGetUser]);
-
-  const socketInitializer = async () => {
-    socket = socketIOClient.connect(process.env.ENDPOINT_SERVER);
-
-    socket.on("find-partner", (data) => {
-      setIsLoading(false);
-
-      if (data.status === "fail") {
-        // toast.error(data.message);
-      }
-    });
-
-    socket.on("join-room-for-partner", (data) => {
-      socket.emit("join-room-for-partner", data.user);
-    });
-
-    socket.on("send-noti-disconnected-for-partner", (message) => {
-      toast.info(message);
-    });
-
-    socket.on("out-chat-room-for-partner", (partner) => {
-      socket.emit("out-chat-room", partner);
-      setIsWaitingRoom(false);
-      setIsInRoom(false);
-    });
-    socket.on("disconnected-for-partner", () => {
-      setIsWaitingRoom(false);
-      setIsInRoom(false);
-    });
-    socket.on("send-disconnected-for-partner", (data) => {
-      socket.emit("receive-disconnected-for-partner", data);
-    });
-    socket.on("find-partner-success", (data) => {
-      clearInterval(TimeIntervalFindPartner.current);
-      if (session && session.user) {
-        setIsInRoom(true);
-        let message = data.message;
-        if (data.user.account === session.user.account) {
-          const userPartner = data.partner;
-
-          setPartner(userPartner);
-          message = message.replace(
-            message,
-            `Tìm bạn thành công, hãy tâm sự vui vẻ nhé!`
-          );
-          // message = message.replace(
-          //   "$name",
-          //   `Họ tên: ${data.partner.name}, giới tính: ${data.partner.sex}, ${
-          //     new Date().getFullYear() - data.partner.date
-          //   } tuổi, đang sống ở tỉnh/TP: ${data.partner.city} `
-          // );
-        } else {
-          const userPartner = data.user;
-
-          setPartner(userPartner);
-          message = message.replace(
-            message,
-            `Tìm bạn thành công, hãy tâm sự vui vẻ nhé!`
-          );
-          // message = message.replace(
-          //   "$name",
-          //   `Họ tên: ${data.user.name}, giới tính: ${data.user.sex}, ${
-          //     new Date().getFullYear() - data.partner.date
-          //   } tuổi, đang sống ở tỉnh/TP: ${data.user.city} `
-          // );
-        }
-        toast.success(message);
-      }
-    });
-  };
 
   const handleClickJoinWaitingRoom = async () => {
     if (getToggleStatusBanned) {
@@ -197,11 +181,11 @@ const FindPartner = () => {
         );
         socket.emit("join-list-users", user);
         toast.info(
-          "Tham gia vào phòng chờ thành công, Lưu ý rằng bạn sẽ nhận được ghép đôi bất cứ lúc nào khi còn đang trong phòng chờ! Bạn hãy nhấn vào Tìm bạn thui để tìm nhaa"
+          "Tham gia vào phòng chờ thành công. Đang tiến hành tìm đối phương!"
         );
         TimeIntervalFindPartner.current = setInterval(() => {
           socket.emit("find-partner", user);
-        }, 1000);
+        }, 2000);
         setIsLoading(false);
         setIsWaitingRoom(true);
       } catch (err) {
@@ -236,6 +220,9 @@ const FindPartner = () => {
       socket.emit("find-partner", user);
     }
   };
+  const handleTimeoutFindPartner = () => {
+    handleClickOutWaitingRoom();
+  };
 
   return (
     <>
@@ -262,15 +249,10 @@ const FindPartner = () => {
                 <>
                   {!isInRoom && (
                     <>
-                      {/* <Button
-                        as={motion.div}
-                        whileHover={{ scale: 1.02 }}
-                        type="submit"
-                        onClick={() => handleClickFindPartner()}
-                      >
-                        Tìm bạn thui!!
-                      </Button> */}
-                      <Typography>Đang tìm bạn...</Typography>
+                      <CountFindPartner
+                        handleTimeoutFindPartner={handleTimeoutFindPartner}
+                      />
+
                       <Button
                         as={motion.div}
                         whileHover={{ scale: 1.02 }}

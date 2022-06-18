@@ -1,5 +1,4 @@
-import { Typography } from "@mui/material";
-
+import { Box, Typography } from "@mui/material";
 const Introduce = () => {
   // const { boy, girl, lgbt } = dataUserWaiting;
   const convertDay = (day) => {
