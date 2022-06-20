@@ -1,17 +1,17 @@
 import {
-  GET_LIST_FOLLOWINGS,
-  REMOVE_ITEM_LIST_FOLLOWINGS,
+  GET_LIST_HEARTED_POSTS,
+  REMOVE_ITEM_LIST_HEARTED_POSTS,
 } from "../actions/constants";
 const initialState = [];
-const getListFollowingsReducer = (state = initialState, payload) => {
+const getListHeartedPostsReducer = (state = initialState, payload) => {
   switch (payload.type) {
-    case GET_LIST_FOLLOWINGS:
+    case GET_LIST_HEARTED_POSTS:
       if (state.includes(payload.data)) {
         return state;
       }
 
       return [...state, payload.data];
-    case REMOVE_ITEM_LIST_FOLLOWINGS:
+    case REMOVE_ITEM_LIST_HEARTED_POSTS:
       const newState = state.filter((item, i) => item !== payload.data);
 
       return newState;
@@ -19,4 +19,4 @@ const getListFollowingsReducer = (state = initialState, payload) => {
       return state;
   }
 };
-export default getListFollowingsReducer;
+export default getListHeartedPostsReducer;

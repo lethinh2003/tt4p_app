@@ -6,7 +6,6 @@ import { useEffect, useRef, useState } from "react";
 import { ThreeDots } from "react-loading-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import socketIOClient from "socket.io-client";
 import { getUser } from "../../redux/actions/getUser";
 import { getToggleBanned } from "../../redux/actions/getToggleBanned";
 import useLoading from "../../utils/useLoading";
@@ -16,8 +15,8 @@ import YourSelf from "./YourSelf";
 
 import Partner from "./Partner";
 import CountFindPartner from "../Chat/CountFindPartner";
-let socket;
-const FindPartner = () => {
+
+const FindPartner = ({ socket }) => {
   const { data: session, status } = useSession();
   const socketDisconnectNoti = useRef(null);
   const socketDisconnectPartner = useRef(null);
@@ -40,28 +39,35 @@ const FindPartner = () => {
 
   const dispatch = useDispatch();
   useEffect(() => {
-    if (status === "authenticated") {
+    if (status === "authenticated" && !data) {
       dispatch(getUser(session.user.account));
     }
   }, [status]);
   useEffect(() => {
-    socket = socketIOClient.connect(process.env.ENDPOINT_SERVER);
+    if (socket) {
+      socketInitializer();
+    }
     return () => {
-      socket.disconnect();
-    };
-  }, []);
-  useEffect(() => {
-    return () => {
-      clearTimeout(TimeOutFindPartner.current);
-      clearInterval(TimeIntervalFindPartner.current);
-    };
-  }, []);
-  useEffect(() => {
-    socket.on("find-partner", (data) => {
-      setIsLoading(false);
-      if (data.status === "fail") {
-        // toast.error(data.message);
+      if (socket) {
+        socket.off("find-partner");
+        socket.off("join-room-for-partner");
+        socket.off("disconnected-for-partner");
+        socket.off("send-disconnected-for-partner");
+        socket.off("join-room-for-partner");
+        socket.off("find-partner-success");
+        socket.off("send-noti-disconnected-for-partner");
+        socket.off("out-chat-room-for-partner");
+        socket.off("banned-account");
       }
+    };
+  }, [socket]);
+  const socketInitializer = () => {
+    socket.on("find-partner", (data) => {
+      console.log(data);
+      setIsLoading(false);
+      // if (data.status === "fail") {
+      //   // toast.error(data.message);
+      // }
     });
 
     socket.on("disconnected-for-partner", () => {
@@ -107,22 +113,80 @@ const FindPartner = () => {
       setIsInRoom(false);
       dispatch(getToggleBanned(!status));
     });
-
-    console.log("mounted", socket);
+  };
+  useEffect(() => {
     return () => {
-      socket.off("find-partner");
-      socket.off("join-room-for-partner");
-      socket.off("disconnected-for-partner");
-      socket.off("send-disconnected-for-partner");
-      socket.off("join-room-for-partner");
-      socket.off("find-partner-success");
-      socket.off("send-noti-disconnected-for-partner");
-      socket.off("out-chat-room-for-partner");
-      socket.off("banned-account");
-
-      console.log("unmounted", socket);
+      clearTimeout(TimeOutFindPartner.current);
+      clearInterval(TimeIntervalFindPartner.current);
     };
-  }, [socket]);
+  }, []);
+  // useEffect(() => {
+  //   socket.on("find-partner", (data) => {
+  //     setIsLoading(false);
+  //     if (data.status === "fail") {
+  //       // toast.error(data.message);
+  //     }
+  //   });
+
+  //   socket.on("disconnected-for-partner", () => {
+  //     setIsWaitingRoom(false);
+  //     setIsInRoom(false);
+  //   });
+  //   socket.on("send-disconnected-for-partner", (roomRandom) => {
+  //     socket.emit("receive-disconnected-for-partner", roomRandom);
+  //   });
+  //   socket.on("join-room-for-partner", ({ partner }) => {
+  //     socket.emit("join-room-for-partner", partner);
+  //   });
+  //   socket.on("find-partner-success", (data) => {
+  //     let { partner, message } = data;
+  //     console.log(data);
+  //     clearInterval(TimeIntervalFindPartner.current);
+  //     setIsInRoom(true);
+  //     setPartner(partner);
+  //     message = message.replace(
+  //       message,
+  //       `Tìm bạn thành công, hãy tâm sự vui vẻ nhé!`
+  //     );
+  //     toast.success(message);
+  //   });
+  //   socket.on("send-noti-disconnected-for-partner", (message) => {
+  //     console.log("message: ", message);
+  //     toast.info(message);
+  //   });
+  //   socket.on("out-chat-room-for-partner", (partner) => {
+  //     console.log("vcl nha thinh l");
+  //     socket.emit("out-chat-room", partner);
+  //     setIsWaitingRoom(false);
+  //     setIsInRoom(false);
+  //   });
+
+  //   socket.on("banned-account", async (status) => {
+  //     if (isWaitingRoom && !isInRoom) {
+  //       await socket.emit("out-waiting-room");
+  //     } else if (isWaitingRoom && isInRoom && partner) {
+  //       await socket.emit("out-chat-room", partner);
+  //     }
+  //     setIsWaitingRoom(false);
+  //     setIsInRoom(false);
+  //     dispatch(getToggleBanned(!status));
+  //   });
+
+  //   console.log("mounted", socket);
+  //   return () => {
+  //     socket.off("find-partner");
+  //     socket.off("join-room-for-partner");
+  //     socket.off("disconnected-for-partner");
+  //     socket.off("send-disconnected-for-partner");
+  //     socket.off("join-room-for-partner");
+  //     socket.off("find-partner-success");
+  //     socket.off("send-noti-disconnected-for-partner");
+  //     socket.off("out-chat-room-for-partner");
+  //     socket.off("banned-account");
+
+  //     console.log("unmounted", socket);
+  //   };
+  // }, [socket]);
 
   useEffect(() => {
     if (data && data.data && socket) {

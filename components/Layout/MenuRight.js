@@ -1,25 +1,20 @@
 import { Box } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import SuggestFriends from "../MenuRight/SuggestFriends";
-import BottomMenu from "./BottomMenu";
 import LatestPost from "../MenuRight/LatestPost";
 import OptionMenu from "../MenuRight/OptionMenu";
-import { memo } from "react";
-const MenuRight = () => {
-  const dispatch = useDispatch();
-  console.log("render-right");
-
+import SuggestFriends from "../MenuRight/SuggestFriends";
+const MenuRight = ({ session, status }) => {
   const ItemWrapper = styled(Box)(({ theme }) => ({
+    backgroundColor: theme.palette.sidebar.background.default,
+
     right: 0,
     bottom: 0,
-    padding: "20px 0px",
+    padding: "20px 5px",
     alignItems: "center",
+    position: "fixed",
     zIndex: 97,
     width: "400px",
-    position: "fixed",
+
     display: "flex",
     flexDirection: "column",
     height: "100%",
@@ -82,21 +77,23 @@ const MenuRight = () => {
 
   return (
     <>
-      <ItemWrapper
-        className="ms-sidebar"
-        sx={{
-          display: { xs: "none", md: "flex" },
-        }}
-      >
-        <div className="ms-sidebar__wrapper">
-          <div className="ms-navbar">
-            <OptionMenu />
-            <SuggestFriends />
-            <LatestPost />
+      {status === "authenticated" && (
+        <ItemWrapper
+          className="ms-sidebar"
+          sx={{
+            display: { xs: "none", md: "flex" },
+          }}
+        >
+          <div className="ms-sidebar__wrapper">
+            <div className="ms-navbar">
+              <OptionMenu />
+              <SuggestFriends session={session} status={status} />
+              <LatestPost session={session} status={status} />
+            </div>
           </div>
-        </div>
-      </ItemWrapper>
+        </ItemWrapper>
+      )}
     </>
   );
 };
-export default memo(MenuRight);
+export default MenuRight;

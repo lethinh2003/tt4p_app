@@ -1,14 +1,13 @@
-import { Typography, Box, Skeleton, Button } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import axios from "axios";
 import { useSession } from "next-auth/react";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Oval } from "react-loading-icons";
 import { toast } from "react-toastify";
 import CreateComment from "./CommentPost/CreateComment";
 import Item from "./CommentPost/Item";
 import Loading from "./CommentPost/Loading";
-import { Oval } from "react-loading-icons";
-import socketIOClient from "socket.io-client";
-let socket;
+
 const CommentPost = (props) => {
   const requestApiRef = useRef(null);
   const createCommentBoxRef = useRef(null);
@@ -24,13 +23,8 @@ const CommentPost = (props) => {
   const [resultsPage, setResultsPage] = useState(1);
   const { data: session, status } = useSession();
 
-  const { item } = props;
-  useEffect(() => {
-    socketInitializer();
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
+  const { item, socket } = props;
+
   const setEditComment = (data) => {
     if (replyCommentData) {
       setReplyCommentData("");
@@ -58,12 +52,13 @@ const CommentPost = (props) => {
       }
     }
     return () => {
-      socket.off();
+      if (socket) {
+        socket.off("create-post-comment");
+        socket.off("typing-post-comment");
+      }
     };
-  }, [dataComments]);
-  const socketInitializer = async () => {
-    socket = socketIOClient.connect(process.env.ENDPOINT_SERVER);
-  };
+  }, [dataComments, socket, status]);
+
   useEffect(() => {
     if (status === "authenticated") {
       requestApiRef.current = getPostComments();

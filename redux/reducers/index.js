@@ -9,9 +9,13 @@ import getPostActivityReducer from "./getPostActivityReducer";
 import getPostHeartsReducer from "./getPostHeartsReducer";
 import getListFollowingsReducer from "./getListFollowingsReducer";
 import getListCommentsLoadingReducer from "./getListCommentsLoadingReducer";
+import getSuggestFriendsReducer from "./getSuggestFriendsReducer";
+import getListHeartedPostsReducer from "./getListHeartedPostsReducer";
 const reducers = combineReducers({
   user: getUserReducer,
-  useFollowing: getListFollowingsReducer,
+  suggestFriends: getSuggestFriendsReducer,
+  userFollowing: getListFollowingsReducer,
+  userHearted: getListHeartedPostsReducer,
   listCommentsLoading: getListCommentsLoadingReducer,
   postActivity: getPostActivityReducer,
   postHearts: getPostHeartsReducer,

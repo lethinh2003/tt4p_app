@@ -1,30 +1,62 @@
-import { Avatar, Box, Skeleton, Typography, Button } from "@mui/material";
+import { Avatar, Box, Button, Skeleton, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import axios from "axios";
 import { motion } from "framer-motion";
-import { useSession } from "next-auth/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { Oval } from "react-loading-icons";
 import { toast } from "react-toastify";
 import Item from "../Feeds/Item";
-import InfiniteScroll from "react-infinite-scroll-component";
-import { Oval } from "react-loading-icons";
+import { useQuery } from "react-query";
+import { ThreeDots } from "react-loading-icons";
 
-const Feeds = () => {
-  const { data: session, status } = useSession();
+const Feeds = ({ session, status }) => {
   const [buttonLoadmore, setButtonLoadmore] = useState(false);
 
-  const test = useRef(null);
-  const timeRefLoadingFeeds = useRef(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [resultsOnPage, setResultsOnPage] = useState(5);
+  const [resultsOnPage, setResultsOnPage] = useState(6);
   const [posts, setPosts] = useState([]);
   const [filter, setFilter] = useState("all");
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
   const [isLoadingLoadMore, setIsLoadingLoadMore] = useState(false);
+  const callDataApi = async () => {
+    setCurrentPage(1);
+    setButtonLoadmore(true);
+
+    const results = await axios.get(
+      `${process.env.ENDPOINT_SERVER}/api/v1/posts?sort=${filter}&pageSize=${resultsOnPage}`
+    );
+    return results.data;
+  };
+  const getListQuery = useQuery("get-all-posts", callDataApi, {
+    cacheTime: Infinity,
+    refetchOnWindowFocus: false,
+    manual: true,
+  });
+  const {
+    data,
+    isLoading,
+    isFetching,
+    isError: isErrorQuery,
+    error,
+    refetch,
+  } = getListQuery;
+
   useEffect(() => {
-    if (status === "authenticated") {
-      getAllPosts();
+    if (data && data.results) {
+      setPosts(data.data);
+      if (data.results < resultsOnPage) {
+        setButtonLoadmore(false);
+      } else {
+        if (filter === "following" || filter === "popular") {
+          setCurrentPage((prev) => prev + 1);
+        }
+        console.log("hehe");
+        setButtonLoadmore(true);
+      }
     }
+  }, [data]);
+  useEffect(() => {
+    refetch();
   }, [filter]);
 
   const getAllPosts = async () => {
@@ -45,7 +77,7 @@ const Feeds = () => {
         }
         setButtonLoadmore(true);
       }
-      console.log(res.data.data);
+
       setIsLoading(false);
       setPosts(res.data.data);
     } catch (err) {
@@ -71,7 +103,7 @@ const Feeds = () => {
           `${process.env.ENDPOINT_SERVER}/api/v1/posts?sort=${filter}&page=${currentPage}&pageSize=${resultsOnPage}`
         );
       }
-      console.log("data moi", res.data.data);
+
       if (res.data.results < resultsOnPage) {
         setButtonLoadmore(false);
       } else {
@@ -124,17 +156,16 @@ const Feeds = () => {
     },
   }));
   const handleClickFilter = (key) => {
-    if (posts.length >= 0 && !isLoading) {
+    if (posts.length >= 0 && !isFetching) {
       setFilter(key);
     }
   };
   return (
     <>
       <Box
-        ref={test}
         sx={{
           width: "100%",
-          maxWidth: "calc(100% - 60px)",
+          minHeight: "100vh",
           display: "flex",
           flexDirection: "column",
           gap: "30px",
@@ -177,11 +208,23 @@ const Feeds = () => {
             ))}
           </Box>
         </Box>
+        {isFetching && (
+          <Box
+            sx={{
+              textAlign: "center",
+            }}
+          >
+            <ThreeDots fill="#06bcee" width={30} />
+          </Box>
+        )}
 
         <Box
           sx={{
             display: "grid",
-            gridTemplateColumns: { xs: "repeat(1, 1fr)", md: "repeat(2, 1fr)" },
+            gridTemplateColumns: {
+              xs: "repeat(1, minmax(0,1fr))",
+              md: "repeat(2, minmax(0,1fr))",
+            },
             gap: "30px",
           }}
         >
@@ -205,7 +248,7 @@ const Feeds = () => {
                       borderRadius: "30px",
                       overflow: "hidden",
                       boxShadow: (theme) =>
-                        `0px 3px 20px 6px${theme.palette.feeds.boxShadow}`,
+                        `0px 3px 20px 6px ${theme.palette.feeds.boxShadow}`,
                       display: "flex",
                       fontSize: "3rem",
                       color: "#ffffff",
@@ -308,7 +351,7 @@ const Feeds = () => {
 
           {!isLoading &&
             posts.length > 0 &&
-            posts.map((item, i) => <Item key={i} i={i} item={item} />)}
+            posts.map((item, i) => <Item key={item._id} i={i} item={item} />)}
         </Box>
         {buttonLoadmore && (
           <Button

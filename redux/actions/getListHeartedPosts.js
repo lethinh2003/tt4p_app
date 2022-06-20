@@ -1,4 +1,4 @@
-export const getListFollowings = (payload) => (dispatch) => {
+export const getListHeartedPosts = (payload) => (dispatch) => {
   dispatch({
     type: payload.type,
     data: payload.data,

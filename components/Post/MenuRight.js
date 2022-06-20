@@ -7,6 +7,8 @@ import TableOfContent from "./TableOfContent";
 import FeaturesPost from "./FeaturesPost";
 const MenuRight = ({ item }) => {
   const BoxNav = styled(Box)(({ theme }) => ({
+    backgroundColor: theme.palette.sidebar.background.default,
+
     width: "100%",
     height: "50px",
     display: "flex",
@@ -42,6 +44,8 @@ const MenuRight = ({ item }) => {
     },
   }));
   const ItemWrapper = styled(Box)(({ theme }) => ({
+    backgroundColor: theme.palette.sidebar.background.default,
+
     right: 0,
     bottom: 0,
     padding: "20px 0px",

@@ -4,7 +4,7 @@ import useCity from "../../utils/useCity";
 
 const InfoEditCity = ({ myCity, setMyCity }) => {
   const { city } = useCity();
-  console.log("re-render");
+
   return (
     <>
       <DialogContentText>Đang sống ở</DialogContentText>

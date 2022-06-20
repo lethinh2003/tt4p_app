@@ -17,14 +17,10 @@ const Layout = (props) => {
     backgroundColor: theme.palette.box.background.default,
 
     width: "100%",
-    height: "calc(100% - 20px)",
-    position: "absolute",
-    transform: "translate(-50%, -50%)",
-    top: "50%",
-    left: "50%",
-    borderRadius: "30px",
+    height: "100%",
+    minHeight: "100vh",
+
     boxShadow: `0px 4px 6px 2px ${theme.palette.box.shadow.default}`,
-    overflow: "hidden",
   }));
   const ContainerBoxRightWrapper = styled(Box)(({ theme }) => ({
     backgroundColor: theme.palette.box.background.default,
@@ -38,10 +34,9 @@ const Layout = (props) => {
   const BoxWrapper = styled(Box)(({ theme }) => ({
     height: "calc(100% - 70px)",
     width: "100%",
+    paddingRight: "400px",
 
     display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
 
     gap: "20px",
     overflow: "auto",
@@ -49,47 +44,10 @@ const Layout = (props) => {
 
   return (
     <>
-      <ContainerWrapper>
-        <ContainerBoxWrapper
-          sx={{
-            borderRadius: { xs: "0px", md: "30px" },
-            height: { xs: "calc(100% - 0px)", md: "calc(100% - 0px)" },
-          }}
-        >
-          <Sidebar />
-
-          <ContainerBoxRightWrapper
-            sx={{
-              width: {
-                xs: "100%",
-                md: "calc(100% - 280px - 400px)",
-              },
-              left: {
-                xs: "0",
-                md: "280px",
-              },
-              right: {
-                xs: "0",
-                md: "400px",
-              },
-            }}
-            className="layout"
-          >
-            <BoxWrapper
-              ref={hihi}
-              sx={{
-                height: { xs: "calc(100% - 70px)", md: "100%" },
-                borderRight: (theme) => ({
-                  xs: null,
-                  md: `1px solid ${theme.palette.border.dialog}`,
-                }),
-              }}
-            >
-              {props.children}
-            </BoxWrapper>
-          </ContainerBoxRightWrapper>
-        </ContainerBoxWrapper>
-      </ContainerWrapper>
+      <ContainerBoxWrapper>
+        <Sidebar />
+        {props.children}
+      </ContainerBoxWrapper>
     </>
   );
 };

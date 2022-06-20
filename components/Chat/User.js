@@ -1,17 +1,15 @@
-import axios from "axios";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 import { ThreeDots } from "react-loading-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import socketIOClient from "socket.io-client";
 import { getToggleBanned } from "../../redux/actions/getToggleBanned";
 import { getUser } from "../../redux/actions/getUser";
 import useLoading from "../../utils/useLoading";
-import Loading from "../Loading/Loading";
 import YourSelf from "../Homepage/YourSelf";
+import Loading from "../Loading/Loading";
 import OptionChat from "./OptionChat";
-let socket;
+
 const User = () => {
   const TimeIntervalFindPartner = useRef(null);
 
@@ -28,21 +26,16 @@ const User = () => {
 
   const dispatch = useDispatch();
   useEffect(() => {
-    if (status === "authenticated") {
+    if (status === "authenticated" && !data) {
       dispatch(getUser(session.user.account));
     }
   }, [status]);
   useEffect(() => {
     if (data && data.data) {
       setUser(data.data);
-      if (socket) {
-        socket.emit("join-room-unique-account", data.data.account);
-      }
+
       if (data.data.status === false) {
         dispatch(getToggleBanned(true));
-        if (socket) {
-          socket.disconnect();
-        }
       }
     }
   }, [data]);
@@ -51,28 +44,17 @@ const User = () => {
   }, []);
 
   useEffect(() => {
-    socketInitializer();
-    return () => {
-      socket.disconnect();
-    };
-  }, [status]);
-
-  useEffect(() => {
     if (errorGetUser) {
       toast.error(errorMessageGetUser);
     }
   }, [errorGetUser]);
-
-  const socketInitializer = async () => {
-    socket = socketIOClient.connect(process.env.ENDPOINT_SERVER);
-  };
 
   return (
     <>
       {requesting && !data && <ThreeDots fill="#06bcee" />}
       {data && data.data && (
         <>
-          <Loading isLoading={isLoading} />
+          {/* <Loading isLoading={isLoading} /> */}
 
           <YourSelf user={user} />
           {!isError && !getToggleStatusBanned && <OptionChat />}

@@ -1,20 +1,16 @@
 import { Avatar, Box, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
-import { AiFillMessage } from "react-icons/ai";
-import { RiHeartsFill } from "react-icons/ri";
 import axios from "axios";
-import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
-import checkHeartedPost from "../../utils/checkHeartedPost";
-import { getPostActivity } from "../../redux/actions/getPostActivity";
-import { getPostHearts } from "../../redux/actions/getPostHearts";
 import { motion } from "framer-motion";
-
-const ItemHearts = ({ item }) => {
+import { useEffect, useState } from "react";
+import { RiHeartsFill } from "react-icons/ri";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { getListHeartedPosts } from "../../redux/actions/getListHeartedPosts";
+import { getPostActivity } from "../../redux/actions/getPostActivity";
+const ItemHearts = ({ item, session, status }) => {
   const dispatch = useDispatch();
-  const { data: session, status } = useSession();
+  const dataUserHeatedPosts = useSelector((state) => state.userHearted);
 
   const [isHearted, setIsHearted] = useState(false);
   const [hearts, setHearts] = useState(
@@ -22,14 +18,12 @@ const ItemHearts = ({ item }) => {
   );
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
-    if (status === "authenticated") {
-      if (item && item.hearts.length > 0) {
-        console.log(item.hearts);
-        const resultCheckHeart = checkHeartedPost(session.user.id, item.hearts);
-        setIsHearted(resultCheckHeart);
-      }
+    if (dataUserHeatedPosts.includes(item._id)) {
+      setIsHearted(true);
+    } else {
+      setIsHearted(false);
     }
-  }, [item, status]);
+  }, [dataUserHeatedPosts]);
 
   const AvatarProfile = styled(Avatar)(({ theme }) => ({
     "&.MuiAvatar-root": {
@@ -61,6 +55,12 @@ const ItemHearts = ({ item }) => {
 
       setIsLoading(false);
       if (res.data.message === "create_success") {
+        dispatch(
+          getListHeartedPosts({
+            type: "GET_LIST_HEARTED_POSTS",
+            data: item._id,
+          })
+        );
         setIsHearted(true);
         // setHearts(getHeartsPost.data.data.hearts_count);
         setHearts((prev) => prev + 1);
@@ -72,6 +72,12 @@ const ItemHearts = ({ item }) => {
           {
             postId: item._id,
           }
+        );
+        dispatch(
+          getListHeartedPosts({
+            type: "REMOVE_ITEM_LIST_HEARTED_POSTS",
+            data: item._id,
+          })
         );
 
         setIsHearted(false);

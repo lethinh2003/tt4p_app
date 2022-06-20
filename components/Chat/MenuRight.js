@@ -1,9 +1,5 @@
 import { Box } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import TermCreate from "./TermCreate";
 const MenuRight = () => {
   const BoxNav = styled(Box)(({ theme }) => ({
     width: "100%",
@@ -119,9 +115,7 @@ const MenuRight = () => {
         }}
       >
         <div className="ms-sidebar__wrapper">
-          <div className="ms-navbar">
-            <TermCreate />
-          </div>
+          <div className="ms-navbar"></div>
         </div>
       </ItemWrapper>
     </>

@@ -5,6 +5,8 @@ import Banned from "../../components/Dialog/Banned";
 import AboutMe from "../../components/Homepage/AboutMe";
 import Setting from "../../components/Homepage/Setting";
 import Layout from "../../components/Layout/Layout";
+import { Avatar, Box, Typography } from "@mui/material";
+import MenuRight from "../../components/Chat/MenuRight";
 export default function Home() {
   const { data: session, status } = useSession();
   useEffect(() => {
@@ -18,7 +20,20 @@ export default function Home() {
         <Banned />
         <AboutMe />
         <Setting />
-        <HomePage />
+        <Box
+          sx={{
+            padding: { xs: "0px", md: "0px 410px 0px 280px" },
+          }}
+        >
+          <Box
+            sx={{
+              padding: { xs: "20px 20px 110px 20px", md: "20px" },
+            }}
+          >
+            <HomePage />
+          </Box>
+        </Box>
+        <MenuRight />
       </Layout>
     </>
   );

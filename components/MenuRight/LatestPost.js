@@ -1,26 +1,12 @@
-import {
-  Box,
-  Switch,
-  Typography,
-  Avatar,
-  Button,
-  Skeleton,
-} from "@mui/material";
+import { Avatar, Box, Skeleton, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import Image from "next/image";
-import { AiFillMessage } from "react-icons/ai";
-import { RiHeartsFill } from "react-icons/ri";
-import { useDispatch, useSelector } from "react-redux";
 import { useSession } from "next-auth/react";
+import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { getPostActivity } from "../../redux/actions/getPostActivity";
-import { useEffect, useState, useRef } from "react";
-import { memo } from "react";
 
-const LatestPost = () => {
-  console.log("render-latest");
+const LatestPost = ({ session, status }) => {
   const requestApiRef = useRef(null);
-
-  const { data: session, status } = useSession();
 
   const dispatch = useDispatch();
   const [latestActivityPost, setLatestActivityPost] = useState("");
@@ -34,10 +20,10 @@ const LatestPost = () => {
   );
 
   useEffect(() => {
-    if (status === "authenticated" && !requestApiRef.current) {
+    if (!dataActivityPost && !requestApiRef.current) {
       requestApiRef.current = dispatch(getPostActivity(session.user.id));
     }
-  }, [status]);
+  }, []);
 
   useEffect(() => {
     if (dataActivityPost && dataActivityPost.data.length > 0) {
@@ -272,38 +258,6 @@ const LatestPost = () => {
                     {latestActivityPost.post[0].user[0].name}
                   </Typography>
                 </Box>
-                {/* <Box
-                  sx={{
-                    display: "flex",
-                    gap: "10px",
-                    fontSize: "1.7rem",
-                    height: "100%",
-                    fontWeight: "bold",
-                    color: (theme) => theme.palette.text.color.second,
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      gap: "5px",
-                      alignItems: "center",
-                      color: isHearted ? "#ff5775" : "inherit",
-                    }}
-                  >
-                    <RiHeartsFill />
-                    {latestActivityPost.post[0].hearts_count}
-                  </Box>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      gap: "5px",
-                      alignItems: "center",
-                    }}
-                  >
-                    <AiFillMessage />
-                    {latestActivityPost.post[0].comments_count}
-                  </Box>
-                </Box> */}
               </Box>
             </Box>
           )}
