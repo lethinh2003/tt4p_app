@@ -7,7 +7,7 @@ import { Provider } from "react-redux";
 import { store } from "../redux/reducers/store";
 import DefaultLayout from "../components/Layout/DefaultLayout";
 import ThemeLayout from "../components/Layout/ThemeLayout";
-import SocketProvider from "../contexts/socketProvider";
+import SocketProvider from "../contexts/SocketProvider";
 import { QueryClientProvider, QueryClient } from "react-query";
 const queryClient = new QueryClient();
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
