@@ -1,14 +1,11 @@
 import { Avatar, Box, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { motion } from "framer-motion";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { AiFillMessage } from "react-icons/ai";
-import { RiHeartsFill } from "react-icons/ri";
-import axios from "axios";
-import { toast } from "react-toastify";
 import ItemHearts from "./ItemHearts";
-import { motion } from "framer-motion";
-import Link from "next/link";
 
 const Item = ({ item, i }) => {
   const timeoutRef = useRef(null);
@@ -32,7 +29,6 @@ const Item = ({ item, i }) => {
   return (
     <>
       <Box
-        key={i}
         as={motion.div}
         initial={{ opacity: 1, filter: "blur(5px)" }}
         transition={{
@@ -130,7 +126,7 @@ const Item = ({ item, i }) => {
               color: (theme) => theme.palette.text.color.second,
             }}
           >
-            <ItemHearts item={item} />
+            <ItemHearts item={item} session={session} status={status} />
             <Box
               sx={{
                 display: "flex",

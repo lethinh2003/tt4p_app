@@ -1,41 +1,26 @@
-import {
-  Box,
-  Switch,
-  Typography,
-  Avatar,
-  Button,
-  Skeleton,
-} from "@mui/material";
+import { Avatar, Box, Button, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import { toast } from "react-toastify";
-import { useSession } from "next-auth/react";
-import { memo } from "react";
 import { Oval } from "react-loading-icons";
-import { useSelector } from "react-redux";
-
-const Item = ({ item, key }) => {
-  const dataUser = useSelector((state) => state.user.data);
-
-  const timeRef = useRef(null);
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { getListFollowings } from "../../redux/actions/getListFollowings";
+const Item = ({ item }) => {
+  const dispatch = useDispatch();
+  const dataUserFollowing = useSelector((state) => state.userFollowing);
   const [isLoading, setIsLoading] = useState(false);
-  const [isFollows, setIsFollows] = useState(false);
 
-  const [message, setMessage] = useState("Follow");
+  const [message, setMessage] = useState(<Oval width={20} />);
   useEffect(() => {
-    if (dataUser) {
-      const listFollowings = dataUser.data.following;
-      if (listFollowings.includes(item._id)) {
-        setIsFollows(true);
+    if (dataUserFollowing) {
+      if (dataUserFollowing.includes(item._id)) {
+        setMessage("Unfollow");
+      } else {
+        setMessage("Follow");
       }
     }
-  }, [dataUser]);
-  useEffect(() => {
-    if (isFollows) {
-      setMessage("Unfollow");
-    }
-  }, [isFollows]);
+  }, [dataUserFollowing]);
 
   const AvatarProfile = styled(Avatar)(({ theme }) => ({
     "&.MuiAvatar-root": {
@@ -55,8 +40,20 @@ const Item = ({ item, key }) => {
       );
       if (res.data.code === 1) {
         setMessage("Unfollow");
+        dispatch(
+          getListFollowings({
+            type: "GET_LIST_FOLLOWINGS",
+            data: item._id,
+          })
+        );
       } else {
         setMessage("Follow");
+        dispatch(
+          getListFollowings({
+            type: "REMOVE_ITEM_LIST_FOLLOWINGS",
+            data: item._id,
+          })
+        );
       }
       setIsLoading(false);
     } catch (err) {
@@ -69,71 +66,69 @@ const Item = ({ item, key }) => {
 
   return (
     <>
-      {item._id !== dataUser.data._id && (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+
+          width: "100%",
+          gap: "10px",
+        }}
+      >
         <Box
           sx={{
             display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-
-            width: "100%",
             gap: "10px",
           }}
         >
+          <AvatarProfile alt="Remy Sharp" src={item.avatar} />
           <Box
             sx={{
               display: "flex",
-              gap: "10px",
+              flexDirection: "column",
             }}
           >
-            <AvatarProfile alt="Remy Sharp" src={item.avatar} />
-            <Box
+            <Typography
               sx={{
-                display: "flex",
-                flexDirection: "column",
+                fontSize: "1.7rem",
+                fontWeight: "bold",
+                color: (theme) => theme.palette.text.color.first,
               }}
             >
-              <Typography
-                sx={{
-                  fontSize: "1.7rem",
-                  fontWeight: "bold",
-                  color: (theme) => theme.palette.text.color.first,
-                }}
-              >
-                {item.name}
-              </Typography>
-              <Typography
-                sx={{
-                  fontSize: "1rem",
-                  fontWeight: "500",
-                  color: (theme) => theme.palette.text.color.second,
-                }}
-              >
-                @{item.account}
-              </Typography>
-            </Box>
+              {item.name}
+            </Typography>
+            <Typography
+              sx={{
+                fontSize: "1rem",
+                fontWeight: "500",
+                color: (theme) => theme.palette.text.color.second,
+              }}
+            >
+              @{item.account}
+            </Typography>
           </Box>
-          <Button
-            sx={{
-              width: "100px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "5px",
-              pointerEvents: isLoading ? "none" : "visible",
-              opacity: isLoading ? 0.6 : 1,
-            }}
-            onClick={() => handleClickFollow(item)}
-          >
-            {isLoading && (
-              <>
-                <Oval width={20} />
-              </>
-            )}
-            {message}
-          </Button>
         </Box>
-      )}
+        <Button
+          sx={{
+            width: "100px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "5px",
+            pointerEvents: isLoading ? "none" : "visible",
+            opacity: isLoading ? 0.6 : 1,
+          }}
+          onClick={() => handleClickFollow(item)}
+        >
+          {isLoading && (
+            <>
+              <Oval width={20} />
+            </>
+          )}
+          {message}
+        </Button>
+      </Box>
     </>
   );
 };

@@ -18,27 +18,39 @@ const CreatePost = () => {
   return (
     <>
       <Layout>
-        <MenuRight />
         <Box
           sx={{
-            width: "100%",
-            maxWidth: "calc(100% - 60px)",
-            display: "flex",
-            flexDirection: "column",
-            gap: "30px",
+            padding: { xs: "0px", md: "0px 410px 0px 280px" },
           }}
         >
-          <Typography
+          <Box
             sx={{
-              fontSize: "1.7rem",
-              fontWeight: "bold",
-              color: (theme) => theme.palette.text.color.first,
+              padding: { xs: "20px 20px 110px 20px", md: "20px" },
             }}
           >
-            Create Post
-          </Typography>
-          <CreateNewPost />
+            <Box
+              sx={{
+                width: "100%",
+
+                display: "flex",
+                flexDirection: "column",
+                gap: "30px",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: "1.7rem",
+                  fontWeight: "bold",
+                  color: (theme) => theme.palette.text.color.first,
+                }}
+              >
+                Create Post
+              </Typography>
+              <CreateNewPost />
+            </Box>
+          </Box>
         </Box>
+        <MenuRight />
       </Layout>
     </>
   );

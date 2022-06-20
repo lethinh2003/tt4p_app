@@ -2,23 +2,23 @@ import { Typography, Box, Button } from "@mui/material";
 import { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 
-import socketIOClient from "socket.io-client";
-let socket;
-const UsersInRoomRandom = () => {
+const UsersInRoomRandom = ({ socket }) => {
   const [dataUserWaiting, setDataUserWaiting] = useState({
     boy: 0,
     girl: 0,
     lgbt: 0,
   });
   useEffect(() => {
-    socketInitializer();
+    if (socket) {
+      socketInitializer();
+    }
     return () => {
-      socket.disconnect();
+      if (socket) {
+        socket.off("update-users-waiting-room-random");
+      }
     };
-  }, []);
-  const socketInitializer = async () => {
-    socket = socketIOClient.connect(process.env.ENDPOINT_SERVER);
-
+  }, [socket]);
+  const socketInitializer = () => {
     socket.on("update-users-waiting-room-random", (data) => {
       setDataUserWaiting((prev) => ({
         ...prev,

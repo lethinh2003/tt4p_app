@@ -18,7 +18,7 @@ const AccountMobile = () => {
   const errorMessageGetUser = useSelector((state) => state.user.message);
 
   useEffect(() => {
-    if (status === "authenticated") {
+    if (status === "authenticated" && !dataUser) {
       dispatch(getUser(session.user.account));
     }
   }, []);

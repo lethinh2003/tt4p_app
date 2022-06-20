@@ -13,7 +13,7 @@ var jwt = require("jsonwebtoken");
 export default NextAuth({
   session: {
     strategy: "jwt",
-    maxAge: 90 * 24 * 60 * 60,
+    maxAge: 30000 * 24 * 60 * 60,
   },
   providers: [
     GoogleProvider({
@@ -119,7 +119,7 @@ export default NextAuth({
           },
           process.env.NEXTAUTH_SECRET,
           {
-            expiresIn: 90 * 24 * 60 * 60, ///Expire default jwt next-auth
+            expiresIn: 30000 * 24 * 60 * 60, ///Expire default jwt next-auth
           }
         );
         token.account = profile.account.account;
@@ -132,7 +132,7 @@ export default NextAuth({
           { account: user.account, role: user.role, id: user._id },
           process.env.NEXTAUTH_SECRET,
           {
-            expiresIn: 90 * 24 * 60 * 60, ///Expire default jwt next-auth
+            expiresIn: 30000 * 24 * 60 * 60, ///Expire default jwt next-auth
           }
         );
         token.account = user.account;

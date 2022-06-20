@@ -1,7 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import axios from "axios";
 import { useRouter } from "next/router";
-import { memo, useEffect, useRef } from "react";
+import { memo, useEffect, useRef, useContext } from "react";
 import Layout from "../../components/Layout/Layout";
 import CommentPost from "../../components/Post/CommentPost";
 import ContentPost from "../../components/Post/ContentPost";
@@ -10,10 +10,11 @@ import MenuRight from "../../components/Post/MenuRight";
 import Head from "next/head";
 import { useSession, getSession } from "next-auth/react";
 import { MdOutlineArticle } from "react-icons/md";
-
+import SocketContext from "../../contexts/socket";
 const PostDetail = (props) => {
   const pagePostRef = useRef(null);
   const { data: session, status } = useSession();
+  const socket = useContext(SocketContext);
   const { dataPost: item } = props;
   const router = useRouter();
 
@@ -24,52 +25,64 @@ const PostDetail = (props) => {
   }, [status]);
   return (
     <>
-      <Layout ref={pagePostRef}>
-        <MenuRight item={item} />
+      <Layout>
         <Box
           sx={{
-            width: "100%",
-            maxWidth: "calc(100% - 60px)",
-            display: "flex",
-            flexDirection: "column",
-            gap: "30px",
+            padding: { xs: "0px", md: "0px 410px 0px 280px" },
           }}
         >
-          <Typography
+          <Box
             sx={{
-              fontSize: "1.7rem",
-              fontWeight: "bold",
-              color: (theme) => theme.palette.text.color.first,
-              display: "flex",
-              gap: "10px",
-              alignItems: "center",
+              padding: { xs: "20px 20px 110px 20px", md: "20px" },
             }}
           >
-            <MdOutlineArticle />
-            Post
-          </Typography>
-          {item && (
-            <>
-              <Head>
-                <title>{`${item.title} - TroChuyen4Phuong`}</title>
-                <meta name="description" content={item.title} />
-                <meta
-                  name="keywords"
-                  content={`${item.title.split(" ").join(", ")}`}
-                />
-                <meta
-                  property="og:title"
-                  content={`${item.title} - TroChuyen4Phuong`}
-                />
-                <meta property="og:description" content={item.title} />
-              </Head>
-              <IntroducePost item={item} />
+            <Box
+              sx={{
+                width: "100%",
 
-              <ContentPost item={item} />
-              <CommentPost item={item} />
-            </>
-          )}
+                display: "flex",
+                flexDirection: "column",
+                gap: "30px",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: "1.7rem",
+                  fontWeight: "bold",
+                  color: (theme) => theme.palette.text.color.first,
+                  display: "flex",
+                  gap: "10px",
+                  alignItems: "center",
+                }}
+              >
+                <MdOutlineArticle />
+                Post
+              </Typography>
+              {item && (
+                <>
+                  <Head>
+                    <title>{`${item.title} - TroChuyen4Phuong`}</title>
+                    <meta name="description" content={item.title} />
+                    <meta
+                      name="keywords"
+                      content={`${item.title.split(" ").join(", ")}`}
+                    />
+                    <meta
+                      property="og:title"
+                      content={`${item.title} - TroChuyen4Phuong`}
+                    />
+                    <meta property="og:description" content={item.title} />
+                  </Head>
+                  <IntroducePost item={item} />
+
+                  <ContentPost item={item} />
+                  <CommentPost socket={socket} item={item} />
+                </>
+              )}
+            </Box>
+          </Box>
         </Box>
+        <MenuRight item={item} />
       </Layout>
     </>
   );

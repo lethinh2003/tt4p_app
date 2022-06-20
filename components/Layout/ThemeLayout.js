@@ -12,7 +12,7 @@ import cookieCutter from "cookie-cutter";
 
 const GlobalStyle = createGlobalStyle`
   body {
-    background-color: ${({ theme }) => theme.palette.background.first};
+    background-color: ${({ theme }) => theme.palette.box.background.default};
   }
   ::-webkit-scrollbar-thumb {
   background-color:  ${({ theme }) => theme.palette.iconColor.default};
@@ -60,7 +60,8 @@ const getDesignTokens = (mode) => ({
         root: ({ theme }) => ({
           backgroundColor: theme.palette.button.default,
           color: "#fff",
-          height: "40px",
+          minHeight: "40px",
+          maxWidth: "200px",
           textTransform: "capitalize",
           borderRadius: "10px",
           padding: "10px",
