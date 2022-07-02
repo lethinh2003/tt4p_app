@@ -1,6 +1,12 @@
 import { Box } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import YourSelf from "./MenuRight/YourSelf";
+import Partner from "./MenuRight/Partner";
+import { useDispatch, useSelector } from "react-redux";
+
 const MenuRight = () => {
+  const dataUser = useSelector((state) => state.user.data);
+
   const BoxNav = styled(Box)(({ theme }) => ({
     width: "100%",
     height: "50px",
@@ -115,7 +121,12 @@ const MenuRight = () => {
         }}
       >
         <div className="ms-sidebar__wrapper">
-          <div className="ms-navbar"></div>
+          <div className="ms-navbar">
+            <YourSelf dataUser={dataUser} />
+          </div>
+          <div className="ms-navbar">
+            <Partner />
+          </div>
         </div>
       </ItemWrapper>
     </>

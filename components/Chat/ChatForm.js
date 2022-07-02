@@ -1,8 +1,11 @@
 import SendIcon from "@mui/icons-material/Send";
 import { Box, IconButton, TextField } from "@mui/material";
 import { useRef, useState } from "react";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 import ChatEmotion from "./ChatEmotion";
 const ChatForm = ({ socket }) => {
+  const dispatch = useDispatch();
   const [chatContent, setChatContent] = useState("");
 
   const chatTypingRef = useRef(null);
@@ -19,8 +22,13 @@ const ChatForm = ({ socket }) => {
   const handleClickSubmit = () => {
     if (chatContent) {
       socket.emit("chat-typing", false);
-      socket.emit("send-chat-content", chatContent);
-      setChatContent("");
+      socket.emit("send-chat-content", chatContent, (res) => {
+        if (res.status === "ok") {
+          setChatContent("");
+        } else {
+          toast.error("Lỗi hệ thống");
+        }
+      });
     }
   };
   const handleSubmit = (event) => {

@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
-import SocketContext from "./socket";
-import socketIOClient from "socket.io-client";
 import { useSession } from "next-auth/react";
-
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { io } from "socket.io-client";
+import SocketContext from "./socket";
 const SocketProvider = (props) => {
+  // const dispatch = useDispatch();
   const { data: session, status } = useSession();
   const [value, setValue] = useState();
   useEffect(() => {
@@ -20,8 +21,18 @@ const SocketProvider = (props) => {
     };
   }, [status]);
   const socketInitializer = () => {
-    const socket = socketIOClient.connect(process.env.ENDPOINT_SERVER);
-    console.log("conect nek");
+    const socket = io(process.env.ENDPOINT_SERVER, {
+      auth: {
+        token: `Bearer ${session.user.access_token}`,
+      },
+    });
+
+    socket.on("connect_error", (err) => {
+      console.log("error", err);
+      toast.error(err.message);
+      // signOut();
+    });
+
     setValue(socket);
   };
   return (

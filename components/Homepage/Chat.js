@@ -1,45 +1,55 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { motion } from "framer-motion";
 import { useSession } from "next-auth/react";
-import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
-import ChatForm from "../Chat/ChatForm";
 import { ThreeDots } from "react-loading-icons";
-
+import ChatForm from "../Chat/ChatForm";
+import { useDispatch } from "react-redux";
+import { getMessagesCount } from "../../redux/actions/getMessagesCount";
+import { INC_MESSAGES_COUNT } from "../../redux/actions/constants";
 import convertChat from "../../utils/convertChat";
 import ChatContent from "../Chat/ChatContent";
-const Chat = ({ socket, partner, isHideInfo }) => {
+const Chat = ({ socket, partner, isHideInfo, statusUser }) => {
+  const dispatch = useDispatch();
   const { data: session, status } = useSession();
   const [namePartner, setNamePartner] = useState(partner ? partner.name : "");
 
   const [messages, setMessages] = useState([]);
   const [typingMessage, setTypingMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [isScroll, setIsScroll] = useState(false);
-  const socketOn = useRef(null);
-  const socketTypingChatOn = useRef(null);
-  const boxChat = useRef(null);
-  const boxChat2 = useRef(null);
+
   const chatSoundRef = useRef(null);
-  const onScrollChat = useRef(null);
-  const socketChatSoundOn = useRef(null);
 
   const messagesEndRef = useRef(null);
   useEffect(() => {
     socket.on("receive-chat-content", (data) => {
-      const newMessage = convertChat(data.message);
-      data.vanilaMessage = data.message;
-      data.message = newMessage;
-      console.log(data);
+      const newMessage = convertChat(data.msg);
+      data.vanilaMessage = data.msg;
+      data.msg = newMessage;
 
       setMessages((prev) => [...prev, data]);
+      dispatch(
+        getMessagesCount({
+          type: INC_MESSAGES_COUNT,
+          data: 1,
+        })
+      );
     });
 
     socket.on("receive-chat-sound", () => {
       if (chatSoundRef.current) {
         // chatSoundRef.current.play();
       }
+    });
+    socket.on("success-restore-message", (messages) => {
+      let newMessages = messages.map((item, i) => {
+        const newMessage = convertChat(item.msg);
+        item.vanilaMessage = item.msg;
+        item.msg = newMessage;
+        return item;
+      });
+
+      setMessages(newMessages);
     });
 
     socket.on("chat-typing", (data) => {
@@ -55,6 +65,7 @@ const Chat = ({ socket, partner, isHideInfo }) => {
       socket.off("receive-chat-content");
       socket.off("receive-chat-sound");
       socket.off("chat-typing");
+      socket.off("success-restore-message");
     };
   }, [socket]);
   useEffect(() => {
@@ -75,7 +86,7 @@ const Chat = ({ socket, partner, isHideInfo }) => {
   }, [messages, isTyping]);
 
   const scrollToBottom = () => {
-    messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current.scrollIntoView();
   };
 
   const BoxWrapper = styled(Box)(({ theme }) => ({
@@ -110,7 +121,7 @@ const Chat = ({ socket, partner, isHideInfo }) => {
       borderRadius: "50px",
       border: "2px solid #6edee0",
       position: "absolute",
-      content: `""`,
+      content: "",
       width: "100%",
       height: "100%",
       top: 0,
@@ -164,7 +175,7 @@ const Chat = ({ socket, partner, isHideInfo }) => {
 
         padding: "10px",
         borderRadius: "10px 0 10px 10px",
-        backgroundColor: "#6c90eb",
+        backgroundColor: "#20b8fb",
         color: "#ffffff",
         fontSize: "1.3rem",
       },
@@ -189,7 +200,30 @@ const Chat = ({ socket, partner, isHideInfo }) => {
         }}
       >
         <BoxWrapper>
-          {messages.length === 0 && (
+          {statusUser === "partner-outed-chat" && (
+            <Typography
+              sx={{
+                fontWeight: "bold",
+                fontSize: "20px",
+                alignSelf: "center",
+              }}
+            >
+              Đối phương đã rời phòng, bấm Thoát Chat để tìm bạn mới.
+            </Typography>
+          )}
+          {statusUser === "partner-disconnected" && (
+            <Typography
+              sx={{
+                fontWeight: "bold",
+                fontSize: "20px",
+                alignSelf: "center",
+              }}
+            >
+              Đối phương đã thoát ứng dụng, vui lòng đợi đối phương kết nối lại
+              hoặc bấm Thoát Chat để tìm bạn mới.
+            </Typography>
+          )}
+          {messages.length === 0 && statusUser === "chatting" && (
             <Typography
               sx={{
                 fontWeight: "bold",
@@ -203,12 +237,12 @@ const Chat = ({ socket, partner, isHideInfo }) => {
           {messages.length > 0 &&
             messages.map((item, i) => (
               <React.Fragment key={i}>
-                {item.account !== session.user.account ? (
+                {item.from.account !== session.user.account ? (
                   <BoxChatUserLeft>
                     <ChatContent
                       item={item}
                       name={namePartner}
-                      message={item.message}
+                      message={item.msg}
                       type={"left"}
                     />
                   </BoxChatUserLeft>
@@ -216,8 +250,8 @@ const Chat = ({ socket, partner, isHideInfo }) => {
                   <BoxChatUserRight>
                     <ChatContent
                       item={item}
-                      name={item.name}
-                      message={item.message}
+                      name={item.from.name}
+                      message={item.msg}
                       type={"right"}
                     />
                   </BoxChatUserRight>
@@ -236,8 +270,7 @@ const Chat = ({ socket, partner, isHideInfo }) => {
             </BoxChatUserLeft>
           )}
         </BoxWrapper>
-
-        <ChatForm socket={socket} />
+        {statusUser === "chatting" && <ChatForm socket={socket} />}
       </Box>
     </>
   );

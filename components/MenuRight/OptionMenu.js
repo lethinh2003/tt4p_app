@@ -3,6 +3,8 @@ import { styled } from "@mui/material/styles";
 import { FiSearch } from "react-icons/fi";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import CreateIcon from "@mui/icons-material/Create";
+import { VscAdd } from "react-icons/vsc";
+import { IoNotificationsOutline } from "react-icons/io5";
 import Link from "next/link";
 const OptionMenu = () => {
   const AvatarProfile = styled(Avatar)(({ theme }) => ({
@@ -25,15 +27,17 @@ const OptionMenu = () => {
           <Box
             sx={{
               width: "150px",
-              height: "70px",
-              border: (theme) =>
-                `2px solid ${theme.palette.border.menuright_option}`,
-              borderRadius: "20px",
+              height: "50px",
+              backgroundColor: "#f1f6fc",
+              borderRadius: "10px",
               flex: 1,
               display: "flex",
 
               justifyContent: "center",
               alignItems: "center",
+              "&:hover": {
+                border: "2px solid #e8ecf9",
+              },
             }}
           >
             <Box
@@ -71,48 +75,41 @@ const OptionMenu = () => {
           >
             <Box
               sx={{
-                width: "70px",
-                height: "70px",
-                border: (theme) =>
-                  `2px solid ${theme.palette.border.menuright_option}`,
-                borderRadius: "50%",
-                display: "flex",
+                width: "50px",
+                height: "50px",
 
+                borderRadius: "10px",
+                display: "flex",
+                fontSize: "2.5rem",
                 justifyContent: "center",
                 alignItems: "center",
+                "&:hover": {
+                  backgroundColor: "#e8ecf9",
+                },
               }}
             >
               <Badge badgeContent={4} color="error">
-                <NotificationsIcon
-                  sx={{
-                    fontSize: "2.5rem",
-                    fontWeight: "bold",
-                    color: "#98a1b5",
-                  }}
-                />
+                <IoNotificationsOutline />
               </Badge>
             </Box>
             <Link href="/posts/create">
               <Box
                 sx={{
-                  width: "70px",
-                  height: "70px",
-                  border: (theme) =>
-                    `2px solid ${theme.palette.border.menuright_option}`,
-                  borderRadius: "50%",
-                  display: "flex",
+                  cursor: "pointer",
+                  width: "50px",
+                  height: "50px",
 
+                  borderRadius: "10px",
+                  display: "flex",
+                  fontSize: "2.5rem",
                   justifyContent: "center",
                   alignItems: "center",
+                  "&:hover": {
+                    backgroundColor: "#e8ecf9",
+                  },
                 }}
               >
-                <CreateIcon
-                  sx={{
-                    fontSize: "2.5rem",
-                    fontWeight: "bold",
-                    color: "#98a1b5",
-                  }}
-                />
+                <VscAdd />
               </Box>
             </Link>
           </Box>

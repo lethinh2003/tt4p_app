@@ -107,6 +107,7 @@ export default NextAuth({
       session.user.findSex = token.findSex;
       session.user.city = token.city;
       session.user.date = token.date;
+
       return session;
     },
     async jwt({ token, user, account, profile, isNewUser }) {

@@ -25,35 +25,18 @@ const ItemHearts = ({ item, session, status }) => {
     }
   }, [dataUserHeatedPosts]);
 
-  const AvatarProfile = styled(Avatar)(({ theme }) => ({
-    "&.MuiAvatar-root": {
-      border: `3px solid ${theme.palette.border.feeds}`,
-    },
-  }));
-  const TitleFeeds = styled(Typography)(({ theme }) => ({
-    fontSize: "1.7rem",
-    fontWeight: "bold",
-    color: theme.palette.text.color.second,
-    cursor: "pointer",
-    "&.active": {
-      color: theme.palette.text.color.active,
-    },
-  }));
   const handleClickHeart = async (item) => {
     try {
       setIsLoading(true);
       const res = await axios.post(
         `${process.env.ENDPOINT_SERVER}/api/v1/hearts`,
         {
-          post: item._id,
+          postID: item._id,
         }
       );
 
-      // const getHeartsPost = await axios.get(
-      //   `${process.env.ENDPOINT_SERVER}/api/v1/posts/${item._id}`
-      // );
-
       setIsLoading(false);
+      setHearts(res.data.data.hearts_count);
       if (res.data.message === "create_success") {
         dispatch(
           getListHeartedPosts({
@@ -61,11 +44,7 @@ const ItemHearts = ({ item, session, status }) => {
             data: item._id,
           })
         );
-        setIsHearted(true);
-        // setHearts(getHeartsPost.data.data.hearts_count);
-        setHearts((prev) => prev + 1);
         dispatch(getPostActivity(session.user.id));
-        // dispatch(getPostHearts(session.user.id));
       } else if (res.data.message === "delete_success") {
         await axios.post(
           `${process.env.ENDPOINT_SERVER}/api/v1/posts/activities/${session.user.id}`,
@@ -79,11 +58,6 @@ const ItemHearts = ({ item, session, status }) => {
             data: item._id,
           })
         );
-
-        setIsHearted(false);
-        // setHearts(getHeartsPost.data.data.hearts_count);
-        setHearts((prev) => prev - 1);
-        // dispatch(getPostHearts(session.user.id));
       }
     } catch (err) {
       setIsLoading(false);

@@ -9,11 +9,16 @@ const LatestPost = ({ session, status }) => {
   const requestApiRef = useRef(null);
 
   const dispatch = useDispatch();
-  const [latestActivityPost, setLatestActivityPost] = useState("");
   const dataActivityPost = useSelector((state) => state.postActivity.data);
+  const [latestActivityPost, setLatestActivityPost] = useState(
+    dataActivityPost && dataActivityPost.data
+      ? dataActivityPost.data.slice(0, 1)[0]
+      : null
+  );
   const requestingGetActivityPost = useSelector(
     (state) => state.postActivity.requesting
   );
+
   const errorGetActivityPost = useSelector((state) => state.postActivity.error);
   const errorMessageGetActivityPost = useSelector(
     (state) => state.postActivity.message

@@ -55,8 +55,7 @@ const PostDetail = (props) => {
                   alignItems: "center",
                 }}
               >
-                <MdOutlineArticle />
-                Post
+                🗒️ Post
               </Typography>
               {item && (
                 <>

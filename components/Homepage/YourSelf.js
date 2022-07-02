@@ -3,6 +3,8 @@ import { styled } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { memo } from "react";
+import { BigHead } from "@bigheads/core";
+
 const YourSelf = ({ user }) => {
   const BoxAvatar = styled(Box)(({ theme }) => ({
     backgroundColor: "#ccc",
@@ -132,19 +134,43 @@ const YourSelf = ({ user }) => {
                   />
                 </BoxAvatarChild>
               ))}
+              <Box
+                sx={{
+                  width: "250px",
+                }}
+              >
+                <BigHead
+                  accessory={user.avatarSVG.accessory}
+                  body={user.avatarSVG.body}
+                  circleColor={user.avatarSVG.circleColor}
+                  clothing={user.avatarSVG.clothing}
+                  clothingColor={user.avatarSVG.clothingColor}
+                  eyebrows={user.avatarSVG.eyebrows}
+                  eyes={user.avatarSVG.eyes}
+                  faceMask={user.avatarSVG.faceMask}
+                  faceMaskColor={user.avatarSVG.faceMaskColor}
+                  facialHair={user.avatarSVG.facialHair}
+                  graphic={user.avatarSVG.graphic}
+                  hair={user.avatarSVG.hair}
+                  hairColor={user.avatarSVG.hairColor}
+                  hat={user.avatarSVG.hat}
+                  hatColor={user.avatarSVG.hatColor}
+                  lashes={user.avatarSVG.lashes}
+                  lipColor={user.avatarSVG.lipColor}
+                  mask={user.avatarSVG.mask}
+                  mouth={user.avatarSVG.mouth}
+                  skinTone={user.avatarSVG.skinTone}
+                />
+              </Box>
 
-              <BoxAvatar>
+              {/* <BoxAvatar>
                 <Image
-                  src={
-                    user.sex === "boy"
-                      ? "https://i.imgur.com/yFYUbLZ.png"
-                      : "https://i.imgur.com/Or9WeCe.png"
-                  }
+                  src={user.avatar}
                   alt={user.name}
                   width={200}
                   height={200}
                 />
-              </BoxAvatar>
+              </BoxAvatar> */}
             </Box>
           </Box>
         </>

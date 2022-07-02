@@ -1,5 +1,5 @@
 import { getSession, useSession } from "next-auth/react";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useRef } from "react";
 import UsersInRoomRandom from "../../../components/Chat/Room/Random/UserInRoomRandom";
 import Banned from "../../../components/Dialog/Banned";
 import MenuRight from "../../../components/Chat/MenuRight";
@@ -10,10 +10,12 @@ import Setting from "../../../components/Homepage/Setting";
 import Layout from "../../../components/Layout/Layout";
 import SocketContext from "../../../contexts/socket";
 import { Avatar, Box, Typography } from "@mui/material";
-
+import { toast } from "react-toastify";
+import axios from "axios";
 export default function Home() {
   const { data: session, status } = useSession();
   const socket = useContext(SocketContext);
+
   useEffect(() => {
     if (status === "unauthenticated") {
       window.location.href = "/portal";

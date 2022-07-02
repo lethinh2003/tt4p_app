@@ -10,6 +10,7 @@ import Layout from "../components/Layout/Layout";
 import MenuRight from "../components/Layout/MenuRight";
 import SidebarMobile from "../components/Layout/SidebarMobile";
 import SuggestFriends from "../components/MenuRight/SuggestFriends";
+
 const Home = () => {
   const { data: session, status } = useSession();
 
@@ -18,7 +19,7 @@ const Home = () => {
       window.location.href = "/portal";
     }
   }, [status]);
-  console.log("re-render index");
+
   return (
     <>
       {status === "authenticated" && (

@@ -1,5 +1,4 @@
 import { Typography, Box } from "@mui/material";
-import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import Layout from "../../components/Layout/Layout";
 import axios from "axios";
@@ -7,8 +6,11 @@ import { motion } from "framer-motion";
 import CreateNewPost from "../../components/Post/CreateNewPost";
 import { useSession, getSession } from "next-auth/react";
 import MenuRight from "../../components/Post/CreatePost/MenuRight";
+import { useRouter } from "next/router";
+
 const CreatePost = () => {
   const { data: session, status } = useSession();
+
   useEffect(() => {
     if (status === "unauthenticated") {
       window.location.href = "/";
@@ -44,7 +46,7 @@ const CreatePost = () => {
                   color: (theme) => theme.palette.text.color.first,
                 }}
               >
-                Create Post
+                📝 Create a post
               </Typography>
               <CreateNewPost />
             </Box>

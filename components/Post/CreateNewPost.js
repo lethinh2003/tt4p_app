@@ -7,9 +7,10 @@ import { toast } from "react-toastify";
 import CreateColorTitle from "./CreatePost/CreateColorTitle";
 import CreateContent from "./CreatePost/CreateContent";
 import CreateTitle from "./CreatePost/CreateTitle";
-const CreateNewPost = () => {
-  const { data: session, status } = useSession();
+import useWarnIfUnsavedChanges from "../../utils/useWarnIfUnsavedChanges.ts";
+import Loading from "../Loading/Loading";
 
+const CreateNewPost = () => {
   const [title, setTitle] = useState("");
   const [titleErrMessage, setTitleErrMessage] = useState("");
   const [contentErrMessage, setContentErrMessage] = useState("");
@@ -19,11 +20,20 @@ const CreateNewPost = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingUploadImage, setIsLoadingUploadImage] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
   // form validation rules
 
+  useWarnIfUnsavedChanges(isSaved, () => {
+    return confirm("Warning! You have unsaved changes.");
+  });
   useEffect(() => {
-    if (title.length < 5 && isEdit) {
-      setTitleErrMessage("Tiêu đề phải có độ dài từ 5 kí tự trở nên");
+    if (title || dataContent) {
+      setIsSaved(true);
+    }
+  }, [title, dataContent]);
+  useEffect(() => {
+    if ((title.length < 5 || title.length > 300) && isEdit) {
+      setTitleErrMessage("Tiêu đề phải có độ dài từ 5 kí tự đến 300 kí tự");
     } else {
       setTitleErrMessage("");
     }
@@ -50,8 +60,11 @@ const CreateNewPost = () => {
       });
 
       setIsLoading(false);
-
+      setTitle("");
+      setDataContent("");
+      setIsEdit(false);
       toast.success("Tạo thành công");
+      setIsSaved(false);
     } catch (err) {
       setIsLoading(false);
       if (err.response) {
@@ -69,6 +82,7 @@ const CreateNewPost = () => {
 
   return (
     <>
+      <Loading isLoading={isLoading} />
       <Box
         sx={{
           width: "100%",
@@ -77,28 +91,6 @@ const CreateNewPost = () => {
           gap: "10px",
         }}
       >
-        {isLoading && (
-          <>
-            <Skeleton
-              variant="rectangular"
-              height={50}
-              sx={{ marginTop: "10px" }}
-              width={300}
-            />
-            <Skeleton
-              variant="rectangular"
-              height={50}
-              sx={{ marginTop: "10px" }}
-              width={300}
-            />
-            <Skeleton
-              variant="rectangular"
-              height={150}
-              sx={{ marginTop: "10px" }}
-              width={300}
-            />
-          </>
-        )}
         {!isLoading && (
           <>
             <CreateTitle
@@ -122,14 +114,14 @@ const CreateNewPost = () => {
 
             <Button
               sx={{
+                alignSelf: "flex-end",
                 pointerEvents: isLoadingUploadImage ? "none" : "visible",
                 opacity: isLoadingUploadImage ? "0.7" : "1",
               }}
               onClick={onSubmit}
-              variant="outlined"
               type="submit"
             >
-              {isLoadingUploadImage ? "Đang tải ảnh..." : "Lưu"}
+              {isLoadingUploadImage ? "Đang tải ảnh..." : "Post"}
             </Button>
           </>
         )}

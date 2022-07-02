@@ -1,4 +1,9 @@
-import { FormControl, TextField, Typography } from "@mui/material";
+import {
+  FormControl,
+  TextField,
+  Typography,
+  InputAdornment,
+} from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { memo, useEffect } from "react";
 const CreateTitle = ({
@@ -35,6 +40,11 @@ const CreateTitle = ({
           onChange={(e) => setTitle(e.target.value)}
           size="small"
           fullWidth
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">{title.length}/300</InputAdornment>
+            ),
+          }}
           error={titleErrMessage ? true : false}
           helperText={titleErrMessage ? titleErrMessage : ""}
         />

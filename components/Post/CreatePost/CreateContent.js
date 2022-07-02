@@ -27,7 +27,7 @@ const CreateContent = ({
   }, []);
   const ErrorContent = styled(Typography)({
     fontWeight: "400",
-    fontSize: "1rem",
+    fontSize: "1.2rem",
     lineHeight: 1.66,
     textAlign: "left",
     margin: "4px 14px 0 14px",

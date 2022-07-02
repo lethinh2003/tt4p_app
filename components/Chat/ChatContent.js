@@ -3,17 +3,10 @@ import React, { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import Image from "next/image";
 
-// import convertChat from "../../utils/convertChat";
-
 const ChatContent = ({ item, name, message, type }) => {
-  // const [message, setMessage] = useState("");
   const handleClickChatDetail = (item) => {
     console.log(item);
   };
-  // useEffect(() => {
-  //   const newMessage = convertChat(item.message);
-  //   setMessage(newMessage);
-  // }, [item]);
 
   const BoxAvatar = styled(Box)(({ theme }) => ({
     backgroundColor: "#ccc",
@@ -50,16 +43,7 @@ const ChatContent = ({ item, name, message, type }) => {
               display: { xs: "none", md: "block" },
             }}
           >
-            <Image
-              src={
-                item.sex === "boy"
-                  ? "https://i.imgur.com/yFYUbLZ.png"
-                  : "https://i.imgur.com/Or9WeCe.png"
-              }
-              alt={name}
-              width={50}
-              height={50}
-            />
+            <Image src={item.to.avatar} alt={name} width={50} height={50} />
           </BoxAvatar>
           <Box className="box-content">
             <Typography
@@ -102,16 +86,7 @@ const ChatContent = ({ item, name, message, type }) => {
               display: { xs: "none", md: "block" },
             }}
           >
-            <Image
-              src={
-                item.sex === "boy"
-                  ? "https://i.imgur.com/yFYUbLZ.png"
-                  : "https://i.imgur.com/Or9WeCe.png"
-              }
-              alt={name}
-              width={50}
-              height={50}
-            />
+            <Image src={item.from.avatar} alt={name} width={50} height={50} />
           </BoxAvatar>
         </>
       )}
@@ -122,16 +97,7 @@ const ChatContent = ({ item, name, message, type }) => {
               display: { xs: "none", md: "block" },
             }}
           >
-            <Image
-              src={
-                item.sex === "boy"
-                  ? "https://i.imgur.com/yFYUbLZ.png"
-                  : "https://i.imgur.com/Or9WeCe.png"
-              }
-              alt={name}
-              width={50}
-              height={50}
-            />
+            <Image src={item.avatar} alt={name} width={50} height={50} />
           </BoxAvatar>
           <Box className="box-content">
             <Typography

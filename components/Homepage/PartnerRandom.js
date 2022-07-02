@@ -9,22 +9,22 @@ import RequestInfoDialog from "../Chat/RequestInfoDialog";
 import InfoPartnerAndUser from "../Partner/InfoPartnerAndUser";
 import InfoPartnerDialog from "../Partner/InfoPartnerDialog";
 import ButtonRequestInfoPartner from "../Partner/ButtonRequestInfoPartner";
+import { useDispatch } from "react-redux";
+import { getPartner } from "../../redux/actions/getPartner";
 const PartnerRandom = ({
   isHideInfo,
   setIsHideInfo,
-  isInRoom,
-  setIsWaitingRoom,
-  setIsInRoom,
   partner,
   user,
   socket,
+  setStatusUser,
+  statusUser,
+  setIsLoading,
 }) => {
-  const socketOn = useRef(null);
-  const socketOnCancelRequestInfoPartner = useRef(null);
   const { isShow, toggle } = useModal();
   const { isShow: isShowInfoPartner, toggle: toggleInfoPartner } = useModal();
   const [countRequestInfo, setCountRequestInfo] = useState(5);
-
+  const dispatch = useDispatch();
   useEffect(() => {
     socket.on("request-info-partner", () => {
       toggle();
@@ -45,49 +45,66 @@ const PartnerRandom = ({
     };
   }, [socket]);
   const handleClickOutChatRoom = async () => {
-    await socket.emit("out-chat-room-random", partner);
-    setIsWaitingRoom(false);
-    setIsInRoom(false);
+    setIsLoading(true);
+    if (statusUser === "partner-outed-chat") {
+      socket.emit("agree-out-chat-room-for-current-user", (res) => {
+        if (res.status === "ok") {
+          socket.emit("update-status-user", {
+            room: `${user.account}-room`,
+            status: "",
+          });
+          dispatch(
+            getPartner({
+              type: "GET_PARTNER",
+              data: null,
+            })
+          );
+          setStatusUser("");
+        } else {
+          toast.error("Lỗi hệ thống!");
+        }
+        setIsLoading(false);
+      });
+    } else if (statusUser === "partner-disconnected") {
+      socket.emit("agree-out-chat-room-dont-wait-partner", (res) => {
+        if (res.status === "ok") {
+          socket.emit("update-status-user", {
+            room: `${user.account}-room`,
+            status: "",
+          });
+          dispatch(
+            getPartner({
+              type: "GET_PARTNER",
+              data: null,
+            })
+          );
+          setStatusUser("");
+        } else {
+          toast.error("Lỗi hệ thống!");
+        }
+        setIsLoading(false);
+      });
+    } else {
+      socket.emit("out-chat-room-for-current-user", (res) => {
+        if (res.status === "ok") {
+          socket.emit("update-status-user", {
+            room: `${user.account}-room`,
+            status: "",
+          });
+          dispatch(
+            getPartner({
+              type: "GET_PARTNER",
+              data: null,
+            })
+          );
+          setStatusUser("");
+        } else {
+          toast.error("Lỗi hệ thống!");
+        }
+        setIsLoading(false);
+      });
+    }
   };
-
-  const ButtonSocialWrapper = styled(Button)(({ theme }) => ({
-    backgroundColor: theme.palette.button.default,
-    color: "#fff",
-    textTransform: "capitalize",
-    borderRadius: "10px",
-    padding: "10px",
-    fontWeight: "bold",
-    cursor: "pointer",
-    fontSize: "1.5rem",
-    "&:hover": {
-      backgroundColor: theme.palette.button.default,
-      opacity: 0.8,
-    },
-  }));
-  const BoxAvatar = styled(Box)(({ theme }) => ({
-    backgroundColor: "#ccc",
-    color: "#fd6b22",
-    textTransform: "capitalize",
-    borderRadius: "10px",
-    padding: "10px",
-    width: "100%",
-    maxWidth: "200px",
-    fontWeight: "bold",
-    height: "200px",
-    borderRadius: "50px",
-    position: "relative",
-    "&::before": {
-      borderRadius: "50px",
-      border: "2px solid #6edee0",
-      position: "absolute",
-      content: `""`,
-      width: "100%",
-      height: "100%",
-      top: 0,
-      left: 0,
-      transform: "scale(1.1)",
-    },
-  }));
 
   const handleClickRequestInfoPartner = () => {
     if (isHideInfo) {
@@ -138,6 +155,7 @@ const PartnerRandom = ({
         isHideInfo={isHideInfo}
         countRequestInfo={countRequestInfo}
       />
+
       <Button
         as={motion.div}
         whileHover={{ scale: 1.02 }}
