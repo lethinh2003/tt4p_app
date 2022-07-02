@@ -24,19 +24,9 @@ const User = () => {
   const errorMessageGetUser = useSelector((state) => state.user.message);
   const getToggleStatusBanned = useSelector((state) => state.toggleBanned.on);
 
-  const dispatch = useDispatch();
-  useEffect(() => {
-    if (status === "authenticated" && !data) {
-      dispatch(getUser(session.user.account));
-    }
-  }, [status]);
   useEffect(() => {
     if (data && data.data) {
       setUser(data.data);
-
-      if (data.data.status === false) {
-        dispatch(getToggleBanned(true));
-      }
     }
   }, [data]);
   useEffect(() => {

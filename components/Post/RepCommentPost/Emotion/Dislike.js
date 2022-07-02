@@ -61,31 +61,33 @@ const Dislike = ({ item }) => {
   return (
     <>
       <Box
-        as={motion.div}
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.9 }}
         onClick={() => handleClickHeart()}
         sx={{
           cursor: "pointer",
           overflow: "hidden",
-          backgroundColor: "#f7f7f7",
+
           display: "flex",
           gap: "5px",
           alignItems: "center",
           padding: "5px",
-          borderRadius: "10px",
-          border: (theme) => `1px solid ${theme.palette.border.dialog}`,
+
           color: isHearted
             ? "#ff5775"
             : (theme) => theme.palette.text.color.second,
           pointerEvents: isLoading ? "none" : "visible",
           opacity: isLoading ? "0.5" : "1",
+          "&:hover": {
+            backgroundColor: "#e8ecf9",
+          },
+          "&:hover > .angry": {
+            color: "#ff5775",
+          },
         }}
       >
-        <ImAngry2 />
+        <ImAngry2 className="angry" />
         <Typography
           sx={{
-            color: (theme) => theme.palette.text.color.first,
+            color: (theme) => theme.palette.text.color.second,
             fontWeight: 600,
           }}
         >

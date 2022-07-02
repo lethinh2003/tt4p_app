@@ -8,7 +8,7 @@ const RepCommentEmotion = ({ item }) => {
       <Box
         sx={{
           display: "flex",
-          gap: "5px",
+
           alignItems: "center",
         }}
       >

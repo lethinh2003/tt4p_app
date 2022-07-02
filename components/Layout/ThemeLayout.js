@@ -60,17 +60,26 @@ const getDesignTokens = (mode) => ({
         root: ({ theme }) => ({
           backgroundColor: theme.palette.button.default,
           color: "#fff",
-          minHeight: "40px",
+
           maxWidth: "200px",
           textTransform: "capitalize",
           borderRadius: "10px",
-          padding: "10px",
+
           fontWeight: "bold",
           cursor: "pointer",
-          fontSize: "1.5rem",
+          fontSize: "1.2rem",
           "&:hover": {
             backgroundColor: theme.palette.button.default,
             opacity: 0.8,
+          },
+        }),
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          "& .MuiFormHelperText-root": {
+            fontSize: "1.2rem",
           },
         }),
       },

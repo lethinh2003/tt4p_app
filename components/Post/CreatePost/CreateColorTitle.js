@@ -48,29 +48,37 @@ const CreateColorTitle = ({
           />
         )}
         <Box
-          as={motion.div}
-          whileHover={{ scale: 1.02 }}
+          // whileHover={{ scale: 1.02 }}
           sx={{
+            textAlign: "center",
             cursor: "pointer",
+            overflowWrap: "break-word",
             height: "250px",
             border: (theme) => `3px solid ${theme.palette.border.feeds}`,
             backgroundColor: backgroundColorTitle
               ? backgroundColorTitle
               : "#ccc",
             borderRadius: "30px",
-            overflow: "hidden",
+
             boxShadow: (theme) =>
               `0px 3px 20px 6px${theme.palette.feeds.boxShadow}`,
-            display: "flex",
+
             fontSize: "3rem",
             color: "#ffffff",
-            justifyContent: "center",
-            alignItems: "center",
+
             fontWeight: "bold",
             padding: "20px",
           }}
         >
-          {title}
+          <Box
+            sx={{
+              width: "100%",
+              height: "100%",
+              overflowY: "auto",
+            }}
+          >
+            <Box>{title ? title : "Nhập tiêu đề..."}</Box>
+          </Box>
         </Box>
       </Box>
     </>

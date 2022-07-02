@@ -1,3 +1,6 @@
+import dayjs from "dayjs";
+var relativeTime = require("dayjs/plugin/relativeTime");
+dayjs.extend(relativeTime);
 const DateThinh = (date1, date2) => {
   let result;
 
@@ -36,38 +39,41 @@ const DateThinh = (date1, date2) => {
   return result;
 };
 const convertTime = (timeISOString) => {
-  let date = `Gần đây`;
-  const getFullDate = new Date(timeISOString);
-  const getCurrentDate = new Date();
+  const a = dayjs(new Date());
+  const testss = dayjs(timeISOString).from(a);
+  // let date = `Gần đây`;
+  // const getFullDate = new Date(timeISOString);
+  // const getCurrentDate = new Date();
 
-  const getDay = `${
-    getFullDate.getDate() < 10
-      ? "0" + getFullDate.getDate()
-      : getFullDate.getDate()
-  }/${
-    getFullDate.getMonth() < 9
-      ? "0" + (getFullDate.getMonth() + 1)
-      : getFullDate.getMonth() + 1
-  }/${getFullDate.getFullYear()}`;
-  const getTime = `${
-    getFullDate.getHours() < 10
-      ? "0" + getFullDate.getHours()
-      : getFullDate.getHours()
-  }:${
-    getFullDate.getMinutes() < 10
-      ? "0" + getFullDate.getMinutes()
-      : getFullDate.getMinutes()
-  }:${
-    getFullDate.getSeconds() < 10
-      ? "0" + getFullDate.getSeconds()
-      : getFullDate.getSeconds()
-  }`;
-  date = getDay + " " + getTime;
-  const hanldeConvert = DateThinh(getFullDate, getCurrentDate);
-  if (hanldeConvert) {
-    return `${hanldeConvert}`;
-  }
+  // const getDay = `${
+  //   getFullDate.getDate() < 10
+  //     ? "0" + getFullDate.getDate()
+  //     : getFullDate.getDate()
+  // }/${
+  //   getFullDate.getMonth() < 9
+  //     ? "0" + (getFullDate.getMonth() + 1)
+  //     : getFullDate.getMonth() + 1
+  // }/${getFullDate.getFullYear()}`;
+  // const getTime = `${
+  //   getFullDate.getHours() < 10
+  //     ? "0" + getFullDate.getHours()
+  //     : getFullDate.getHours()
+  // }:${
+  //   getFullDate.getMinutes() < 10
+  //     ? "0" + getFullDate.getMinutes()
+  //     : getFullDate.getMinutes()
+  // }:${
+  //   getFullDate.getSeconds() < 10
+  //     ? "0" + getFullDate.getSeconds()
+  //     : getFullDate.getSeconds()
+  // }`;
+  // date = getDay + " " + getTime;
+  // const hanldeConvert = DateThinh(getFullDate, getCurrentDate);
+  // if (hanldeConvert) {
+  //   return `${hanldeConvert}`;
+  // }
 
-  return date;
+  // return date;
+  return testss;
 };
 export default convertTime;

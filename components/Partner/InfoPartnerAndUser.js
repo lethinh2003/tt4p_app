@@ -125,16 +125,7 @@ const InfoPartnerAndUser = ({
             initial={{ opacity: 0, x: "-100%" }}
             animate={{ opacity: 1, x: 0 }}
           >
-            <Image
-              src={
-                user.sex === "boy"
-                  ? "https://i.imgur.com/yFYUbLZ.png"
-                  : "https://i.imgur.com/Or9WeCe.png"
-              }
-              alt={user.name}
-              width={200}
-              height={200}
-            />
+            <Image src={user.avatar} alt={user.name} width={200} height={200} />
           </BoxAvatar>
         </Box>
 
@@ -193,11 +184,7 @@ const InfoPartnerAndUser = ({
             animate={{ opacity: 1, x: 0 }}
           >
             <Image
-              src={
-                partner.sex === "boy"
-                  ? "https://i.imgur.com/yFYUbLZ.png"
-                  : "https://i.imgur.com/Or9WeCe.png"
-              }
+              src={partner.avatar}
               alt={namePartner}
               width={200}
               height={200}

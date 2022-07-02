@@ -3,6 +3,7 @@ import { styled } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import { BsListStars } from "react-icons/bs";
 import { IoWarningOutline } from "react-icons/io5";
+import { BigHead } from "@bigheads/core";
 
 const TermCreate = () => {
   const BoxTitleItem = styled(Box)(({ theme }) => ({
@@ -43,13 +44,12 @@ const TermCreate = () => {
             alignItems: "center",
           }}
         >
-          <IoWarningOutline />
-          Quy định đăng bài
+          ⚠️ Quy định đăng bài
         </Typography>
+
         <Box
           as={motion.div}
           sx={{
-            cursor: "pointer",
             // height: "250px",
             overflowY: "auto",
             border: (theme) => `3px solid ${theme.palette.border.feeds}`,
@@ -58,7 +58,7 @@ const TermCreate = () => {
             borderRadius: "10px",
 
             boxShadow: (theme) =>
-              `0px 3px 20px 6px${theme.palette.feeds.boxShadow}`,
+              `0px 3px 20px 6px ${theme.palette.feeds.boxShadow}`,
             display: "flex",
             fontSize: "3rem",
             color: "#ffffff",

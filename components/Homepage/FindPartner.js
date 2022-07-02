@@ -38,11 +38,7 @@ const FindPartner = ({ socket }) => {
   const getToggleStatusBanned = useSelector((state) => state.toggleBanned.on);
 
   const dispatch = useDispatch();
-  useEffect(() => {
-    if (status === "authenticated" && !data) {
-      dispatch(getUser(session.user.account));
-    }
-  }, [status]);
+
   useEffect(() => {
     if (socket) {
       socketInitializer();

@@ -1,17 +1,12 @@
-import { Typography, Box, Avatar } from "@mui/material";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { Box, Typography } from "@mui/material";
 import { motion } from "framer-motion";
-import { styled } from "@mui/material/styles";
-import convertToTime from "../../utils/convertTime";
-import readingTime from "reading-time";
-import { BiTimeFive } from "react-icons/bi";
+import { AiFillMessage } from "react-icons/ai";
 import { BsHandThumbsUp } from "react-icons/bs";
 import ItemHearts from "../Feeds/ItemHearts";
-import { AiFillMessage } from "react-icons/ai";
-
+import { useSession } from "next-auth/react";
 const FeaturesPost = (props) => {
   const { item } = props;
+  const { data: session, status } = useSession();
 
   return (
     <>
@@ -64,7 +59,7 @@ const FeaturesPost = (props) => {
                 flexDirection: "column",
               }}
             >
-              <ItemHearts item={item} />
+              <ItemHearts item={item} session={session} status={status} />
               <Box
                 sx={{
                   display: "flex",

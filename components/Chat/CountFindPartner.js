@@ -2,7 +2,7 @@ import { Button, Typography, Box } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 const CountFindPartner = ({ handleTimeoutFindPartner }) => {
   const timeCountRef = useRef(null);
-  const [timeCount, setTimeCount] = useState(30);
+  const [timeCount, setTimeCount] = useState(5);
   useEffect(() => {
     if (timeCount <= 0) {
       clearInterval(timeCountRef.current);

@@ -236,7 +236,7 @@ const CommentPost = (props) => {
               <Typography
                 sx={{
                   color: (theme) => theme.palette.text.color.first,
-                  fontSize: "1.7rem",
+                  fontSize: "1.25rem",
                 }}
               >
                 Ai đó đang nhập bình luận
@@ -246,24 +246,35 @@ const CommentPost = (props) => {
               <Typography
                 sx={{
                   color: (theme) => theme.palette.text.color.first,
-                  fontSize: "1.7rem",
+                  fontSize: "1.25rem",
                 }}
               >
                 Hãy là người đầu tiên bình luận
               </Typography>
             )}
-            {!isLoading &&
-              dataComments.length > 0 &&
-              dataComments.map((item, i) => (
-                <Item
-                  socket={socket}
-                  setReplyComment={setReplyComment}
-                  createCommentBoxRef={createCommentBoxRef}
-                  setEditComment={setEditComment}
-                  item={item}
-                  key={i}
-                />
-              ))}
+            <Box
+              sx={{
+                overflowX: "auto",
+                width: "100%",
+              }}
+            >
+              {!isLoading &&
+                dataComments.length > 0 &&
+                dataComments.map((item, i) => {
+                  if (!item.parent_comment) {
+                    return (
+                      <Item
+                        socket={socket}
+                        setReplyComment={setReplyComment}
+                        createCommentBoxRef={createCommentBoxRef}
+                        setEditComment={setEditComment}
+                        item={item}
+                        key={item._id}
+                      />
+                    );
+                  }
+                })}
+            </Box>
             {buttonLoadmore && (
               <Button
                 sx={{
@@ -280,7 +291,7 @@ const CommentPost = (props) => {
               >
                 {isLoading && (
                   <>
-                    <Oval width={20} />
+                    <Oval width={15} />
                     Loading
                   </>
                 )}

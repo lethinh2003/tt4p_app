@@ -28,12 +28,16 @@ const EditComment = ({
           display: "flex",
           gap: "5px",
           alignItems: "center",
+          padding: "5px",
+          "&:hover": {
+            backgroundColor: "#e8ecf9",
+          },
         }}
       >
         <Typography
           sx={{
             cursor: "pointer",
-            color: (theme) => theme.palette.text.color.first,
+            color: (theme) => theme.palette.text.color.second,
             fontWeight: 600,
           }}
           onClick={() => handleClickEdit(item)}
@@ -41,13 +45,6 @@ const EditComment = ({
           Edit
         </Typography>
       </Box>
-      <Box
-        sx={{
-          width: "2px",
-          height: "50%",
-          backgroundColor: (theme) => `${theme.palette.border.dialog}`,
-        }}
-      ></Box>
     </>
   );
 };

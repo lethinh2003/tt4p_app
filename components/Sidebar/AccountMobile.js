@@ -19,7 +19,7 @@ const AccountMobile = () => {
 
   useEffect(() => {
     if (status === "authenticated" && !dataUser) {
-      dispatch(getUser(session.user.account));
+      // dispatch(getUser(session.user.account));
     }
   }, []);
   useEffect(() => {

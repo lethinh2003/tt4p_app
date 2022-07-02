@@ -6,7 +6,7 @@ import { useQuery } from "react-query";
 import Item from "../SuggestFriend/Item";
 
 const SuggestFriends = ({ session, status }) => {
-  const [suggestionFriends, setSuggestionFriends] = useState([]);
+  // const [suggestionFriends, setSuggestionFriends] = useState([]);
   const AvatarProfile = styled(Avatar)(({ theme }) => ({
     "&.MuiAvatar-root": {
       border: `3px solid ${theme.palette.border.feeds}`,
@@ -24,17 +24,12 @@ const SuggestFriends = ({ session, status }) => {
     staleTime: Infinity,
   });
   const {
-    data,
+    data: suggestionFriends,
     isLoading,
     isFetching,
     isError: isErrorQuery,
     error,
   } = getListQuery;
-  useEffect(() => {
-    if (data && data.data) {
-      setSuggestionFriends(data.data);
-    }
-  }, [data]);
 
   return (
     <>
@@ -61,7 +56,7 @@ const SuggestFriends = ({ session, status }) => {
               color: (theme) => theme.palette.text.color.first,
             }}
           >
-            Suggestions for you
+            ↗️ Gợi ý theo dõi
           </Typography>
           <Typography
             sx={{
@@ -129,9 +124,9 @@ const SuggestFriends = ({ session, status }) => {
             </>
           )}
           {!isLoading &&
-            suggestionFriends &&
-            suggestionFriends.length > 0 &&
-            suggestionFriends.map((item, i) => (
+            suggestionFriends.data &&
+            suggestionFriends.data.length > 0 &&
+            suggestionFriends.data.map((item, i) => (
               <Item key={item._id} item={item} />
             ))}
         </Box>
