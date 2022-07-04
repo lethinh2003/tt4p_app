@@ -5,15 +5,38 @@ import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import { ImAngry2 } from "react-icons/im";
 import { toast } from "react-toastify";
-const Dislike = ({ item }) => {
+const Dislike = ({ item, socket }) => {
   const { data: session, status } = useSession();
   const [isHearted, setIsHearted] = useState(false);
-  const [hearts, setHearts] = useState(0);
+  const [hearts, setHearts] = useState(item.dislikes.length);
   const [isLoading, setIsLoading] = useState(false);
+  useEffect(() => {
+    if (socket) {
+      socket.on("update-reaction-post-comment", (data) => {
+        if (
+          data.userId === session.user.id &&
+          data.type === "dislike" &&
+          data.commentId === item._id
+        ) {
+          setIsHearted(true);
+          setHearts(data.dislikes);
+        } else if (
+          data.userId === session.user.id &&
+          data.type === "like" &&
+          data.commentId === item._id
+        ) {
+          setIsHearted(false);
+          setHearts(data.dislikes);
+        }
+      });
+      return () => {
+        socket.off("update-reaction-post-comment");
+      };
+    }
+  }, [socket]);
   useEffect(() => {
     if (status === "authenticated") {
       if (item && item.dislikes.length >= 0) {
-        setHearts(item.dislikes.length);
         const resultCheckHeart = checkHeartedPost(
           session.user.id,
           item.dislikes
@@ -42,13 +65,13 @@ const Dislike = ({ item }) => {
         }
       );
       setIsLoading(false);
-      if (res.data.message === "create_success") {
-        setIsHearted(true);
-        setHearts((prev) => prev + 1);
-      } else if (res.data.message === "delete_success") {
-        setIsHearted(false);
-        setHearts((prev) => prev - 1);
-      }
+      // if (res.data.message === "create_success") {
+      //   setIsHearted(true);
+      //   setHearts((prev) => prev + 1);
+      // } else if (res.data.message === "delete_success") {
+      //   setIsHearted(false);
+      //   setHearts((prev) => prev - 1);
+      // }
     } catch (err) {
       setIsLoading(false);
       if (err.response) {

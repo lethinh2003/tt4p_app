@@ -4,6 +4,8 @@ import React from "react";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { getListCommentsLoading } from "../../../redux/actions/getListCommentsLoading";
+import { DELETE_POST_COMMENTS } from "../../../redux/actions/constants";
+import { setPostComments } from "../../../redux/actions/setPostComments";
 const DeleteComment = ({ socket, item, setDataItem, setIsLoadingOption }) => {
   const dispatch = useDispatch();
   const handleClickDelete = async (item) => {
@@ -16,16 +18,50 @@ const DeleteComment = ({ socket, item, setDataItem, setIsLoadingOption }) => {
           userId: item.user[0]._id,
         }
       );
-
       if (socket) {
         const data = {
-          room: `post_${res.data.data.post[0]}`,
+          room: `post_comment_${item._id}`,
+          commentId: item._id,
         };
-
-        socket.emit("create-post-comment", data);
+        socket.emit("delete-post-rep-comment", data, (res) => {
+          if (res.status === "ok") {
+            if (item.rep_comments.length > 0) {
+              item.rep_comments.forEach((item) => {
+                dispatch(
+                  setPostComments({
+                    type: DELETE_POST_COMMENTS,
+                    data: item,
+                  })
+                );
+              });
+              const dataUpdate = {
+                room: `post_comment_${item._id}`,
+                commentId: item._id,
+                item: item,
+              };
+              socket.emit("update-post-comments", dataUpdate);
+            }
+            dispatch(
+              setPostComments({
+                type: DELETE_POST_COMMENTS,
+                data: item,
+              })
+            );
+            const dataUpdate = {
+              room: `post_comment_${item._id}`,
+              commentId: item._id,
+              item: item,
+            };
+            socket.emit("update-post-comments", dataUpdate);
+            setDataItem("");
+            dispatch(getListCommentsLoading(item._id));
+            setIsLoadingOption(false);
+          } else {
+            toast.error("Lỗi hệ thống");
+            setIsLoadingOption(false);
+          }
+        });
       }
-      dispatch(getListCommentsLoading(item._id));
-      setIsLoadingOption(false);
     } catch (err) {
       setIsLoadingOption(false);
       if (err.response) {

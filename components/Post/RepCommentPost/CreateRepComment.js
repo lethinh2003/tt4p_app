@@ -1,16 +1,14 @@
+import InputUnstyled from "@mui/base/InputUnstyled";
 import { Box, Button, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import axios from "axios";
-import { motion } from "framer-motion";
 import { useSession } from "next-auth/react";
 import React, { memo, useEffect, useRef, useState } from "react";
-import { RiCloseFill } from "react-icons/ri";
 import { Oval } from "react-loading-icons";
+import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import convertChat from "../../../utils/convertChat";
 import Icon from "./Emotion/Icon";
-import { useDispatch } from "react-redux";
-import InputUnstyled from "@mui/base/InputUnstyled";
 
 import { getListCommentsLoading } from "../../../redux/actions/getListCommentsLoading";
 const blue = {
@@ -98,14 +96,12 @@ const CustomInput = React.forwardRef(function CustomInput(props, ref) {
   );
 });
 
-const CreateComment = ({
+const CreateRepComment = ({
+  setIsClickRepComment,
   item,
   socket,
   setReplyComment,
   replyCommentData,
-  createCommentBoxRef,
-  setEditComment,
-  editCommentData,
 }) => {
   const dispatch = useDispatch();
   const { data: session, status } = useSession();
@@ -115,11 +111,7 @@ const CreateComment = ({
   useEffect(() => {
     return () => clearTimeout(timeoutRef.current);
   }, []);
-  useEffect(() => {
-    if (editCommentData) {
-      setContent(editCommentData.content);
-    }
-  }, [editCommentData]);
+
   const ErrorContent = styled(Typography)({
     fontWeight: "400",
     fontSize: "1.25rem",
@@ -134,78 +126,25 @@ const CreateComment = ({
         return 0;
       }
       setIsLoading(true);
-      if (editCommentData) {
-        dispatch(getListCommentsLoading(editCommentData.commentId));
-        if (editCommentData.type === "comment") {
-          const res = await axios.post(
-            `${process.env.ENDPOINT_SERVER}/api/v1/posts/comments/edit/${editCommentData.commentId}`,
-            {
-              userId: session.user.id,
-              content: convertChat(content),
-            }
-          );
-
-          if (socket) {
-            const data = {
-              room: `post_${res.data.data.post[0]}`,
-            };
-
-            socket.emit("create-post-comment", data);
-          }
-        } else if (editCommentData.type === "rep_comment") {
-          const res = await axios.post(
-            `${process.env.ENDPOINT_SERVER}/api/v1/posts/comments/reps/edit/${editCommentData.commentId}`,
-            {
-              userId: session.user.id,
-              content: convertChat(content),
-            }
-          );
-
-          if (socket) {
-            const data = {
-              room: `post_${res.data.data.comment[0].post[0]}`,
-            };
-
-            socket.emit("create-post-comment", data);
-          }
-        }
-        dispatch(getListCommentsLoading(editCommentData.commentId));
-        setEditComment("");
-      } else if (replyCommentData) {
+      if (replyCommentData) {
         const res = await axios.post(
           `${process.env.ENDPOINT_SERVER}/api/v1/posts/comments/reps/${replyCommentData.commentId}`,
           {
             userId: session.user.id,
             content: convertChat(content),
-            postId: item._id,
+            postId: item.post[0]._id,
           }
         );
         if (socket) {
           const data = {
-            room: `post_${replyCommentData.postId}`,
+            room: `post_comment_${res.data.data.parent_comment}`,
+            parentComment: res.data.data.parent_comment,
           };
-          console.log(data);
-          socket.emit("create-post-comment", data);
-        }
-        setReplyComment("");
-      } else {
-        const res = await axios.post(
-          `${process.env.ENDPOINT_SERVER}/api/v1/posts/comments/${item._id}`,
-          {
-            userId: session.user.id,
-            content: convertChat(content),
-          }
-        );
-
-        if (socket) {
-          const data = {
-            room: `post_${item._id}`,
-            commentId: res.data.data._id,
-          };
-          socket.emit("create-post-comment", data, (res) => {
+          socket.emit("create-new-post-rep-comment", data, (res) => {
             if (res.status === "ok") {
-              setContent("");
               setIsLoading(false);
+              setReplyComment("");
+              setIsClickRepComment(false);
             } else {
               toast.error("Lỗi hệ thống");
               setIsLoading(false);
@@ -213,8 +152,6 @@ const CreateComment = ({
           });
         }
       }
-      setContent("");
-      setIsLoading(false);
     } catch (err) {
       setIsLoading(false);
       if (err.response) {
@@ -244,54 +181,25 @@ const CreateComment = ({
   return (
     <>
       <Box
-        ref={createCommentBoxRef}
         sx={{
+          marginLeft: "60px",
           width: "100%",
           display: "flex",
           gap: "10px",
           flexDirection: "column",
+          position: "relative",
+          "&::after": {
+            top: "0px",
+            backgroundColor: "#a1acb9",
+            left: "-10px",
+            width: "2px",
+            height: "calc(100%)",
+            position: "absolute",
+
+            content: '""',
+          },
         }}
       >
-        {editCommentData && (
-          <Box
-            sx={{
-              display: "flex",
-              gap: "10px",
-              alignItems: "center",
-              flexWrap: "wrap",
-            }}
-          >
-            <Typography
-              sx={{
-                fontSize: "1.7rem",
-                fontWeight: "bold",
-                color: (theme) => theme.palette.text.color.first,
-              }}
-            >
-              Đang chỉnh sửa cho: {editCommentData.content}
-            </Typography>
-            <Box
-              as={motion.div}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => setEditComment("")}
-              sx={{
-                cursor: "pointer",
-                overflow: "hidden",
-                backgroundColor: "#f7f7f7",
-                display: "flex",
-                gap: "5px",
-                alignItems: "center",
-                padding: "5px",
-                borderRadius: "10px",
-                border: (theme) => `1px solid ${theme.palette.border.dialog}`,
-                color: (theme) => theme.palette.text.color.second,
-              }}
-            >
-              <RiCloseFill />
-            </Box>
-          </Box>
-        )}
         {replyCommentData && (
           <Box
             sx={{
@@ -312,11 +220,12 @@ const CreateComment = ({
               {replyCommentData.content}
             </Typography>
             <Box
-              as={motion.div}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => setReplyComment("")}
+              onClick={() => {
+                setReplyComment("");
+                setIsClickRepComment(false);
+              }}
               sx={{
+                fontSize: "1.2rem",
                 cursor: "pointer",
                 overflow: "hidden",
                 backgroundColor: "#f7f7f7",
@@ -329,7 +238,7 @@ const CreateComment = ({
                 color: (theme) => theme.palette.text.color.second,
               }}
             >
-              <RiCloseFill />
+              ❌
             </Box>
           </Box>
         )}
@@ -372,7 +281,7 @@ const CreateComment = ({
               }}
               value={content}
               type="text"
-              placeholder="Type comment"
+              placeholder="Bạn đang nghĩ gì?"
               onChange={(e) => handleChangeContent(e.target.value)}
             />
           </Box>
@@ -405,7 +314,7 @@ const CreateComment = ({
                   Loading
                 </>
               )}
-              {!isLoading && <>Comment</>}
+              {!isLoading && <>Reply</>}
             </Button>
           </Box>
         </Box>
@@ -413,4 +322,4 @@ const CreateComment = ({
     </>
   );
 };
-export default memo(CreateComment);
+export default memo(CreateRepComment);

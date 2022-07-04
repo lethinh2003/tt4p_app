@@ -15,7 +15,9 @@ import getPartnersCountReducer from "./getPartnersCountReducer";
 import getMessagesCountReducer from "./getMessagesCountReducer";
 import getFeedCategoryReducer from "./getFeedCategoryReducer";
 import getUsersOnlineReducer from "./getUsersOnlineReducer";
+import setPostCommentsReducer from "./setPostCommentsReducer";
 const reducers = combineReducers({
+  postComments: setPostCommentsReducer,
   user: getUserReducer,
   usersOnline: getUsersOnlineReducer,
   partner: getPartnerReducer,

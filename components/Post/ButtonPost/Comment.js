@@ -1,0 +1,45 @@
+import { Box, Typography } from "@mui/material";
+import Link from "next/link";
+import React from "react";
+import { BiMessage } from "react-icons/bi";
+import { useSelector } from "react-redux";
+const Comment = ({
+  item,
+  setEditComment,
+  createCommentBoxRef,
+  setIsLoadingOption,
+}) => {
+  const CommentsCount = useSelector((state) => state.postComments);
+  return (
+    <>
+      <Box
+        sx={{
+          display: "flex",
+          gap: "5px",
+          alignItems: "center",
+          padding: "5px",
+          "&:hover": {
+            backgroundColor: "#e8ecf9",
+          },
+        }}
+      >
+        <Link href="#comments">
+          <Typography
+            sx={{
+              fontSize: "inherit",
+              cursor: "pointer",
+              color: (theme) => theme.palette.text.color.first,
+              fontWeight: 600,
+              display: "flex",
+              alignItems: "center",
+              gap: "5px",
+            }}
+          >
+            <BiMessage /> {CommentsCount.length} Comments
+          </Typography>
+        </Link>
+      </Box>
+    </>
+  );
+};
+export default React.memo(Comment);

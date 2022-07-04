@@ -1,44 +1,98 @@
-import { Avatar, Box, Typography, Badge } from "@mui/material";
+import { BigHead } from "@bigheads/core";
+import { Badge, Box, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { motion } from "framer-motion";
 import { useSession } from "next-auth/react";
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
+import checkIsCommentLoading from "../../../utils/checkIsCommentLoading";
+import checkUserOnline from "../../../utils/checkUserOnline";
 import convertChat from "../../../utils/convertChat";
 import convertTime from "../../../utils/convertTime";
 import CommentEmotion from "./CommentEmotion";
 import DeleteComment from "./DeleteComment";
 import EditComment from "./EditComment";
 import ReplyComment from "./ReplyComment";
-import { memo } from "react";
-import RepCommentItem from "../RepCommentPost/RepCommentItem";
-import { useSelector } from "react-redux";
-import checkIsCommentLoading from "../../../utils/checkIsCommentLoading";
-import { BigHead } from "@bigheads/core";
-import checkUserOnline from "../../../utils/checkUserOnline";
+import CreateRepComment from "../RepCommentPost/CreateRepComment";
+import { useDispatch } from "react-redux";
+import { INSERT_POST_COMMENTS } from "../../../redux/actions/constants";
+import { setPostComments } from "../../../redux/actions/setPostComments";
 const Item = ({
   isChildren,
   socket,
   item,
-  setReplyComment,
   createCommentBoxRef,
   setEditComment,
 }) => {
-  const hasChildren = item && item.rep_comments.length;
+  // const hasChildren = item && item.rep_comments.length;
+  const dispatch = useDispatch();
   const { data: session, status } = useSession();
   const listCommentsLoading = useSelector((state) => state.listCommentsLoading);
   const listUsersOnline = useSelector((state) => state.usersOnline);
-  const [isOnline, setIsOnline] = useState(false);
+  const [replyCommentData, setReplyCommentData] = useState("");
+  const [editCommentData, setEditCommentData] = useState("");
 
+  const [isOnline, setIsOnline] = useState(false);
+  const [isClickRepComment, setIsClickRepComment] = useState(false);
+
+  const elementsContent = item.content.split("\n");
   const timeRef = useRef(null);
   const [dataItem, setDataItem] = useState(item);
+  const [hasChildren, setHasChildren] = useState(
+    dataItem && dataItem.rep_comments.length
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [isOpenOption, setIsOpenOption] = useState(false);
   useEffect(() => {
-    const checkOnline = checkUserOnline(item.user[0], listUsersOnline);
-    setIsOnline(checkOnline);
+    if (socket && dataItem) {
+      socket.emit("join-room-post-comment", dataItem._id);
+      socket.on("create-new-post-rep-comment", (data) => {
+        if (data._id === dataItem._id) {
+          if (data.rep_comments.length > 0) {
+            setHasChildren(true);
+          }
+          setDataItem(data);
+          console.log(data);
+        }
+      });
+      // socket.on("delete-post-rep-comment", (data) => {
+      //   if (data.commentId === dataItem._id) {
+      //     setDataItem("");
+      //     console.log("hide");
+      //   }
+      // });
+      // socket.on("create-rep-post-comment", (data) => {
+      //   dispatch(
+      //     setPostComments({
+      //       type: INSERT_POST_COMMENTS,
+      //       data: [data.data],
+      //     })
+      //   );
+      // });
+      return () => {
+        socket.emit("leave-room-post-comment", dataItem._id);
+        socket.off("create-new-post-rep-comment");
+        socket.off("create-rep-post-comment");
+
+        // socket.off("delete-post-rep-comment");
+      };
+    }
+  }, [socket]);
+  useEffect(() => {
+    const getCommentPost = document.querySelectorAll(".comment_post");
+    for (let i = 0; i < getCommentPost.length; i++) {
+      if (getCommentPost[i].lastChild.textContent === "0") {
+        getCommentPost[i].lastChild.textContent = null;
+      }
+    }
+  }, [dataItem]);
+  useEffect(() => {
+    if (dataItem) {
+      const checkOnline = checkUserOnline(dataItem.user[0], listUsersOnline);
+      setIsOnline(checkOnline);
+    }
   }, [listUsersOnline]);
   useEffect(() => {
-    if (checkIsCommentLoading(item._id, listCommentsLoading)) {
+    if (checkIsCommentLoading(dataItem._id, listCommentsLoading)) {
       setIsLoading(true);
     } else {
       setIsLoading(false);
@@ -62,18 +116,21 @@ const Item = ({
       },
     },
   }));
-
+  const setReplyComment = (data) => {
+    setReplyCommentData(data);
+  };
   return (
     <>
       {dataItem && (
         <Box
+          className="comment_post"
           sx={{
             width: "100%",
 
-            borderBottom: (theme) =>
-              isChildren ? "unset" : `1px solid ${theme.palette.border.dialog}`,
-            borderLeft: (theme) => `1px solid ${theme.palette.border.dialog}`,
-            gap: isChildren ? "0px" : "20px",
+            // borderBottom: (theme) =>
+            //   isChildren ? "unset" : `1px solid ${theme.palette.border.dialog}`,
+
+            gap: isChildren ? "0px" : "0px",
 
             display: "flex",
             fontSize: "3rem",
@@ -84,19 +141,31 @@ const Item = ({
             padding: isChildren ? "0px" : "20px 0px",
             flexDirection: "column",
             position: "relative",
-            marginLeft: isChildren ? "20px" : "0px",
+            marginLeft: isChildren ? "30px" : "0px",
+            opacity: isLoading ? 0.7 : 1,
+            pointerEvents: isLoading ? "none" : "visible",
+            "&::after": {
+              top: !isChildren ? "60px" : "40px",
+              backgroundColor: "#a1acb9",
+              left: "20px",
+              width: "2px",
+              height: !isChildren
+                ? "calc(100% - 40px - 20px - 20px)"
+                : "calc(100% - 40px)",
+              position: "absolute",
+
+              content: '""',
+            },
           }}
         >
           <Box
             sx={{
               display: "flex",
-              gap: "10px",
+              gap: "5px",
               alignItems: "flex-start",
 
               flexDirection: "column",
               width: "100%",
-              opacity: isLoading ? 0.7 : 1,
-              pointerEvents: isLoading ? "none" : "visible",
             }}
           >
             <Box
@@ -123,14 +192,14 @@ const Item = ({
                 >
                   <Box
                     sx={{
-                      width: "50px",
-                      height: "50px",
+                      width: "40px",
+                      height: "40px",
 
                       borderRadius: "50%",
                       position: "relative",
                       overflow: "hidden",
                       border: "2px solid #23303a",
-                      boxShadow: "0px 3px 15px 0px #23303a",
+                      boxShadow: "0px 3px 15px 0px #e1e1e1",
                     }}
                   >
                     <Box
@@ -139,30 +208,30 @@ const Item = ({
                         top: "50%",
                         left: "50%",
                         transform: "translate(-50%, -50%)",
-                        width: "50px",
+                        width: "40px",
                       }}
                     >
                       <BigHead
-                        accessory={item.user[0].avatarSVG.accessory}
-                        body={item.user[0].avatarSVG.body}
-                        circleColor={item.user[0].avatarSVG.circleColor}
-                        clothing={item.user[0].avatarSVG.clothing}
-                        clothingColor={item.user[0].avatarSVG.clothingColor}
-                        eyebrows={item.user[0].avatarSVG.eyebrows}
-                        eyes={item.user[0].avatarSVG.eyes}
-                        faceMask={item.user[0].avatarSVG.faceMask}
-                        faceMaskColor={item.user[0].avatarSVG.faceMaskColor}
-                        facialHair={item.user[0].avatarSVG.facialHair}
-                        graphic={item.user[0].avatarSVG.graphic}
-                        hair={item.user[0].avatarSVG.hair}
-                        hairColor={item.user[0].avatarSVG.hairColor}
-                        hat={item.user[0].avatarSVG.hat}
-                        hatColor={item.user[0].avatarSVG.hatColor}
-                        lashes={item.user[0].avatarSVG.lashes}
-                        lipColor={item.user[0].avatarSVG.lipColor}
-                        mask={item.user[0].avatarSVG.mask}
-                        mouth={item.user[0].avatarSVG.mouth}
-                        skinTone={item.user[0].avatarSVG.skinTone}
+                        accessory={dataItem.user[0].avatarSVG.accessory}
+                        body={dataItem.user[0].avatarSVG.body}
+                        circleColor={dataItem.user[0].avatarSVG.circleColor}
+                        clothing={dataItem.user[0].avatarSVG.clothing}
+                        clothingColor={dataItem.user[0].avatarSVG.clothingColor}
+                        eyebrows={dataItem.user[0].avatarSVG.eyebrows}
+                        eyes={dataItem.user[0].avatarSVG.eyes}
+                        faceMask={dataItem.user[0].avatarSVG.faceMask}
+                        faceMaskColor={dataItem.user[0].avatarSVG.faceMaskColor}
+                        facialHair={dataItem.user[0].avatarSVG.facialHair}
+                        graphic={dataItem.user[0].avatarSVG.graphic}
+                        hair={dataItem.user[0].avatarSVG.hair}
+                        hairColor={dataItem.user[0].avatarSVG.hairColor}
+                        hat={dataItem.user[0].avatarSVG.hat}
+                        hatColor={dataItem.user[0].avatarSVG.hatColor}
+                        lashes={dataItem.user[0].avatarSVG.lashes}
+                        lipColor={dataItem.user[0].avatarSVG.lipColor}
+                        mask={dataItem.user[0].avatarSVG.mask}
+                        mouth={dataItem.user[0].avatarSVG.mouth}
+                        skinTone={dataItem.user[0].avatarSVG.skinTone}
                       />
                     </Box>
                   </Box>
@@ -171,6 +240,7 @@ const Item = ({
                   sx={{
                     display: "flex",
                     gap: "10px",
+                    alignItems: "center",
                   }}
                 >
                   <Box
@@ -186,7 +256,7 @@ const Item = ({
                         color: (theme) => theme.palette.text.color.first,
                       }}
                     >
-                      {item.user[0].name}
+                      {dataItem.user[0].name}
                     </Typography>
                     <Typography
                       sx={{
@@ -195,16 +265,17 @@ const Item = ({
                         color: (theme) => theme.palette.text.color.second,
                       }}
                     >
-                      @{item.user[0].account}
+                      @{dataItem.user[0].account}
                     </Typography>
                   </Box>
                   <Typography
                     sx={{
+                      fontSize: "1rem",
                       fontWeight: "500",
                       color: (theme) => theme.palette.text.color.second,
                     }}
                   >
-                    {convertTime(item.createdAt)}
+                    · {convertTime(dataItem.createdAt)}
                   </Typography>
                 </Box>
               </Box>
@@ -213,8 +284,8 @@ const Item = ({
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                gap: "10px",
-                paddingLeft: "20px",
+                gap: "5px",
+                paddingLeft: "50px",
               }}
             >
               <Box
@@ -224,7 +295,9 @@ const Item = ({
                   fontWeight: 500,
                 }}
               >
-                {convertChat(item.content)}
+                {elementsContent.map((item, i) => {
+                  return <Typography key={i}>{convertChat(item)}</Typography>;
+                })}
               </Box>
               <Box
                 sx={{
@@ -236,16 +309,18 @@ const Item = ({
                   color: (theme) => theme.palette.text.color.second,
                 }}
               >
-                <CommentEmotion item={item} />
+                <CommentEmotion item={dataItem} socket={socket} />
                 <ReplyComment
+                  setIsClickRepComment={setIsClickRepComment}
+                  isClickRepComment={isClickRepComment}
                   createCommentBoxRef={createCommentBoxRef}
-                  item={item}
+                  item={dataItem}
                   setReplyComment={setReplyComment}
                 />
-                {session.user.id === item.user[0]._id && (
+                {session.user.id === dataItem.user[0]._id && (
                   <>
                     <EditComment
-                      item={item}
+                      item={dataItem}
                       createCommentBoxRef={createCommentBoxRef}
                       setEditComment={setEditComment}
                       setIsLoadingOption={setIsLoading}
@@ -253,7 +328,7 @@ const Item = ({
                     <DeleteComment
                       setDataItem={setDataItem}
                       socket={socket}
-                      item={item}
+                      item={dataItem}
                       setIsLoadingOption={setIsLoading}
                     />
                   </>
@@ -261,13 +336,23 @@ const Item = ({
               </Box>
             </Box>
           </Box>
+          {isClickRepComment && (
+            <CreateRepComment
+              socket={socket}
+              setIsClickRepComment={setIsClickRepComment}
+              isClickRepComment={isClickRepComment}
+              replyCommentData={replyCommentData}
+              setReplyComment={setReplyComment}
+              item={dataItem}
+            />
+          )}
 
           {/* Rep Comment */}
           {hasChildren &&
-            item.rep_comments.map((item, i) => (
+            dataItem.rep_comments.map((item, i) => (
               <Item
                 isChildren={true}
-                key={i}
+                key={item._id}
                 setReplyComment={setReplyComment}
                 createCommentBoxRef={createCommentBoxRef}
                 item={item}

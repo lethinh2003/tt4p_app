@@ -2,13 +2,22 @@ import { Box, Button, Typography } from "@mui/material";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
-import { Oval } from "react-loading-icons";
+import { ThreeDots } from "react-loading-icons";
 import { toast } from "react-toastify";
 import CreateComment from "./CommentPost/CreateComment";
 import Item from "./CommentPost/Item";
 import Loading from "./CommentPost/Loading";
-
+import { useDispatch, useSelector } from "react-redux";
+import { setPostComments } from "../../redux/actions/setPostComments";
+import {
+  SET_POST_COMMENTS,
+  INSERT_POST_COMMENTS,
+  CREATE_POST_COMMENTS,
+} from "../../redux/actions/constants";
 const CommentPost = (props) => {
+  const PostComments = useSelector((state) => state.postComments);
+
+  const dispatch = useDispatch();
   const requestApiRef = useRef(null);
   const createCommentBoxRef = useRef(null);
 
@@ -16,10 +25,11 @@ const CommentPost = (props) => {
   const [replyCommentData, setReplyCommentData] = useState("");
   const [buttonLoadmore, setButtonLoadmore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingLoadmore, setIsLoadingLoadmore] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [valueFilter, setValueFilter] = useState("latest");
   const [dataComments, setDataComments] = useState([]);
-  const [resultsNum, setResultsNum] = useState(5);
+  const [resultsNum, setResultsNum] = useState(100);
   const [resultsPage, setResultsPage] = useState(1);
   const { data: session, status } = useSession();
 
@@ -39,8 +49,13 @@ const CommentPost = (props) => {
   };
   useEffect(() => {
     if (socket) {
-      socket.on("create-post-comment", (data) => {
-        reloadPostComments();
+      socket.on("create-new-post-comment", (data) => {
+        dispatch(
+          setPostComments({
+            type: CREATE_POST_COMMENTS,
+            data: data,
+          })
+        );
       });
 
       if (status === "authenticated") {
@@ -53,7 +68,7 @@ const CommentPost = (props) => {
     }
     return () => {
       if (socket) {
-        socket.off("create-post-comment");
+        socket.off("create-new-post-comment");
         socket.off("typing-post-comment");
       }
     };
@@ -63,7 +78,7 @@ const CommentPost = (props) => {
     if (status === "authenticated") {
       requestApiRef.current = getPostComments();
     }
-  }, [valueFilter, resultsPage]);
+  }, [valueFilter]);
   const getPostComments = async () => {
     try {
       setIsLoading(true);
@@ -76,15 +91,61 @@ const CommentPost = (props) => {
         setButtonLoadmore(true);
       }
       if (resultsPage === 1) {
-        setDataComments(res.data.data);
+        dispatch(
+          setPostComments({
+            type: SET_POST_COMMENTS,
+            data: res.data.data,
+          })
+        );
       } else {
-        setDataComments((prev) => [...prev, ...res.data.data]);
+        dispatch(
+          setPostComments({
+            type: INSERT_POST_COMMENTS,
+            data: res.data.data,
+          })
+        );
       }
 
       setIsLoading(false);
       return "ok";
     } catch (err) {
       setIsLoading(false);
+      if (err.response) {
+        toast.error(err.response.data.message);
+      }
+    }
+  };
+  const getLoadmorePostComments = async (resultsPage) => {
+    try {
+      setIsLoadingLoadmore(true);
+      const res = await axios.get(
+        `${process.env.ENDPOINT_SERVER}/api/v1/posts/comments/${item._id}?sort=${valueFilter}&results=${resultsNum}&page=${resultsPage}`
+      );
+      if (res.data.results < resultsNum) {
+        setButtonLoadmore(false);
+      } else {
+        setButtonLoadmore(true);
+      }
+      if (resultsPage === 1) {
+        dispatch(
+          setPostComments({
+            type: SET_POST_COMMENTS,
+            data: res.data.data,
+          })
+        );
+      } else {
+        dispatch(
+          setPostComments({
+            type: INSERT_POST_COMMENTS,
+            data: res.data.data,
+          })
+        );
+      }
+
+      setIsLoadingLoadmore(false);
+      return "ok";
+    } catch (err) {
+      setIsLoadingLoadmore(false);
       if (err.response) {
         toast.error(err.response.data.message);
       }
@@ -101,9 +162,19 @@ const CommentPost = (props) => {
         setButtonLoadmore(true);
       }
       if (resultsPage === 1) {
-        setDataComments(res.data.data);
+        dispatch(
+          setPostComments({
+            type: SET_POST_COMMENTS,
+            data: res.data.data,
+          })
+        );
       } else {
-        setDataComments((prev) => [...prev, ...res.data.data]);
+        dispatch(
+          setPostComments({
+            type: INSERT_POST_COMMENTS,
+            data: res.data.data,
+          })
+        );
       }
 
       return "ok";
@@ -121,12 +192,14 @@ const CommentPost = (props) => {
   };
   const handleClickLoadmore = () => {
     setResultsPage((prev) => prev + 1);
+    getLoadmorePostComments(resultsPage + 1);
   };
   return (
     <>
       {item && (
         <>
           <Box
+            id="comments"
             sx={{
               display: "flex",
               justifyContent: "space-between",
@@ -140,7 +213,7 @@ const CommentPost = (props) => {
                 color: (theme) => theme.palette.text.color.first,
               }}
             >
-              Comments ({dataComments.length})
+              Comments ({PostComments.length})
             </Typography>
             <Box
               sx={{
@@ -236,17 +309,21 @@ const CommentPost = (props) => {
               <Typography
                 sx={{
                   color: (theme) => theme.palette.text.color.first,
-                  fontSize: "1.25rem",
+                  fontSize: "1.7rem",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
                 }}
               >
-                Ai đó đang nhập bình luận
+                <ThreeDots width={20} fill="inherit" /> Ai đó đang nhập bình
+                luận
               </Typography>
             )}
-            {!isLoading && dataComments.length === 0 && (
+            {!isLoading && PostComments.length === 0 && (
               <Typography
                 sx={{
                   color: (theme) => theme.palette.text.color.first,
-                  fontSize: "1.25rem",
+                  fontSize: "1.7rem",
                 }}
               >
                 Hãy là người đầu tiên bình luận
@@ -259,14 +336,15 @@ const CommentPost = (props) => {
               }}
             >
               {!isLoading &&
-                dataComments.length > 0 &&
-                dataComments.map((item, i) => {
+                PostComments.length > 0 &&
+                PostComments.map((item, i) => {
                   if (!item.parent_comment) {
                     return (
                       <Item
                         socket={socket}
                         setReplyComment={setReplyComment}
                         createCommentBoxRef={createCommentBoxRef}
+                        replyCommentData={replyCommentData}
                         setEditComment={setEditComment}
                         item={item}
                         key={item._id}
@@ -275,6 +353,21 @@ const CommentPost = (props) => {
                   }
                 })}
             </Box>
+            {isLoadingLoadmore && (
+              <Typography
+                sx={{
+                  fontSize: "1.4rem",
+                  cursor: "pointer",
+                  color: (theme) => theme.palette.text.color.first,
+                  fontWeight: 600,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "5px",
+                }}
+              >
+                Loading...
+              </Typography>
+            )}
             {buttonLoadmore && (
               <Button
                 sx={{
@@ -289,13 +382,8 @@ const CommentPost = (props) => {
                 }}
                 onClick={() => handleClickLoadmore()}
               >
-                {isLoading && (
-                  <>
-                    <Oval width={15} />
-                    Loading
-                  </>
-                )}
-                {!isLoading && <>Load more</>}
+                {isLoadingLoadmore && <>Loading</>}
+                {!isLoading && !isLoadingLoadmore && <>Load more</>}
               </Button>
             )}
           </Box>

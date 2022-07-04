@@ -2,7 +2,7 @@ import { Box } from "@mui/material";
 import React, { useState } from "react";
 import Dislike from "./Emotion/Dislike";
 import Like from "./Emotion/Like";
-const CommentEmotion = ({ item }) => {
+const CommentEmotion = ({ item, socket }) => {
   return (
     <>
       <Box
@@ -12,8 +12,8 @@ const CommentEmotion = ({ item }) => {
           alignItems: "center",
         }}
       >
-        <Like item={item} />
-        <Dislike item={item} />
+        <Like item={item} socket={socket} />
+        <Dislike item={item} socket={socket} />
       </Box>
       <Box
         sx={{

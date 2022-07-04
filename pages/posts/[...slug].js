@@ -6,6 +6,7 @@ import Layout from "../../components/Layout/Layout";
 import CommentPost from "../../components/Post/CommentPost";
 import ContentPost from "../../components/Post/ContentPost";
 import IntroducePost from "../../components/Post/IntroducePost";
+import ButtonPost from "../../components/Post/ButtonPost";
 import MenuRight from "../../components/Post/MenuRight";
 import Head from "next/head";
 import { useSession, getSession } from "next-auth/react";
@@ -75,6 +76,8 @@ const PostDetail = (props) => {
                   <IntroducePost item={item} />
 
                   <ContentPost item={item} />
+                  <ButtonPost item={item} />
+
                   <CommentPost socket={socket} item={item} />
                 </>
               )}
