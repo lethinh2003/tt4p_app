@@ -1,4 +1,4 @@
-export const getPartner = (payload) => (dispatch) => {
+export const _darkMode = (payload) => (dispatch) => {
   dispatch({
     type: payload.type,
     data: payload.data,

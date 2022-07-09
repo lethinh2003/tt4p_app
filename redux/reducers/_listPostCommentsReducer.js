@@ -6,7 +6,7 @@ import {
 } from "../actions/constants";
 const initialState = [];
 let newData = [];
-const setPostCommentsReducer = (state = initialState, payload) => {
+const _listPostCommentsReducer = (state = initialState, payload) => {
   switch (payload.type) {
     case SET_POST_COMMENTS:
       return payload.data;
@@ -34,7 +34,7 @@ const setPostCommentsReducer = (state = initialState, payload) => {
       return state;
   }
 };
-export default setPostCommentsReducer;
+export default _listPostCommentsReducer;
 const checkIsExistComment = (comment, array) => {
   let check = false;
   for (let i = 0; i < array.length; i++) {

@@ -1,4 +1,4 @@
-export const getPartnersCount = (payload) => (dispatch) => {
+export const _feedCategory = (payload) => (dispatch) => {
   dispatch({
     type: payload.type,
     data: payload.data,

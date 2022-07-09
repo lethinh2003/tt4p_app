@@ -6,24 +6,23 @@ import { useEffect, useRef, useState } from "react";
 import { ThreeDots } from "react-loading-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import {
+  INC_PARTNERS_COUNT,
+  SET_MESSAGES_COUNT,
+  SET_PARTNERS_COUNT,
+  SET_PARTNER,
+} from "../../redux/actions/constants";
+import { _partner } from "../../redux/actions/_partner";
 import { getToggleBanned } from "../../redux/actions/getToggleBanned";
 import { getUser } from "../../redux/actions/getUser";
+import { _messagesCount } from "../../redux/actions/_messagesCount";
+import { _partnersCount } from "../../redux/actions/_partnersCount";
 import useLoading from "../../utils/useLoading";
 import CountFindPartner from "../Chat/CountFindPartner";
 import Loading from "../Loading/Loading";
 import Chat from "./Chat";
 import PartnerRandom from "./PartnerRandom";
 import YourSelf from "./YourSelf";
-import { getPartner } from "../../redux/actions/getPartner";
-import { getPartnersCount } from "../../redux/actions/getPartnersCount";
-import { getMessagesCount } from "../../redux/actions/getMessagesCount";
-import {
-  GET_PARTNERS_COUNT,
-  INC_PARTNERS_COUNT,
-  DEC_PARTNERS_COUNT,
-  GET_MESSAGES_COUNT,
-  INC_MESSAGES_COUNT,
-} from "../../redux/actions/constants";
 
 const FindPartnerRandom = ({ socket }) => {
   const { data: session, status } = useSession();
@@ -66,8 +65,8 @@ const FindPartnerRandom = ({ socket }) => {
       setIsWaitingRoom(false);
       setStatusUser("");
       dispatch(
-        getPartner({
-          type: "GET_PARTNER",
+        _partner({
+          type: SET_PARTNER,
           data: null,
         })
       );
@@ -195,8 +194,8 @@ const FindPartnerRandom = ({ socket }) => {
     socket.on("reject-restore", (msg) => {
       setStatusUser("");
       dispatch(
-        getPartner({
-          type: "GET_PARTNER",
+        _partner({
+          type: SET_PARTNER,
           data: null,
         })
       );
@@ -218,8 +217,8 @@ const FindPartnerRandom = ({ socket }) => {
             if (res.status === "ok") {
               setStatusUser("chatting");
               dispatch(
-                getPartner({
-                  type: "GET_PARTNER",
+                _partner({
+                  type: SET_PARTNER,
                   data: partner,
                 })
               );
@@ -236,8 +235,8 @@ const FindPartnerRandom = ({ socket }) => {
       setStatusUser("chatting");
       toast.info(msg);
       dispatch(
-        getPartner({
-          type: "GET_PARTNER",
+        _partner({
+          type: SET_PARTNER,
           data: partner,
         })
       );
@@ -251,8 +250,8 @@ const FindPartnerRandom = ({ socket }) => {
     socket.on("send-noti-current-user-out-chat-room", (msg) => {
       setStatusUser("");
       dispatch(
-        getPartner({
-          type: "GET_PARTNER",
+        _partner({
+          type: SET_PARTNER,
           data: null,
         })
       );
@@ -271,13 +270,13 @@ const FindPartnerRandom = ({ socket }) => {
       clearInterval(TimeIntervalFindPartner.current);
       setStatusUser("chatting");
       dispatch(
-        getPartner({
-          type: "GET_PARTNER",
+        _partner({
+          type: SET_PARTNER,
           data: partner,
         })
       );
       dispatch(
-        getPartnersCount({
+        _partnersCount({
           type: INC_PARTNERS_COUNT,
           data: 1,
         })
@@ -314,14 +313,14 @@ const FindPartnerRandom = ({ socket }) => {
       setUser(data.data);
 
       dispatch(
-        getPartnersCount({
-          type: GET_PARTNERS_COUNT,
+        _partnersCount({
+          type: SET_PARTNERS_COUNT,
           data: data.data.partners,
         })
       );
       dispatch(
-        getMessagesCount({
-          type: GET_MESSAGES_COUNT,
+        _messagesCount({
+          type: SET_MESSAGES_COUNT,
           data: data.data.messages,
         })
       );
@@ -353,8 +352,8 @@ const FindPartnerRandom = ({ socket }) => {
         setIsLoading(true);
         setIsWaitingRoom(false);
         dispatch(
-          getPartner({
-            type: "GET_PARTNER",
+          _partner({
+            type: SET_PARTNER,
             data: null,
           })
         );
@@ -452,8 +451,8 @@ const FindPartnerRandom = ({ socket }) => {
           });
           setStatusUser("");
           dispatch(
-            getPartner({
-              type: "GET_PARTNER",
+            _partner({
+              type: SET_PARTNER,
               data: null,
             })
           );

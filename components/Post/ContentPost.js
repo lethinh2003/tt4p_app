@@ -7,11 +7,8 @@ import convertToTime from "../../utils/convertTime";
 import readingTime from "reading-time";
 import { BiTimeFive } from "react-icons/bi";
 import { RiBookOpenLine } from "react-icons/ri";
-
-const ContentPost = (props) => {
-  const [timeReading, setTimeReading] = useState(0);
-  const { item } = props;
-
+import ButtonPost from "./ButtonPost";
+const ContentPost = ({ item, socket }) => {
   return (
     <>
       {item && (
@@ -30,7 +27,6 @@ const ContentPost = (props) => {
               backgroundColor: "#ffffff",
 
               padding: "20px",
-
               color: (theme) => theme.palette.text.color.first,
             }}
           >
@@ -38,6 +34,7 @@ const ContentPost = (props) => {
               className="content-html"
               dangerouslySetInnerHTML={{ __html: item.content }}
             />
+            <ButtonPost socket={socket} item={item} />
           </Box>
         </>
       )}

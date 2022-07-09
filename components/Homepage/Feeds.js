@@ -1,94 +1,113 @@
-import { Avatar, Box, Button, Skeleton, Typography } from "@mui/material";
+import { Box, Button, Skeleton, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import axios from "axios";
-import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
-import { Oval } from "react-loading-icons";
-import { toast } from "react-toastify";
-import Item from "../Feeds/Item";
-import { useQuery } from "react-query";
-import { ThreeDots } from "react-loading-icons";
+import { memo, useContext, useEffect, useState } from "react";
+import { VscEye, VscFlame, VscPreview, VscRocket } from "react-icons/vsc";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { useSelector, useDispatch } from "react-redux";
-import { GET_FEED_CATEGORY } from "../../redux/actions/constants";
-import { getFeedCategory } from "../../redux/actions/getFeedCategory";
-import { VscRocket, VscEye, VscFlame, VscPreview } from "react-icons/vsc";
-const Feeds = ({ session, status }) => {
+import { Oval } from "react-loading-icons";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import SocketContext from "../../contexts/socket";
+import {
+  ADD_FEED_POSTS,
+  INC_FEED_CURRENT_PAGE,
+  SET_FEED_CATEGORY,
+  SET_FEED_CURRENT_PAGE,
+  SET_FEED_CURRENT_POSITION_SCROLL,
+  SET_FEED_POSTS,
+} from "../../redux/actions/constants";
+import { _feedCategory } from "../../redux/actions/_feedCategory";
+import {
+  _feedCurrentPositionScroll,
+  _feedPosts,
+} from "../../redux/actions/_feedPosts";
+import Item from "../Feeds/Item";
+import EndList from "./EndList";
+const Feeds = () => {
+  const socket = useContext(SocketContext);
   const dispatch = useDispatch();
   const getGlobalCategory = useSelector((state) => state.feedCategory);
+  const getFeedPosts = useSelector((state) => state.feedPosts);
+  const getFeedCurrentPage = useSelector((state) => state.feedCurrentPage);
+  const getFeedCurrentPositionScroll = useSelector(
+    (state) => state.feedCurrentPositionScroll
+  );
   const [buttonLoadmore, setButtonLoadmore] = useState(false);
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const [resultsOnPage, setResultsOnPage] = useState(6);
-  const [posts, setPosts] = useState([]);
+  const [resultsOnPage, setResultsOnPage] = useState(10);
   const [filter, setFilter] = useState(getGlobalCategory);
-  // const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isLoadingLoadMore, setIsLoadingLoadMore] = useState(false);
-  const callDataApi = async () => {
-    setCurrentPage(1);
-    setButtonLoadmore(true);
-
-    const results = await axios.get(
-      `${process.env.ENDPOINT_SERVER}/api/v1/posts?sort=${filter}&pageSize=${resultsOnPage}`
-    );
-    return results.data;
-  };
-  const getListQuery = useQuery("get-all-posts", callDataApi, {
-    cacheTime: Infinity,
-    refetchOnWindowFocus: false,
-    manual: true,
-  });
-  const {
-    data,
-    isLoading,
-    isFetching,
-    isError: isErrorQuery,
-    error,
-    refetch,
-  } = getListQuery;
 
   useEffect(() => {
-    if (data && data.results >= 0) {
-      setPosts(data.data);
-      if (data.results < resultsOnPage) {
-        setButtonLoadmore(false);
-      } else {
-        if (filter === "following" || filter === "popular") {
-          setCurrentPage((prev) => prev + 1);
-        }
-        console.log("hehe");
-        setButtonLoadmore(true);
+    const scrollEvent = () => {
+      if (window.scrollY != 0) {
+        dispatch(
+          _feedCurrentPositionScroll({
+            type: SET_FEED_CURRENT_POSITION_SCROLL,
+            data: window.scrollY,
+          })
+        );
       }
-    }
-  }, [data]);
+    };
+    window.addEventListener("scroll", scrollEvent);
+    return () => {
+      window.removeEventListener("scroll", scrollEvent);
+    };
+  });
   useEffect(() => {
-    // window.scroll(0, 2000);
+    if (getFeedPosts.length === 0) {
+      getAPIFeedPosts();
+    }
   }, []);
   useEffect(() => {
-    refetch();
+    if (getFeedCurrentPositionScroll) {
+      window.scroll(0, getFeedCurrentPositionScroll);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (filter !== getGlobalCategory) {
+      dispatch(
+        _feedPosts({
+          type: SET_FEED_CURRENT_PAGE,
+          data: 1,
+        })
+      );
+      getAPIFeedPosts();
+      dispatch(
+        _feedCategory({
+          type: SET_FEED_CATEGORY,
+          data: filter,
+        })
+      );
+    }
   }, [filter]);
 
-  const getAllPosts = async () => {
+  const getAPIFeedPosts = async () => {
     try {
       setIsLoading(true);
-      setCurrentPage(1);
-      let res;
-
-      res = await axios.get(
+      const results = await axios.get(
         `${process.env.ENDPOINT_SERVER}/api/v1/posts?sort=${filter}&pageSize=${resultsOnPage}`
       );
-
-      if (res.data.results < resultsOnPage) {
+      dispatch(
+        _feedPosts({
+          type: SET_FEED_POSTS,
+          data: results.data.data,
+        })
+      );
+      if (results.data.results < resultsOnPage) {
         setButtonLoadmore(false);
       } else {
         if (filter === "following" || filter === "popular") {
-          setCurrentPage((prev) => prev + 1);
+          dispatch(
+            _feedPosts({
+              type: INC_FEED_CURRENT_PAGE,
+            })
+          );
         }
         setButtonLoadmore(true);
       }
-
       setIsLoading(false);
-      setPosts(res.data.data);
     } catch (err) {
       setIsLoading(false);
       if (err.response) {
@@ -96,6 +115,16 @@ const Feeds = ({ session, status }) => {
       }
     }
   };
+
+  useEffect(() => {
+    if (socket) {
+      socket.emit("join-room-update-public-post");
+    }
+  }, [socket]);
+
+  useEffect(() => {
+    // refetch();
+  }, [filter]);
 
   const handleUpdateNewPage = async () => {
     try {
@@ -104,12 +133,12 @@ const Feeds = ({ session, status }) => {
       if (filter === "latest" || filter === "all") {
         res = await axios.get(
           `${process.env.ENDPOINT_SERVER}/api/v1/posts?sort=${filter}&postId=${
-            posts[posts.length - 1]._id
+            getFeedPosts[getFeedPosts.length - 1]._id
           }&pageSize=${resultsOnPage}`
         );
       } else {
         res = await axios.get(
-          `${process.env.ENDPOINT_SERVER}/api/v1/posts?sort=${filter}&page=${currentPage}&pageSize=${resultsOnPage}`
+          `${process.env.ENDPOINT_SERVER}/api/v1/posts?sort=${filter}&page=${getFeedCurrentPage}&pageSize=${resultsOnPage}`
         );
       }
 
@@ -117,11 +146,21 @@ const Feeds = ({ session, status }) => {
         setButtonLoadmore(false);
       } else {
         if (filter === "following" || filter === "popular") {
-          setCurrentPage((prev) => prev + 1);
+          dispatch(
+            _feedPosts({
+              type: INC_FEED_CURRENT_PAGE,
+            })
+          );
         }
         setButtonLoadmore(true);
       }
-      setPosts([...posts, ...res.data.data]);
+      dispatch(
+        _feedPosts({
+          type: ADD_FEED_POSTS,
+          data: res.data.data,
+        })
+      );
+
       setIsLoadingLoadMore(false);
     } catch (err) {
       setIsLoadingLoadMore(false);
@@ -130,12 +169,6 @@ const Feeds = ({ session, status }) => {
       }
     }
   };
-
-  const AvatarProfile = styled(Avatar)(({ theme }) => ({
-    "&.MuiAvatar-root": {
-      border: `3px solid ${theme.palette.border.feeds}`,
-    },
-  }));
 
   const category = [
     {
@@ -181,13 +214,7 @@ const Feeds = ({ session, status }) => {
     },
   }));
   const handleClickFilter = (key) => {
-    if (posts.length >= 0 && !isFetching) {
-      dispatch(
-        getFeedCategory({
-          type: GET_FEED_CATEGORY,
-          data: key,
-        })
-      );
+    if (!isLoading) {
       setFilter(key);
     }
   };
@@ -205,9 +232,10 @@ const Feeds = ({ session, status }) => {
         <Box
           sx={{
             display: "flex",
-
+            flexWrap: "wrap",
             alignItems: "center",
             justifyContent: "space-between",
+            gap: "10px",
           }}
         >
           <Typography
@@ -221,162 +249,38 @@ const Feeds = ({ session, status }) => {
           </Typography>
           <Box
             sx={{
-              display: "flex",
-              gap: "10px",
+              overflowX: "auto",
             }}
           >
-            {category.map((item, i) => (
-              <TitleFeeds
-                key={i}
-                onClick={() => handleClickFilter(item.key)}
-                className={item.key === filter ? "active" : null}
-              >
-                {item.icon}
-                {item.title}
-              </TitleFeeds>
-            ))}
+            <Box sx={{ display: "flex", gap: "5px" }}>
+              {category.map((item, i) => (
+                <TitleFeeds
+                  key={i}
+                  onClick={() => handleClickFilter(item.key)}
+                  className={item.key === getGlobalCategory ? "active" : null}
+                >
+                  {item.icon}
+                  {item.title}
+                </TitleFeeds>
+              ))}
+            </Box>
           </Box>
+        </Box>
+        <Box
+          sx={{
+            textAlign: "center",
+          }}
+        >
+          {/* {isFetching && <ThreeDots width={30} fill={"20b8fb"} />} */}
         </Box>
 
         <InfiniteScroll
-          dataLength={posts.length}
+          dataLength={getFeedPosts.length}
           next={handleUpdateNewPage}
           hasMore={buttonLoadmore}
           style={{
             overflow: "unset",
           }}
-          loader={
-            <>
-              <Box
-                sx={{
-                  display: "grid",
-                  gridTemplateColumns: {
-                    xs: "repeat(1, minmax(0,1fr))",
-                    md: "repeat(2, minmax(0,1fr))",
-                  },
-                  gap: "30px",
-                  paddingTop: "20px",
-                }}
-              >
-                {Array.from({ length: 2 }).map((item, i) => (
-                  <Box
-                    key={i}
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "30px",
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        height: "250px",
-                        border: (theme) =>
-                          `3px solid ${theme.palette.border.feeds}`,
-
-                        borderRadius: "30px",
-                        overflow: "hidden",
-                        boxShadow: (theme) =>
-                          `0px 3px 20px 6px ${theme.palette.feeds.boxShadow}`,
-                        display: "flex",
-                        fontSize: "3rem",
-                        color: "#ffffff",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      <Skeleton
-                        animation="wave"
-                        variant="rectangular"
-                        height={"100%"}
-                        width={"100%"}
-                      />
-                    </Box>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        gap: "10px",
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          display: "flex",
-
-                          alignItems: "center",
-                          flex: 1,
-                          width: "100%",
-                          gap: "10px",
-                        }}
-                      >
-                        <Skeleton
-                          animation="wave"
-                          variant="circular"
-                          height={40}
-                          width={40}
-                        />
-
-                        <Typography
-                          sx={{
-                            fontSize: "1.7rem",
-                            fontWeight: "bold",
-                            width: "100px",
-                            whiteSpace: "nowrap",
-                            overflow: "hidden !important",
-                            textOverflow: "ellipsis",
-                          }}
-                        >
-                          <Skeleton animation="wave" width={100} height={20} />
-                        </Typography>
-                      </Box>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          gap: "10px",
-                          fontSize: "1.7rem",
-                          height: "100%",
-                          fontWeight: "bold",
-                          color: (theme) => theme.palette.text.color.second,
-                        }}
-                      >
-                        <Box
-                          sx={{
-                            display: "flex",
-                            gap: "5px",
-                            alignItems: "center",
-                          }}
-                        >
-                          <Skeleton
-                            animation="wave"
-                            variant="circular"
-                            height={20}
-                            width={20}
-                          />
-                          <Skeleton animation="wave" width={50} height={20} />
-                        </Box>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            gap: "5px",
-                            alignItems: "center",
-                          }}
-                        >
-                          <Skeleton
-                            animation="wave"
-                            variant="circular"
-                            height={20}
-                            width={20}
-                          />
-                          <Skeleton animation="wave" width={50} height={20} />
-                        </Box>
-                      </Box>
-                    </Box>
-                  </Box>
-                ))}
-              </Box>
-            </>
-          }
         >
           <Box
             sx={{
@@ -510,11 +414,16 @@ const Feeds = ({ session, status }) => {
             )}
 
             {!isLoading &&
-              posts.length > 0 &&
-              posts.map((item, i) => <Item key={item._id} i={i} item={item} />)}
+              getFeedPosts.length > 0 &&
+              getFeedPosts.map((item, i) => (
+                <Item key={item._id} i={i} item={item} socket={socket} />
+              ))}
           </Box>
         </InfiniteScroll>
-        {buttonLoadmore && (
+        {!isLoading && getFeedPosts.length === 0 && (
+          <EndList msg={"Chưa có bài viết nào 👏🏼"} />
+        )}
+        {buttonLoadmore && getFeedPosts.length > 0 && !isLoading && (
           <Button
             sx={{
               width: "100px",
@@ -541,4 +450,4 @@ const Feeds = ({ session, status }) => {
     </>
   );
 };
-export default Feeds;
+export default memo(Feeds);

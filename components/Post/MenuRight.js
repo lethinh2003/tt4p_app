@@ -5,7 +5,9 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import TableOfContent from "./TableOfContent";
 import FeaturesPost from "./FeaturesPost";
+import AuthorInfo from "./MenuRight/AuthorInfo";
 const MenuRight = ({ item }) => {
+  console.log("ITEM", item);
   const BoxNav = styled(Box)(({ theme }) => ({
     backgroundColor: theme.palette.sidebar.background.default,
 
@@ -124,8 +126,7 @@ const MenuRight = ({ item }) => {
       >
         <div className="ms-sidebar__wrapper">
           <div className="ms-navbar">
-            <TableOfContent item={item} />
-            <FeaturesPost item={item} />
+            <AuthorInfo user={item.user[0]} />
           </div>
         </div>
       </ItemWrapper>

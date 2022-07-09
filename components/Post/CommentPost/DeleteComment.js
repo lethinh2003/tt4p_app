@@ -3,14 +3,23 @@ import axios from "axios";
 import React from "react";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
-import { getListCommentsLoading } from "../../../redux/actions/getListCommentsLoading";
-import { DELETE_POST_COMMENTS } from "../../../redux/actions/constants";
-import { setPostComments } from "../../../redux/actions/setPostComments";
+import { _listCommentsLoading } from "../../../redux/actions/_listCommentsLoading";
+import {
+  DELETE_POST_COMMENTS,
+  REMOVE_ITEM_LIST_COMMENTS_LOADING,
+  ADD_ITEM_LIST_COMMENTS_LOADING,
+} from "../../../redux/actions/constants";
+import { _listPostComments } from "../../../redux/actions/_listPostComments";
 const DeleteComment = ({ socket, item, setDataItem, setIsLoadingOption }) => {
   const dispatch = useDispatch();
   const handleClickDelete = async (item) => {
     try {
-      dispatch(getListCommentsLoading(item._id));
+      dispatch(
+        _listCommentsLoading({
+          type: ADD_ITEM_LIST_COMMENTS_LOADING,
+          data: item._id,
+        })
+      );
       setIsLoadingOption(true);
       const res = await axios.post(
         `${process.env.ENDPOINT_SERVER}/api/v1/posts/comments/delete/${item._id}`,
@@ -28,7 +37,7 @@ const DeleteComment = ({ socket, item, setDataItem, setIsLoadingOption }) => {
             if (item.rep_comments.length > 0) {
               item.rep_comments.forEach((item) => {
                 dispatch(
-                  setPostComments({
+                  _listPostComments({
                     type: DELETE_POST_COMMENTS,
                     data: item,
                   })
@@ -42,7 +51,7 @@ const DeleteComment = ({ socket, item, setDataItem, setIsLoadingOption }) => {
               socket.emit("update-post-comments", dataUpdate);
             }
             dispatch(
-              setPostComments({
+              _listPostComments({
                 type: DELETE_POST_COMMENTS,
                 data: item,
               })
@@ -54,7 +63,12 @@ const DeleteComment = ({ socket, item, setDataItem, setIsLoadingOption }) => {
             };
             socket.emit("update-post-comments", dataUpdate);
             setDataItem("");
-            dispatch(getListCommentsLoading(item._id));
+            dispatch(
+              _listCommentsLoading({
+                type: REMOVE_ITEM_LIST_COMMENTS_LOADING,
+                data: item._id,
+              })
+            );
             setIsLoadingOption(false);
           } else {
             toast.error("Lỗi hệ thống");
@@ -63,6 +77,12 @@ const DeleteComment = ({ socket, item, setDataItem, setIsLoadingOption }) => {
         });
       }
     } catch (err) {
+      dispatch(
+        _listCommentsLoading({
+          type: REMOVE_ITEM_LIST_COMMENTS_LOADING,
+          data: item._id,
+        })
+      );
       setIsLoadingOption(false);
       if (err.response) {
         toast.error(err.response.data.message);

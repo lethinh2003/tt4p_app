@@ -88,7 +88,7 @@ const MenuRight = ({ session, status }) => {
             <div className="ms-navbar">
               <OptionMenu />
               <SuggestFriends session={session} status={status} />
-              <LatestPost session={session} status={status} />
+              <LatestPost />
             </div>
           </div>
         </ItemWrapper>

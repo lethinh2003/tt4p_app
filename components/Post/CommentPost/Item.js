@@ -1,21 +1,17 @@
-import { BigHead } from "@bigheads/core";
-import { Badge, Box, Typography } from "@mui/material";
-import { styled } from "@mui/material/styles";
+import { Box, Typography } from "@mui/material";
 import { useSession } from "next-auth/react";
 import { memo, useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import checkIsCommentLoading from "../../../utils/checkIsCommentLoading";
-import checkUserOnline from "../../../utils/checkUserOnline";
 import convertChat from "../../../utils/convertChat";
 import convertTime from "../../../utils/convertTime";
+import AvatarUser from "../../Homepage/AvatarUser";
+import CreateRepComment from "../RepCommentPost/CreateRepComment";
 import CommentEmotion from "./CommentEmotion";
 import DeleteComment from "./DeleteComment";
 import EditComment from "./EditComment";
 import ReplyComment from "./ReplyComment";
-import CreateRepComment from "../RepCommentPost/CreateRepComment";
-import { useDispatch } from "react-redux";
-import { INSERT_POST_COMMENTS } from "../../../redux/actions/constants";
-import { setPostComments } from "../../../redux/actions/setPostComments";
+import CreateEditComment from "./CreateEditComment";
 const Item = ({
   isChildren,
   socket,
@@ -23,25 +19,29 @@ const Item = ({
   createCommentBoxRef,
   setEditComment,
 }) => {
-  // const hasChildren = item && item.rep_comments.length;
   const dispatch = useDispatch();
   const { data: session, status } = useSession();
   const listCommentsLoading = useSelector((state) => state.listCommentsLoading);
-  const listUsersOnline = useSelector((state) => state.usersOnline);
   const [replyCommentData, setReplyCommentData] = useState("");
   const [editCommentData, setEditCommentData] = useState("");
 
-  const [isOnline, setIsOnline] = useState(false);
+  const [isClickEditComment, setIsClickEditComment] = useState(false);
   const [isClickRepComment, setIsClickRepComment] = useState(false);
 
-  const elementsContent = item.content.split("\n");
   const timeRef = useRef(null);
   const [dataItem, setDataItem] = useState(item);
+  const [vanilaContent, setVanilaContent] = useState(item.content);
+  const [elementsContent, setElementsContent] = useState(
+    vanilaContent.split("\n")
+  );
   const [hasChildren, setHasChildren] = useState(
     dataItem && dataItem.rep_comments.length
   );
   const [isLoading, setIsLoading] = useState(false);
   const [isOpenOption, setIsOpenOption] = useState(false);
+  useEffect(() => {
+    setElementsContent(vanilaContent.split("\n"));
+  }, [vanilaContent]);
   useEffect(() => {
     if (socket && dataItem) {
       socket.emit("join-room-post-comment", dataItem._id);
@@ -54,6 +54,13 @@ const Item = ({
           console.log(data);
         }
       });
+      socket.on("update-edit-post-comment", (data) => {
+        if (data.commentId === dataItem._id) {
+          // setElementsContent(data.newContent.split("\n"));
+          setVanilaContent(data.newContent);
+          console.log(data);
+        }
+      });
       // socket.on("delete-post-rep-comment", (data) => {
       //   if (data.commentId === dataItem._id) {
       //     setDataItem("");
@@ -62,7 +69,7 @@ const Item = ({
       // });
       // socket.on("create-rep-post-comment", (data) => {
       //   dispatch(
-      //     setPostComments({
+      //     _listPostComments({
       //       type: INSERT_POST_COMMENTS,
       //       data: [data.data],
       //     })
@@ -85,12 +92,7 @@ const Item = ({
       }
     }
   }, [dataItem]);
-  useEffect(() => {
-    if (dataItem) {
-      const checkOnline = checkUserOnline(dataItem.user[0], listUsersOnline);
-      setIsOnline(checkOnline);
-    }
-  }, [listUsersOnline]);
+
   useEffect(() => {
     if (checkIsCommentLoading(dataItem._id, listCommentsLoading)) {
       setIsLoading(true);
@@ -98,24 +100,7 @@ const Item = ({
       setIsLoading(false);
     }
   }, [listCommentsLoading]);
-  const StyledBadge = styled(Badge)(({ theme }) => ({
-    "& .MuiBadge-badge": {
-      backgroundColor: isOnline ? "#44b700" : "#cb1760",
-      color: isOnline ? "#44b700" : "#cb1760",
-      boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
-      "&::after": {
-        position: "absolute",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-        borderRadius: "50%",
-        animation: "ripple 1.2s infinite ease-in-out",
-        border: "1px solid currentColor",
-        content: '""',
-      },
-    },
-  }));
+
   const setReplyComment = (data) => {
     setReplyCommentData(data);
   };
@@ -126,9 +111,6 @@ const Item = ({
           className="comment_post"
           sx={{
             width: "100%",
-
-            // borderBottom: (theme) =>
-            //   isChildren ? "unset" : `1px solid ${theme.palette.border.dialog}`,
 
             gap: isChildren ? "0px" : "0px",
 
@@ -185,57 +167,14 @@ const Item = ({
                   alignItems: "center",
                 }}
               >
-                <StyledBadge
-                  overlap="circular"
-                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                  variant="dot"
-                >
-                  <Box
-                    sx={{
-                      width: "40px",
-                      height: "40px",
+                <AvatarUser
+                  user={dataItem.user[0]}
+                  sx={{
+                    width: "40px",
+                    height: "40px",
+                  }}
+                />
 
-                      borderRadius: "50%",
-                      position: "relative",
-                      overflow: "hidden",
-                      border: "2px solid #23303a",
-                      boxShadow: "0px 3px 15px 0px #e1e1e1",
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        transform: "translate(-50%, -50%)",
-                        width: "40px",
-                      }}
-                    >
-                      <BigHead
-                        accessory={dataItem.user[0].avatarSVG.accessory}
-                        body={dataItem.user[0].avatarSVG.body}
-                        circleColor={dataItem.user[0].avatarSVG.circleColor}
-                        clothing={dataItem.user[0].avatarSVG.clothing}
-                        clothingColor={dataItem.user[0].avatarSVG.clothingColor}
-                        eyebrows={dataItem.user[0].avatarSVG.eyebrows}
-                        eyes={dataItem.user[0].avatarSVG.eyes}
-                        faceMask={dataItem.user[0].avatarSVG.faceMask}
-                        faceMaskColor={dataItem.user[0].avatarSVG.faceMaskColor}
-                        facialHair={dataItem.user[0].avatarSVG.facialHair}
-                        graphic={dataItem.user[0].avatarSVG.graphic}
-                        hair={dataItem.user[0].avatarSVG.hair}
-                        hairColor={dataItem.user[0].avatarSVG.hairColor}
-                        hat={dataItem.user[0].avatarSVG.hat}
-                        hatColor={dataItem.user[0].avatarSVG.hatColor}
-                        lashes={dataItem.user[0].avatarSVG.lashes}
-                        lipColor={dataItem.user[0].avatarSVG.lipColor}
-                        mask={dataItem.user[0].avatarSVG.mask}
-                        mouth={dataItem.user[0].avatarSVG.mouth}
-                        skinTone={dataItem.user[0].avatarSVG.skinTone}
-                      />
-                    </Box>
-                  </Box>
-                </StyledBadge>
                 <Box
                   sx={{
                     display: "flex",
@@ -286,6 +225,7 @@ const Item = ({
                 flexDirection: "column",
                 gap: "5px",
                 paddingLeft: "50px",
+                width: "100%",
               }}
             >
               <Box
@@ -295,9 +235,19 @@ const Item = ({
                   fontWeight: 500,
                 }}
               >
-                {elementsContent.map((item, i) => {
-                  return <Typography key={i}>{convertChat(item)}</Typography>;
-                })}
+                {!isClickEditComment &&
+                  elementsContent.map((item, i) => {
+                    return <Typography key={i}>{convertChat(item)}</Typography>;
+                  })}
+                {isClickEditComment && (
+                  <CreateEditComment
+                    setIsClickEditComment={setIsClickEditComment}
+                    item={item}
+                    socket={socket}
+                    editCommentData={editCommentData}
+                    setEditCommentData={setEditCommentData}
+                  />
+                )}
               </Box>
               <Box
                 sx={{
@@ -311,19 +261,19 @@ const Item = ({
               >
                 <CommentEmotion item={dataItem} socket={socket} />
                 <ReplyComment
+                  setReplyCommentData={setReplyCommentData}
                   setIsClickRepComment={setIsClickRepComment}
                   isClickRepComment={isClickRepComment}
-                  createCommentBoxRef={createCommentBoxRef}
                   item={dataItem}
-                  setReplyComment={setReplyComment}
                 />
                 {session.user.id === dataItem.user[0]._id && (
                   <>
                     <EditComment
+                      vanilaContent={vanilaContent}
                       item={dataItem}
-                      createCommentBoxRef={createCommentBoxRef}
-                      setEditComment={setEditComment}
-                      setIsLoadingOption={setIsLoading}
+                      setIsClickEditComment={setIsClickEditComment}
+                      isClickEditComment={isClickEditComment}
+                      setEditCommentData={setEditCommentData}
                     />
                     <DeleteComment
                       setDataItem={setDataItem}
@@ -339,10 +289,10 @@ const Item = ({
           {isClickRepComment && (
             <CreateRepComment
               socket={socket}
+              setReplyCommentData={setReplyCommentData}
               setIsClickRepComment={setIsClickRepComment}
               isClickRepComment={isClickRepComment}
               replyCommentData={replyCommentData}
-              setReplyComment={setReplyComment}
               item={dataItem}
             />
           )}

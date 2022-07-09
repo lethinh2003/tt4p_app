@@ -8,9 +8,8 @@ import { Oval } from "react-loading-icons";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import convertChat from "../../../utils/convertChat";
-import Icon from "./Emotion/Icon";
+import Icon from "../CommentPost/Emotion/Icon";
 
-import { getListCommentsLoading } from "../../../redux/actions/getListCommentsLoading";
 const blue = {
   100: "#DAECFF",
   200: "#80BFFF",
@@ -100,7 +99,7 @@ const CreateRepComment = ({
   setIsClickRepComment,
   item,
   socket,
-  setReplyComment,
+  setReplyCommentData,
   replyCommentData,
 }) => {
   const dispatch = useDispatch();
@@ -143,7 +142,7 @@ const CreateRepComment = ({
           socket.emit("create-new-post-rep-comment", data, (res) => {
             if (res.status === "ok") {
               setIsLoading(false);
-              setReplyComment("");
+              setReplyCommentData("");
               setIsClickRepComment(false);
             } else {
               toast.error("Lỗi hệ thống");
@@ -200,7 +199,7 @@ const CreateRepComment = ({
           },
         }}
       >
-        {replyCommentData && (
+        {/* {replyCommentData && (
           <Box
             sx={{
               display: "flex",
@@ -221,7 +220,7 @@ const CreateRepComment = ({
             </Typography>
             <Box
               onClick={() => {
-                setReplyComment("");
+                setReplyCommentData("");
                 setIsClickRepComment(false);
               }}
               sx={{
@@ -241,7 +240,7 @@ const CreateRepComment = ({
               ❌
             </Box>
           </Box>
-        )}
+        )} */}
 
         <Box
           sx={{

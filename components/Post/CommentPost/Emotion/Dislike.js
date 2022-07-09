@@ -30,10 +30,10 @@ const Dislike = ({ item, socket }) => {
         }
       });
       return () => {
-        socket.off("update-reaction-post-comment");
+        // socket.off("update-reaction-post-comment");
       };
     }
-  }, [socket]);
+  }, [socket, item]);
   useEffect(() => {
     if (status === "authenticated") {
       if (item && item.dislikes.length >= 0) {

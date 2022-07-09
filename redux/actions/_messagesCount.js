@@ -1,4 +1,4 @@
-export const getMessagesCount = (payload) => (dispatch) => {
+export const _messagesCount = (payload) => (dispatch) => {
   dispatch({
     type: payload.type,
     data: payload.data,

@@ -10,7 +10,8 @@ import InfoPartnerAndUser from "../Partner/InfoPartnerAndUser";
 import InfoPartnerDialog from "../Partner/InfoPartnerDialog";
 import ButtonRequestInfoPartner from "../Partner/ButtonRequestInfoPartner";
 import { useDispatch } from "react-redux";
-import { getPartner } from "../../redux/actions/getPartner";
+import { _partner } from "../../redux/actions/_partner";
+import { SET_PARTNER } from "../../redux/actions/constants";
 const PartnerRandom = ({
   isHideInfo,
   setIsHideInfo,
@@ -54,8 +55,8 @@ const PartnerRandom = ({
             status: "",
           });
           dispatch(
-            getPartner({
-              type: "GET_PARTNER",
+            _partner({
+              type: SET_PARTNER,
               data: null,
             })
           );
@@ -73,8 +74,8 @@ const PartnerRandom = ({
             status: "",
           });
           dispatch(
-            getPartner({
-              type: "GET_PARTNER",
+            _partner({
+              type: SET_PARTNER,
               data: null,
             })
           );
@@ -92,8 +93,8 @@ const PartnerRandom = ({
             status: "",
           });
           dispatch(
-            getPartner({
-              type: "GET_PARTNER",
+            _partner({
+              type: SET_PARTNER,
               data: null,
             })
           );

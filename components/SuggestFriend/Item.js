@@ -1,18 +1,19 @@
-import { Avatar, Box, Button, Typography, Badge } from "@mui/material";
-import { styled } from "@mui/material/styles";
+import { Box, Button, Typography } from "@mui/material";
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Oval } from "react-loading-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { getListFollowings } from "../../redux/actions/getListFollowings";
-import { BigHead } from "@bigheads/core";
-import checkUserOnline from "../../utils/checkUserOnline";
+import { _listFollowings } from "../../redux/actions/_listFollowings";
+import {
+  ADD_ITEM_LIST_FOLLOWINGS,
+  REMOVE_ITEM_LIST_FOLLOWINGS,
+} from "../../redux/actions/constants";
+import AvatarUser from "../Homepage/AvatarUser";
 const Item = ({ item }) => {
   const dispatch = useDispatch();
   const dataUserFollowing = useSelector((state) => state.userFollowing);
-  const listUsersOnline = useSelector((state) => state.usersOnline);
-  const [isOnline, setIsOnline] = useState(false);
+
   const [isLoading, setIsLoading] = useState(false);
 
   const [message, setMessage] = useState(<Oval width={20} />);
@@ -25,29 +26,6 @@ const Item = ({ item }) => {
       }
     }
   }, [dataUserFollowing]);
-  useEffect(() => {
-    const checkOnline = checkUserOnline(item, listUsersOnline);
-    setIsOnline(checkOnline);
-  }, [listUsersOnline]);
-
-  const StyledBadge = styled(Badge)(({ theme }) => ({
-    "& .MuiBadge-badge": {
-      backgroundColor: isOnline ? "#44b700" : "#cb1760",
-      color: isOnline ? "#44b700" : "#cb1760",
-      boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
-      "&::after": {
-        position: "absolute",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-        borderRadius: "50%",
-        animation: "ripple 1.2s infinite ease-in-out",
-        border: "1px solid currentColor",
-        content: '""',
-      },
-    },
-  }));
 
   const handleClickFollow = async (item) => {
     try {
@@ -63,8 +41,8 @@ const Item = ({ item }) => {
         setMessage("Unfollow");
         toast.info("Follow success");
         dispatch(
-          getListFollowings({
-            type: "GET_LIST_FOLLOWINGS",
+          _listFollowings({
+            type: ADD_ITEM_LIST_FOLLOWINGS,
             data: item._id,
           })
         );
@@ -72,8 +50,8 @@ const Item = ({ item }) => {
         setMessage("Follow");
         toast.info("Unfollow success");
         dispatch(
-          getListFollowings({
-            type: "REMOVE_ITEM_LIST_FOLLOWINGS",
+          _listFollowings({
+            type: REMOVE_ITEM_LIST_FOLLOWINGS,
             data: item._id,
           })
         );
@@ -106,57 +84,8 @@ const Item = ({ item }) => {
             alignItems: "center",
           }}
         >
-          <StyledBadge
-            overlap="circular"
-            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-            variant="dot"
-          >
-            <Box
-              sx={{
-                width: "50px",
-                height: "50px",
+          <AvatarUser user={item} />
 
-                borderRadius: "50%",
-                position: "relative",
-                overflow: "hidden",
-                border: "2px solid #23303a",
-                boxShadow: "0px 3px 15px 0px #23303a",
-              }}
-            >
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  width: "50px",
-                }}
-              >
-                <BigHead
-                  accessory={item.avatarSVG.accessory}
-                  body={item.avatarSVG.body}
-                  circleColor={item.avatarSVG.circleColor}
-                  clothing={item.avatarSVG.clothing}
-                  clothingColor={item.avatarSVG.clothingColor}
-                  eyebrows={item.avatarSVG.eyebrows}
-                  eyes={item.avatarSVG.eyes}
-                  faceMask={item.avatarSVG.faceMask}
-                  faceMaskColor={item.avatarSVG.faceMaskColor}
-                  facialHair={item.avatarSVG.facialHair}
-                  graphic={item.avatarSVG.graphic}
-                  hair={item.avatarSVG.hair}
-                  hairColor={item.avatarSVG.hairColor}
-                  hat={item.avatarSVG.hat}
-                  hatColor={item.avatarSVG.hatColor}
-                  lashes={item.avatarSVG.lashes}
-                  lipColor={item.avatarSVG.lipColor}
-                  mask={item.avatarSVG.mask}
-                  mouth={item.avatarSVG.mouth}
-                  skinTone={item.avatarSVG.skinTone}
-                />
-              </Box>
-            </Box>
-          </StyledBadge>
           <Box
             sx={{
               display: "flex",

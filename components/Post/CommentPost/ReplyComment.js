@@ -2,16 +2,14 @@ import { Box, Typography } from "@mui/material";
 import React, { useState } from "react";
 const ReplyComment = ({
   item,
-  setReplyComment,
-  createCommentBoxRef,
+  setReplyCommentData,
   isClickRepComment,
   setIsClickRepComment,
 }) => {
   const handleClickReply = (item) => {
     if (isClickRepComment) {
-      setReplyComment("");
+      setReplyCommentData("");
     } else {
-      console.log(item);
       const data = {
         account: item.user[0].account,
         name: item.user[0].name,
@@ -19,7 +17,7 @@ const ReplyComment = ({
         commentId: item._id,
         postId: item.post[0]._id,
       };
-      setReplyComment(data);
+      setReplyCommentData(data);
     }
     setIsClickRepComment(!isClickRepComment);
   };

@@ -1,14 +1,12 @@
-import { Box } from "@mui/material";
-import { createTheme, styled, ThemeProvider } from "@mui/material/styles";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import { createGlobalStyle } from "styled-components";
-import { getDarkMode } from "../../redux/actions/getDarkMode";
-import { getCookie } from "cookies-next";
-import cookieCutter from "cookie-cutter";
+import { SET_DARKMODE } from "../../redux/actions/constants";
+import { _darkMode } from "../../redux/actions/_darkMode";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -314,7 +312,12 @@ const ThemeLayout = (props) => {
   const isDarkMode = useSelector((state) => state.darkMode.on);
   useEffect(() => {
     const getTheme = JSON.parse(localStorage.getItem("darkMode")) || false;
-    dispatch(getDarkMode(getTheme));
+    dispatch(
+      _darkMode({
+        type: SET_DARKMODE,
+        data: getTheme,
+      })
+    );
   }, []);
 
   const { data: session, status } = useSession();

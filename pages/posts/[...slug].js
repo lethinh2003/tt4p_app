@@ -75,8 +75,7 @@ const PostDetail = (props) => {
                   </Head>
                   <IntroducePost item={item} />
 
-                  <ContentPost item={item} />
-                  <ButtonPost item={item} />
+                  <ContentPost socket={socket} item={item} />
 
                   <CommentPost socket={socket} item={item} />
                 </>
@@ -109,7 +108,7 @@ export const getServerSideProps = async (context) => {
       console.log(err);
       return {
         props: {
-          dataPost: dataPost,
+          dataPost: null,
         },
       };
     }

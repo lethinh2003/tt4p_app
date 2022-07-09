@@ -1,4 +1,4 @@
-export const getListHeartedPosts = (payload) => (dispatch) => {
+export const _listUsersOnline = (payload) => (dispatch) => {
   dispatch({
     type: payload.type,
     data: payload.data,

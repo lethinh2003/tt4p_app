@@ -1,11 +1,21 @@
 import {
+  ADD_ITEM_LIST_FOLLOWINGS,
+  SET_LIST_FOLLOWINGS,
   GET_LIST_FOLLOWINGS,
   REMOVE_ITEM_LIST_FOLLOWINGS,
 } from "../actions/constants";
 const initialState = [];
-const getListFollowingsReducer = (state = initialState, payload) => {
+const _listFollowingsReducer = (state = initialState, payload) => {
   switch (payload.type) {
+    case SET_LIST_FOLLOWINGS:
+      return payload.data;
     case GET_LIST_FOLLOWINGS:
+      if (state.includes(payload.data)) {
+        return state;
+      }
+
+      return [...state, payload.data];
+    case ADD_ITEM_LIST_FOLLOWINGS:
       if (state.includes(payload.data)) {
         return state;
       }
@@ -19,4 +29,4 @@ const getListFollowingsReducer = (state = initialState, payload) => {
       return state;
   }
 };
-export default getListFollowingsReducer;
+export default _listFollowingsReducer;

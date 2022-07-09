@@ -8,7 +8,7 @@ import CreateComment from "./CommentPost/CreateComment";
 import Item from "./CommentPost/Item";
 import Loading from "./CommentPost/Loading";
 import { useDispatch, useSelector } from "react-redux";
-import { setPostComments } from "../../redux/actions/setPostComments";
+import { _listPostComments } from "../../redux/actions/_listPostComments";
 import {
   SET_POST_COMMENTS,
   INSERT_POST_COMMENTS,
@@ -51,7 +51,7 @@ const CommentPost = (props) => {
     if (socket) {
       socket.on("create-new-post-comment", (data) => {
         dispatch(
-          setPostComments({
+          _listPostComments({
             type: CREATE_POST_COMMENTS,
             data: data,
           })
@@ -92,14 +92,14 @@ const CommentPost = (props) => {
       }
       if (resultsPage === 1) {
         dispatch(
-          setPostComments({
+          _listPostComments({
             type: SET_POST_COMMENTS,
             data: res.data.data,
           })
         );
       } else {
         dispatch(
-          setPostComments({
+          _listPostComments({
             type: INSERT_POST_COMMENTS,
             data: res.data.data,
           })
@@ -128,14 +128,14 @@ const CommentPost = (props) => {
       }
       if (resultsPage === 1) {
         dispatch(
-          setPostComments({
+          _listPostComments({
             type: SET_POST_COMMENTS,
             data: res.data.data,
           })
         );
       } else {
         dispatch(
-          setPostComments({
+          _listPostComments({
             type: INSERT_POST_COMMENTS,
             data: res.data.data,
           })
@@ -163,14 +163,14 @@ const CommentPost = (props) => {
       }
       if (resultsPage === 1) {
         dispatch(
-          setPostComments({
+          _listPostComments({
             type: SET_POST_COMMENTS,
             data: res.data.data,
           })
         );
       } else {
         dispatch(
-          setPostComments({
+          _listPostComments({
             type: INSERT_POST_COMMENTS,
             data: res.data.data,
           })
