@@ -118,18 +118,20 @@ const MenuRight = ({ item }) => {
 
   return (
     <>
-      <ItemWrapper
-        className="ms-sidebar"
-        sx={{
-          display: { xs: "none", md: "flex" },
-        }}
-      >
-        <div className="ms-sidebar__wrapper">
-          <div className="ms-navbar">
-            <AuthorInfo user={item.user[0]} />
+      {item && (
+        <ItemWrapper
+          className="ms-sidebar"
+          sx={{
+            display: { xs: "none", md: "flex" },
+          }}
+        >
+          <div className="ms-sidebar__wrapper">
+            <div className="ms-navbar">
+              <AuthorInfo user={item.user[0]} />
+            </div>
           </div>
-        </div>
-      </ItemWrapper>
+        </ItemWrapper>
+      )}
     </>
   );
 };

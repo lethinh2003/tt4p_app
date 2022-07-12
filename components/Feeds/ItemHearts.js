@@ -8,10 +8,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { _listHeartedPosts } from "../../redux/actions/_listHeartedPosts";
 import { _postActivity } from "../../redux/actions/_postActivity";
+import { _notify } from "../../redux/actions/_notify";
 import {
   ADD_ITEM_LIST_HEARTED_POSTS,
   SET_POST_ACTIVITY,
   REMOVE_ITEM_LIST_HEARTED_POSTS,
+  INC_NOTIFY_NUMBER,
 } from "../../redux/actions/constants";
 const ItemHearts = ({ item, session, status, socket }) => {
   const dispatch = useDispatch();
@@ -51,13 +53,13 @@ const ItemHearts = ({ item, session, status, socket }) => {
               );
             }
           }
-          console.log(data);
 
           setHearts(data.hearts_count);
         }
       });
+
       return () => {
-        // socket.off("update-public-post");
+        socket.off("update-public-post");
       };
     }
   }, [socket]);
@@ -82,6 +84,22 @@ const ItemHearts = ({ item, session, status, socket }) => {
       setIsLoading(false);
       // setHearts(res.data.data.hearts_count);
       if (res.data.message === "create_success") {
+        if (session.user.id != item.user[0]._id) {
+          const sendNotify = await axios.post(
+            `${process.env.ENDPOINT_SERVER}/api/v1/users/notifies`,
+            {
+              user_send: session.user.id,
+              user_receive: item.user[0]._id,
+              post: item._id,
+              type: "heart_post",
+              content: `${session.user.account} đã yêu thích bài viết của bạn!`,
+            }
+          );
+          socket.emit("inc-notify-number", {
+            account: item.user[0].account,
+            number: 1,
+          });
+        }
         //   dispatch(
         //     _listHeartedPosts({
         //       type: ADD_ITEM_LIST_HEARTED_POSTS,
@@ -90,12 +108,32 @@ const ItemHearts = ({ item, session, status, socket }) => {
         //   );
         //   dispatch(getPostActivity(session.user.id));
       } else if (res.data.message === "delete_success") {
-        await axios.post(
-          `${process.env.ENDPOINT_SERVER}/api/v1/posts/activities/${session.user.id}`,
-          {
-            postId: item._id,
-          }
-        );
+        if (session.user.id != item.user[0]._id) {
+          await Promise.all([
+            axios.post(
+              `${process.env.ENDPOINT_SERVER}/api/v1/users/notifies/delete`,
+              {
+                user_send: session.user.id,
+                user_receive: item.user[0]._id,
+                post: item._id,
+                type: "heart_post",
+              }
+            ),
+            axios.post(
+              `${process.env.ENDPOINT_SERVER}/api/v1/posts/activities/${session.user.id}`,
+              {
+                postId: item._id,
+              }
+            ),
+          ]);
+        } else {
+          await axios.post(
+            `${process.env.ENDPOINT_SERVER}/api/v1/posts/activities/${session.user.id}`,
+            {
+              postId: item._id,
+            }
+          );
+        }
         // dispatch(
         //   _listHeartedPosts({
         //     type: REMOVE_ITEM_LIST_HEARTED_POSTS,

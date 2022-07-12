@@ -1,18 +1,18 @@
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import "../styles/globals.scss";
 import { SessionProvider } from "next-auth/react";
 import Head from "next/head";
+import { QueryClient, QueryClientProvider } from "react-query";
 import { Provider } from "react-redux";
-import { store } from "../redux/reducers/store";
+import "react-toastify/dist/ReactToastify.css";
 import DefaultLayout from "../components/Layout/DefaultLayout";
 import ThemeLayout from "../components/Layout/ThemeLayout";
 import SocketProvider from "../contexts/SocketProvider";
-import { QueryClientProvider, QueryClient } from "react-query";
+import { store } from "../redux/reducers/store";
+import "../styles/globals.scss";
+import { usePreserveScroll } from "../utils/usePreserveScroll.ts";
 const queryClient = new QueryClient();
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   const Layout = DefaultLayout;
-
+  usePreserveScroll();
   return (
     <SessionProvider session={session} refetchOnWindowFocus={false}>
       <QueryClientProvider client={queryClient}>

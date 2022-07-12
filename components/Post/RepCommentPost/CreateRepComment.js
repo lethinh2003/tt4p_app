@@ -102,6 +102,7 @@ const CreateRepComment = ({
   setReplyCommentData,
   replyCommentData,
 }) => {
+  console.log(item);
   const dispatch = useDispatch();
   const { data: session, status } = useSession();
   const [isLoading, setIsLoading] = useState(false);
@@ -134,6 +135,58 @@ const CreateRepComment = ({
             postId: item.post[0]._id,
           }
         );
+        if (session.user.id != item.user[0]._id) {
+          const sendNotify = await axios.post(
+            `${process.env.ENDPOINT_SERVER}/api/v1/users/notifies`,
+            {
+              user_send: session.user.id,
+              user_receive: item.user[0]._id,
+              post: item.post[0]._id,
+              post_comment: res.data.data._id,
+              type: "rep_comment_post",
+              content: `${session.user.account} đã phản hồi bình luận của bạn!`,
+            }
+          );
+          socket.emit("inc-notify-number", {
+            account: item.user[0].account,
+            number: 1,
+          });
+        }
+        if (item.rep_comments.length > 0) {
+          let listSendNoti = [];
+          let listSendNotiUserId = [];
+          let listSendNotiUserAccount = [];
+          item.rep_comments.forEach((itemm, i) => {
+            if (
+              itemm.user[0]._id != session.user.id &&
+              !listSendNotiUserId.includes(itemm.user[0]._id)
+            ) {
+              listSendNotiUserId.push(itemm.user[0]._id);
+              listSendNotiUserAccount.push(itemm.user[0].account);
+              listSendNoti.push(
+                axios.post(
+                  `${process.env.ENDPOINT_SERVER}/api/v1/users/notifies`,
+                  {
+                    user_send: session.user.id,
+                    user_receive: itemm.user[0]._id,
+                    post: item.post[0]._id,
+                    post_comment: res.data.data._id,
+                    type: "rep_comment_post",
+                    content: `${session.user.account} cũng đã phản hồi bình luận của ${item.user[0].account}!`,
+                  }
+                )
+              );
+            }
+          });
+          await Promise.all(listSendNoti);
+          listSendNotiUserAccount.forEach((item) => {
+            socket.emit("inc-notify-number", {
+              account: item,
+              number: 1,
+            });
+          });
+        }
+
         if (socket) {
           const data = {
             room: `post_comment_${res.data.data.parent_comment}`,

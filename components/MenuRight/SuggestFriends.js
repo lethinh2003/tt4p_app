@@ -4,8 +4,10 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import Item from "../SuggestFriend/Item";
-
+import { useContext } from "react";
+import SocketContext from "../../contexts/socket";
 const SuggestFriends = ({ session, status }) => {
+  const socket = useContext(SocketContext);
   // const [suggestionFriends, setSuggestionFriends] = useState([]);
   const AvatarProfile = styled(Avatar)(({ theme }) => ({
     "&.MuiAvatar-root": {
@@ -127,7 +129,12 @@ const SuggestFriends = ({ session, status }) => {
             suggestionFriends.data &&
             suggestionFriends.data.length > 0 &&
             suggestionFriends.data.map((item, i) => (
-              <Item key={item._id} item={item} />
+              <Item
+                key={item._id}
+                item={item}
+                session={session}
+                socket={socket}
+              />
             ))}
         </Box>
       </Box>

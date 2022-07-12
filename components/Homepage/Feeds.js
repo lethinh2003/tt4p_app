@@ -23,9 +23,11 @@ import {
 } from "../../redux/actions/_feedPosts";
 import Item from "../Feeds/Item";
 import EndList from "./EndList";
+
 const Feeds = () => {
   const socket = useContext(SocketContext);
   const dispatch = useDispatch();
+
   const getGlobalCategory = useSelector((state) => state.feedCategory);
   const getFeedPosts = useSelector((state) => state.feedPosts);
   const getFeedCurrentPage = useSelector((state) => state.feedCurrentPage);
@@ -38,32 +40,32 @@ const Feeds = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingLoadMore, setIsLoadingLoadMore] = useState(false);
 
-  useEffect(() => {
-    const scrollEvent = () => {
-      if (window.scrollY != 0) {
-        dispatch(
-          _feedCurrentPositionScroll({
-            type: SET_FEED_CURRENT_POSITION_SCROLL,
-            data: window.scrollY,
-          })
-        );
-      }
-    };
-    window.addEventListener("scroll", scrollEvent);
-    return () => {
-      window.removeEventListener("scroll", scrollEvent);
-    };
-  });
+  // useEffect(() => {
+  //   const scrollEvent = () => {
+  //     if (window.scrollY != 0) {
+  //       dispatch(
+  //         _feedCurrentPositionScroll({
+  //           type: SET_FEED_CURRENT_POSITION_SCROLL,
+  //           data: window.scrollY,
+  //         })
+  //       );
+  //     }
+  //   };
+  //   window.addEventListener("scroll", scrollEvent);
+  //   return () => {
+  //     window.removeEventListener("scroll", scrollEvent);
+  //   };
+  // });
   useEffect(() => {
     if (getFeedPosts.length === 0) {
       getAPIFeedPosts();
     }
   }, []);
-  useEffect(() => {
-    if (getFeedCurrentPositionScroll) {
-      window.scroll(0, getFeedCurrentPositionScroll);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (getFeedCurrentPositionScroll) {
+  //     window.scroll(0, getFeedCurrentPositionScroll);
+  //   }
+  // }, []);
 
   useEffect(() => {
     if (filter !== getGlobalCategory) {
@@ -416,7 +418,7 @@ const Feeds = () => {
             {!isLoading &&
               getFeedPosts.length > 0 &&
               getFeedPosts.map((item, i) => (
-                <Item key={item._id} i={i} item={item} socket={socket} />
+                <Item key={item._id} item={item} socket={socket} />
               ))}
           </Box>
         </InfiniteScroll>

@@ -13,6 +13,7 @@ import { _listPostComments } from "../../../redux/actions/_listPostComments";
 const DeleteComment = ({ socket, item, setDataItem, setIsLoadingOption }) => {
   const dispatch = useDispatch();
   const handleClickDelete = async (item) => {
+    console.log(item);
     try {
       dispatch(
         _listCommentsLoading({
@@ -27,6 +28,18 @@ const DeleteComment = ({ socket, item, setDataItem, setIsLoadingOption }) => {
           userId: item.user[0]._id,
         }
       );
+
+      const deleteNotify = await axios.post(
+        `${process.env.ENDPOINT_SERVER}/api/v1/users/notifies/delete`,
+        {
+          user_send: item.user[0]._id,
+          user_receive: item.post[0].user[0],
+          post: item.post[0]._id,
+          post_comment: item._id,
+          type: "comment_post",
+        }
+      );
+
       if (socket) {
         const data = {
           room: `post_comment_${item._id}`,

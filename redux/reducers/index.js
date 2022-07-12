@@ -20,7 +20,9 @@ import _listPostCommentsReducer from "./_listPostCommentsReducer";
 import _postActivityReducer from "./_postActivityReducer";
 import _feedCurrentPageReducer from "./_feedCurrentPageReducer";
 import _feedCurrentPositionScrollReducer from "./_feedCurrentPositionScrollReducer";
+import _notifyReducer from "./_notifyReducer";
 const reducers = combineReducers({
+  notifyNumber: _notifyReducer,
   postComments: _listPostCommentsReducer,
   user: getUserReducer,
   usersOnline: _listUsersOnlineReducer,

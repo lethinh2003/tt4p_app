@@ -289,15 +289,7 @@ const CommentPost = (props) => {
               position: "relative",
             }}
           >
-            <CreateComment
-              createCommentBoxRef={createCommentBoxRef}
-              replyCommentData={replyCommentData}
-              setReplyComment={setReplyComment}
-              editCommentData={editCommentData}
-              setEditComment={setEditComment}
-              item={item}
-              socket={socket}
-            />
+            <CreateComment item={item} socket={socket} />
             {isLoading && (
               <>
                 {Array.from({ length: 5 }).map((item, i) => (
@@ -343,7 +335,6 @@ const CommentPost = (props) => {
                       <Item
                         socket={socket}
                         setReplyComment={setReplyComment}
-                        createCommentBoxRef={createCommentBoxRef}
                         replyCommentData={replyCommentData}
                         setEditComment={setEditComment}
                         item={item}

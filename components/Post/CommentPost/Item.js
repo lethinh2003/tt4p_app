@@ -12,13 +12,7 @@ import DeleteComment from "./DeleteComment";
 import EditComment from "./EditComment";
 import ReplyComment from "./ReplyComment";
 import CreateEditComment from "./CreateEditComment";
-const Item = ({
-  isChildren,
-  socket,
-  item,
-  createCommentBoxRef,
-  setEditComment,
-}) => {
+const Item = ({ isChildren, socket, item, setEditComment }) => {
   const dispatch = useDispatch();
   const { data: session, status } = useSession();
   const listCommentsLoading = useSelector((state) => state.listCommentsLoading);
@@ -304,7 +298,6 @@ const Item = ({
                 isChildren={true}
                 key={item._id}
                 setReplyComment={setReplyComment}
-                createCommentBoxRef={createCommentBoxRef}
                 item={item}
                 socket={socket}
                 setEditComment={setEditComment}

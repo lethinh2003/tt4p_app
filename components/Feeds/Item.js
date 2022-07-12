@@ -5,19 +5,9 @@ import { useEffect, useRef, useState } from "react";
 import { AiFillMessage } from "react-icons/ai";
 import AvatarUser from "../Homepage/AvatarUser";
 import ItemHearts from "./ItemHearts";
-const Item = ({ item, i, socket }) => {
-  const timeoutRef = useRef(null);
+import { memo } from "react";
+const Item = ({ item, socket }) => {
   const { data: session, status } = useSession();
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    timeoutRef.current = setTimeout(() => {
-      setIsLoading(false);
-    }, 200 * i);
-    return () => {
-      clearTimeout(timeoutRef.current.current);
-    };
-  }, []);
 
   return (
     <>
@@ -47,8 +37,6 @@ const Item = ({ item, i, socket }) => {
 
               fontWeight: "bold",
               padding: "20px",
-              // filter: isLoading ? "blur(5px)" : "blur(0px)",
-              // pointerEvents: isLoading ? "none" : "visible",
             }}
           >
             <Box
@@ -131,4 +119,4 @@ const Item = ({ item, i, socket }) => {
     </>
   );
 };
-export default Item;
+export default memo(Item);

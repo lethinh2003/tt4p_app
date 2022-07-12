@@ -1,6 +1,6 @@
 import { Box, Button, Typography } from "@mui/material";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo } from "react";
 import { Oval } from "react-loading-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -10,7 +10,7 @@ import {
   REMOVE_ITEM_LIST_FOLLOWINGS,
 } from "../../redux/actions/constants";
 import AvatarUser from "../Homepage/AvatarUser";
-const Item = ({ item }) => {
+const Item = ({ item, session, socket }) => {
   const dispatch = useDispatch();
   const dataUserFollowing = useSelector((state) => state.userFollowing);
 
@@ -38,6 +38,20 @@ const Item = ({ item }) => {
         }
       );
       if (res.data.code === 1) {
+        const sendNotify = await axios.post(
+          `${process.env.ENDPOINT_SERVER}/api/v1/users/notifies`,
+          {
+            user_send: session.user.id,
+            user_receive: item._id,
+            user: session.user.id,
+            type: "follow",
+            content: `${session.user.account} đã bắt đầu theo dõi bạn!`,
+          }
+        );
+        socket.emit("inc-notify-number", {
+          account: item.account,
+          number: 1,
+        });
         setMessage("Unfollow");
         toast.info("Follow success");
         dispatch(
@@ -47,6 +61,15 @@ const Item = ({ item }) => {
           })
         );
       } else {
+        const deleteNotify = await axios.post(
+          `${process.env.ENDPOINT_SERVER}/api/v1/users/notifies/delete`,
+          {
+            user_send: session.user.id,
+            user_receive: item._id,
+            user: session.user.id,
+            type: "follow",
+          }
+        );
         setMessage("Follow");
         toast.info("Unfollow success");
         dispatch(
@@ -131,4 +154,4 @@ const Item = ({ item }) => {
     </>
   );
 };
-export default Item;
+export default memo(Item);

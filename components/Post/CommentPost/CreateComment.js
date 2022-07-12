@@ -97,15 +97,7 @@ const CustomInput = React.forwardRef(function CustomInput(props, ref) {
   );
 });
 
-const CreateComment = ({
-  item,
-  socket,
-  setReplyComment,
-  replyCommentData,
-  createCommentBoxRef,
-  setEditComment,
-  editCommentData,
-}) => {
+const CreateComment = ({ item, socket }) => {
   const dispatch = useDispatch();
   const { data: session, status } = useSession();
   const [isLoading, setIsLoading] = useState(false);
@@ -114,19 +106,7 @@ const CreateComment = ({
   useEffect(() => {
     return () => clearTimeout(timeoutRef.current);
   }, []);
-  useEffect(() => {
-    if (editCommentData) {
-      setContent(editCommentData.content);
-    }
-  }, [editCommentData]);
-  const ErrorContent = styled(Typography)({
-    fontWeight: "400",
-    fontSize: "1.25rem",
-    lineHeight: 1.66,
-    textAlign: "left",
-    margin: "4px 14px 0 14px",
-    color: "#f44336",
-  });
+
   const handleClickCreateComment = async () => {
     try {
       if (content.length < 5) {
@@ -141,6 +121,23 @@ const CreateComment = ({
           content: convertChat(content),
         }
       );
+      if (session.user.id != item.user[0]._id) {
+        const sendNotify = await axios.post(
+          `${process.env.ENDPOINT_SERVER}/api/v1/users/notifies`,
+          {
+            user_send: session.user.id,
+            user_receive: item.user[0]._id,
+            post: item._id,
+            post_comment: res.data.data._id,
+            type: "comment_post",
+            content: `${session.user.account} đã bình luận tại bài viết của bạn!`,
+          }
+        );
+        socket.emit("inc-notify-number", {
+          account: item.user[0].account,
+          number: 1,
+        });
+      }
 
       if (socket) {
         const data = {
@@ -185,7 +182,6 @@ const CreateComment = ({
   return (
     <>
       <Box
-        ref={createCommentBoxRef}
         sx={{
           width: "100%",
           display: "flex",
@@ -193,88 +189,6 @@ const CreateComment = ({
           flexDirection: "column",
         }}
       >
-        {editCommentData && (
-          <Box
-            sx={{
-              display: "flex",
-              gap: "10px",
-              alignItems: "center",
-              flexWrap: "wrap",
-            }}
-          >
-            <Typography
-              sx={{
-                fontSize: "1.7rem",
-                fontWeight: "bold",
-                color: (theme) => theme.palette.text.color.first,
-              }}
-            >
-              Đang chỉnh sửa cho: {editCommentData.content}
-            </Typography>
-            <Box
-              as={motion.div}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => setEditComment("")}
-              sx={{
-                cursor: "pointer",
-                overflow: "hidden",
-                backgroundColor: "#f7f7f7",
-                display: "flex",
-                gap: "5px",
-                alignItems: "center",
-                padding: "5px",
-                borderRadius: "10px",
-                border: (theme) => `1px solid ${theme.palette.border.dialog}`,
-                color: (theme) => theme.palette.text.color.second,
-              }}
-            >
-              <RiCloseFill />
-            </Box>
-          </Box>
-        )}
-        {replyCommentData && (
-          <Box
-            sx={{
-              display: "flex",
-              gap: "10px",
-              alignItems: "center",
-              flexWrap: "wrap",
-            }}
-          >
-            <Typography
-              sx={{
-                fontSize: "1.7rem",
-                fontWeight: "bold",
-                color: (theme) => theme.palette.text.color.first,
-              }}
-            >
-              Đang trả lời cho {replyCommentData.name}:
-              {replyCommentData.content}
-            </Typography>
-            <Box
-              as={motion.div}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => setReplyComment("")}
-              sx={{
-                cursor: "pointer",
-                overflow: "hidden",
-                backgroundColor: "#f7f7f7",
-                display: "flex",
-                gap: "5px",
-                alignItems: "center",
-                padding: "5px",
-                borderRadius: "10px",
-                border: (theme) => `1px solid ${theme.palette.border.dialog}`,
-                color: (theme) => theme.palette.text.color.second,
-              }}
-            >
-              <RiCloseFill />
-            </Box>
-          </Box>
-        )}
-
         <Box
           sx={{
             width: "100%",
