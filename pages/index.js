@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import { getSession, useSession } from "next-auth/react";
 
-import { useEffect } from "react";
+import { useEffect, memo } from "react";
 import Banned from "../components/Dialog/Banned";
 import AboutMe from "../components/Homepage/AboutMe";
 import Feeds from "../components/Homepage/Feeds";
@@ -10,59 +10,54 @@ import Layout from "../components/Layout/Layout";
 import MenuRight from "../components/Layout/MenuRight";
 import SidebarMobile from "../components/Layout/SidebarMobile";
 import SuggestFriends from "../components/MenuRight/SuggestFriends";
-
+import useAuth from "../utils/useAuth";
 const Home = () => {
-  const { data: session, status } = useSession();
-
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      window.location.href = "/portal";
-    }
-  }, [status]);
-
+  const isAuthenticated = useAuth(true);
   return (
     <>
-      {status === "authenticated" && (
-        <Layout>
-          <Box
-            sx={{
-              width: "100%",
-              padding: "10px 20px",
-              display: { xs: "block", md: "none" },
-            }}
-          >
-            <SidebarMobile />
-          </Box>
+      <Layout>
+        <Box
+          sx={{
+            width: "100%",
+            padding: "10px 20px",
+            display: { xs: "block", md: "none" },
+          }}
+        >
+          <SidebarMobile />
+        </Box>
 
-          <Box
-            sx={{
-              width: "100%",
-              padding: "0px 20px",
-              display: { xs: "block", md: "none" },
-            }}
-          >
-            <SuggestFriends session={session} status={status} />
-          </Box>
+        <Box
+          sx={{
+            width: "100%",
+            padding: "0px 20px",
+            display: { xs: "block", md: "none" },
+          }}
+        >
+          <SuggestFriends />
+        </Box>
 
+        <Box
+          sx={{
+            padding: {
+              xs: "0px",
+              md: "0px 410px 0px 5px",
+              lg: "0px 410px 0px 280px",
+            },
+          }}
+        >
           <Box
             sx={{
-              padding: { xs: "0px", md: "0px 410px 0px 280px" },
+              padding: { xs: "20px 20px 110px 20px", md: "20px" },
             }}
           >
-            <Box
-              sx={{
-                padding: { xs: "20px 20px 110px 20px", md: "20px" },
-              }}
-            >
-              <Feeds />
-            </Box>
+            <Feeds isAuthenticated={isAuthenticated} />
           </Box>
-          <MenuRight session={session} status={status} />
-          <Banned />
-          <AboutMe />
-          <Setting />
-        </Layout>
-      )}
+        </Box>
+        <MenuRight />
+        <Banned />
+        <AboutMe />
+        <Setting />
+      </Layout>
     </>
   );
 };

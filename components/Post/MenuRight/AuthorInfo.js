@@ -1,14 +1,12 @@
-import { Box, Typography, Skeleton } from "@mui/material";
+import { Box, Skeleton, Typography } from "@mui/material";
 import axios from "axios";
 import dayjs from "dayjs";
-import { memo, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
-import { toast } from "react-toastify";
 import AvatarUser from "../../Homepage/AvatarUser";
 
 const AuthorInfo = ({ user }) => {
   const [postsCount, setPostsCount] = useState(0);
-  // const [isLoading, setIsLoading] = useState(false);
   const callDataApi = async () => {
     const results = await axios.get(
       `${process.env.ENDPOINT_SERVER}/api/v1/users/get-posts-count/${user._id}`
@@ -34,22 +32,6 @@ const AuthorInfo = ({ user }) => {
       setPostsCount(data.data);
     }
   }, [data]);
-
-  const getPostsCount = async () => {
-    try {
-      setIsLoading(true);
-      const res = await axios.get(
-        `${process.env.ENDPOINT_SERVER}/api/v1/users/get-posts-count/${user._id}`
-      );
-      setPostsCount(res.data.data);
-      setIsLoading(false);
-    } catch (err) {
-      setIsLoading(false);
-      if (err.response) {
-        toast.error(err.response.data.message);
-      }
-    }
-  };
 
   return (
     <>
@@ -222,4 +204,4 @@ const AuthorInfo = ({ user }) => {
     </>
   );
 };
-export default memo(AuthorInfo);
+export default AuthorInfo;

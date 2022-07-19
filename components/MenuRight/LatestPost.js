@@ -154,4 +154,4 @@ const LatestPost = () => {
     </>
   );
 };
-export default memo(LatestPost);
+export default LatestPost;

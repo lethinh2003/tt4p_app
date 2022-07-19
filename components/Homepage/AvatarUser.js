@@ -4,6 +4,7 @@ import checkUserOnline from "../../utils/checkUserOnline";
 import { useSelector } from "react-redux";
 import { Badge, Box, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import Link from "next/link";
 const AvatarUser = ({ user, sx }) => {
   const listUsersOnline = useSelector((state) => state.usersOnline);
   const [isOnline, setIsOnline] = useState(false);
@@ -37,57 +38,62 @@ const AvatarUser = ({ user, sx }) => {
   return (
     <>
       {user && (
-        <StyledBadge
-          overlap="circular"
-          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-          variant="dot"
-        >
-          <Box
-            sx={{
-              width: sx ? sx.width : "50px",
-              height: sx ? sx.height : "50px",
-
-              borderRadius: "50%",
-              position: "relative",
-              overflow: "hidden",
-              border: "2px solid #23303a",
-              boxShadow: "0px 3px 15px 0px #e1e1e1",
-            }}
+        <Link href={`/profile/${user.account}`}>
+          <StyledBadge
+            overlap="circular"
+            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            variant="dot"
           >
             <Box
               sx={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                width: sx ? sx.width : "50px",
+                ...sx,
+                width: sx && sx.width ? sx.width : "50px",
+                height: sx && sx.height ? sx.height : "50px",
+                cursor: "pointer",
+
+                borderRadius: "50%",
+                position: "relative",
+                overflow: "hidden",
+                border: "2px solid #23303a",
+                boxShadow: "0px 3px 15px 0px #e1e1e1",
+                maxWidth: "200px",
               }}
             >
-              <BigHead
-                accessory={user.avatarSVG.accessory}
-                body={user.avatarSVG.body}
-                circleColor={user.avatarSVG.circleColor}
-                clothing={user.avatarSVG.clothing}
-                clothingColor={user.avatarSVG.clothingColor}
-                eyebrows={user.avatarSVG.eyebrows}
-                eyes={user.avatarSVG.eyes}
-                faceMask={user.avatarSVG.faceMask}
-                faceMaskColor={user.avatarSVG.faceMaskColor}
-                facialHair={user.avatarSVG.facialHair}
-                graphic={user.avatarSVG.graphic}
-                hair={user.avatarSVG.hair}
-                hairColor={user.avatarSVG.hairColor}
-                hat={user.avatarSVG.hat}
-                hatColor={user.avatarSVG.hatColor}
-                lashes={user.avatarSVG.lashes}
-                lipColor={user.avatarSVG.lipColor}
-                mask={user.avatarSVG.mask}
-                mouth={user.avatarSVG.mouth}
-                skinTone={user.avatarSVG.skinTone}
-              />
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  width: sx ? sx.width : "50px",
+                }}
+              >
+                <BigHead
+                  accessory={user.avatarSVG.accessory}
+                  body={user.avatarSVG.body}
+                  circleColor={user.avatarSVG.circleColor}
+                  clothing={user.avatarSVG.clothing}
+                  clothingColor={user.avatarSVG.clothingColor}
+                  eyebrows={user.avatarSVG.eyebrows}
+                  eyes={user.avatarSVG.eyes}
+                  faceMask={user.avatarSVG.faceMask}
+                  faceMaskColor={user.avatarSVG.faceMaskColor}
+                  facialHair={user.avatarSVG.facialHair}
+                  graphic={user.avatarSVG.graphic}
+                  hair={user.avatarSVG.hair}
+                  hairColor={user.avatarSVG.hairColor}
+                  hat={user.avatarSVG.hat}
+                  hatColor={user.avatarSVG.hatColor}
+                  lashes={user.avatarSVG.lashes}
+                  lipColor={user.avatarSVG.lipColor}
+                  mask={user.avatarSVG.mask}
+                  mouth={user.avatarSVG.mouth}
+                  skinTone={user.avatarSVG.skinTone}
+                />
+              </Box>
             </Box>
-          </Box>
-        </StyledBadge>
+          </StyledBadge>
+        </Link>
       )}
     </>
   );

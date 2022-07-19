@@ -69,6 +69,7 @@ const Login = ({ setStep }) => {
 
       setIsLoading(false);
       if (result.error) {
+        console.log(result.error);
         return toast.error(result.error);
       }
       toast.success("Đăng nhập thành công, chúc bạn tham gia vui vẻ");

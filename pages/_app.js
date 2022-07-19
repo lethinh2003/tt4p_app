@@ -7,14 +7,22 @@ import DefaultLayout from "../components/Layout/DefaultLayout";
 import ThemeLayout from "../components/Layout/ThemeLayout";
 import SocketProvider from "../contexts/SocketProvider";
 import { store } from "../redux/reducers/store";
+import { useState } from "react";
 import "../styles/globals.scss";
 import { usePreserveScroll } from "../utils/usePreserveScroll.ts";
+import RefreshTokenHandler from "../utils/RefreshTokenHandler";
 const queryClient = new QueryClient();
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
+  const [interval, setInterval] = useState(0);
   const Layout = DefaultLayout;
   usePreserveScroll();
   return (
-    <SessionProvider session={session} refetchOnWindowFocus={false}>
+    <SessionProvider
+      session={session}
+      refetchOnWindowFocus={false}
+      refetchInterval={interval}
+    >
+      <RefreshTokenHandler setInterval={setInterval} />
       <QueryClientProvider client={queryClient}>
         <Provider store={store}>
           <SocketProvider>

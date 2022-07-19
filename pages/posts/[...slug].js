@@ -1,35 +1,33 @@
 import { Box, Typography } from "@mui/material";
 import axios from "axios";
+import { getSession } from "next-auth/react";
+import Head from "next/head";
 import { useRouter } from "next/router";
-import { memo, useEffect, useRef, useContext } from "react";
+import { memo, useContext, useRef } from "react";
 import Layout from "../../components/Layout/Layout";
 import CommentPost from "../../components/Post/CommentPost";
 import ContentPost from "../../components/Post/ContentPost";
 import IntroducePost from "../../components/Post/IntroducePost";
-import ButtonPost from "../../components/Post/ButtonPost";
 import MenuRight from "../../components/Post/MenuRight";
-import Head from "next/head";
-import { useSession, getSession } from "next-auth/react";
-import { MdOutlineArticle } from "react-icons/md";
 import SocketContext from "../../contexts/socket";
+import useAuth from "../../utils/useAuth";
 const PostDetail = (props) => {
   const pagePostRef = useRef(null);
-  const { data: session, status } = useSession();
+  const isAuthenticated = useAuth(true);
   const socket = useContext(SocketContext);
   const { dataPost: item } = props;
   const router = useRouter();
 
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      window.location.href = "/";
-    }
-  }, [status]);
   return (
     <>
       <Layout>
         <Box
           sx={{
-            padding: { xs: "0px", md: "0px 410px 0px 280px" },
+            padding: {
+              xs: "0px",
+              md: "0px 410px 0px 5px",
+              lg: "0px 410px 0px 280px",
+            },
           }}
         >
           <Box
@@ -77,13 +75,17 @@ const PostDetail = (props) => {
 
                   <ContentPost socket={socket} item={item} />
 
-                  <CommentPost socket={socket} item={item} />
+                  <CommentPost
+                    socket={socket}
+                    item={item}
+                    isAuthenticated={isAuthenticated}
+                  />
                 </>
               )}
             </Box>
           </Box>
         </Box>
-        <MenuRight item={item} />
+        {item && <MenuRight item={item} />}
       </Layout>
     </>
   );

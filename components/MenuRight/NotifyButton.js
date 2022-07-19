@@ -1,5 +1,5 @@
 import { Badge, Box, ClickAwayListener, Typography } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { IoNotificationsOutline } from "react-icons/io5";
 import NotifyContent from "../Homepage/Notify/NotifyContent";
 import { useSession } from "next-auth/react";
@@ -7,6 +7,8 @@ import { useContext } from "react";
 import SocketContext from "../../contexts/socket";
 import { useSelector, useDispatch } from "react-redux";
 import { _notify } from "../../redux/actions/_notify";
+import { useQuery } from "react-query";
+
 import {
   SET_NOTIFY_NUMBER,
   INC_NOTIFY_NUMBER,
@@ -14,35 +16,54 @@ import {
 import { toast } from "react-toastify";
 import axios from "axios";
 const NotifyButton = () => {
-  const socket = useContext(SocketContext);
   const { data: session, status } = useSession();
+
+  const socket = useContext(SocketContext);
   const dispatch = useDispatch();
+  const countAPIRef = useRef(null);
   const notifyNumber = useSelector((state) => state.notifyNumber);
   const [isOpen, setIsOpen] = useState(false);
-  useEffect(() => {
-    if (status == "authenticated") {
-      getNotifyNumber();
+
+  const callDataApi = async (session) => {
+    if (!session) {
+      return null;
     }
-  }, [status]);
-  const getNotifyNumber = async () => {
-    try {
-      const res = await axios.get(
-        `${process.env.ENDPOINT_SERVER}/api/v1/users/notifies/get_numbers/${session.user.id}`
-      );
-      dispatch(
-        _notify({
-          type: SET_NOTIFY_NUMBER,
-          data: res.data.results,
-        })
-      );
-    } catch (err) {
-      if (err.response) {
-        toast.error(err.response.data.message);
+    const results = await axios.get(
+      `${process.env.ENDPOINT_SERVER}/api/v1/users/notifies/get_numbers/${session.user.id}`
+    );
+    return results.data;
+  };
+  const getListQuery = useQuery(
+    ["get-numbers-notify", session],
+    () => callDataApi(session),
+    {
+      cacheTime: Infinity,
+      refetchOnWindowFocus: false,
+      staleTime: 0,
+    }
+  );
+  const {
+    data,
+    isLoading,
+    isFetching,
+    isError: isErrorQuery,
+    error,
+  } = getListQuery;
+  useEffect(() => {
+    if (data) {
+      if (data.results !== notifyNumber) {
+        dispatch(
+          _notify({
+            type: SET_NOTIFY_NUMBER,
+            data: data.results,
+          })
+        );
       }
     }
-  };
+  }, [data]);
+
   useEffect(() => {
-    if (socket) {
+    if (socket && session) {
       socket.emit("join-room-notify", session.user.account);
       socket.on("update-notify-number", (data) => {
         dispatch(
@@ -67,7 +88,7 @@ const NotifyButton = () => {
         socket.off("inc-notify-number");
       }
     };
-  }, []);
+  }, [session]);
   const handleClickAway = () => {
     if (isOpen === true && notifyNumber > 0) {
       socket.emit("update-notify-number", session.user.id, (res) => {

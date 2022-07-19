@@ -30,7 +30,11 @@ export default function Home() {
         <Setting />
         <Box
           sx={{
-            padding: { xs: "0px", md: "0px 410px 0px 280px" },
+            padding: {
+              xs: "0px",
+              md: "0px 410px 0px 5px",
+              lg: "0px 410px 0px 280px",
+            },
           }}
         >
           <Box

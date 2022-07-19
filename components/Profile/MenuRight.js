@@ -1,9 +1,10 @@
 import { Box } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import TermCreate from "./TermCreate";
-const MenuRight = () => {
+import { memo } from "react";
+const MenuRight = ({ account }) => {
   const ItemWrapper = styled(Box)(({ theme }) => ({
     backgroundColor: theme.palette.sidebar.background.default,
+
     right: 0,
     bottom: 0,
     padding: "20px 0px",
@@ -81,12 +82,10 @@ const MenuRight = () => {
         }}
       >
         <div className="ms-sidebar__wrapper">
-          <div className="ms-navbar">
-            <TermCreate />
-          </div>
+          <div className="ms-navbar"></div>
         </div>
       </ItemWrapper>
     </>
   );
 };
-export default MenuRight;
+export default memo(MenuRight);

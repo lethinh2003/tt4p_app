@@ -430,7 +430,7 @@ const FindPartnerRandom = ({ socket }) => {
 
         if (err.response) {
           if (err.response.data.message.name === "TokenExpiredError") {
-            signOut();
+            // signOut();
           }
           toast.error(err.response.data.message);
         }

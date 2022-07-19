@@ -24,7 +24,7 @@ import {
 import Item from "../Feeds/Item";
 import EndList from "./EndList";
 
-const Feeds = () => {
+const Feeds = ({ isAuthenticated }) => {
   const socket = useContext(SocketContext);
   const dispatch = useDispatch();
 
@@ -40,32 +40,11 @@ const Feeds = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingLoadMore, setIsLoadingLoadMore] = useState(false);
 
-  // useEffect(() => {
-  //   const scrollEvent = () => {
-  //     if (window.scrollY != 0) {
-  //       dispatch(
-  //         _feedCurrentPositionScroll({
-  //           type: SET_FEED_CURRENT_POSITION_SCROLL,
-  //           data: window.scrollY,
-  //         })
-  //       );
-  //     }
-  //   };
-  //   window.addEventListener("scroll", scrollEvent);
-  //   return () => {
-  //     window.removeEventListener("scroll", scrollEvent);
-  //   };
-  // });
   useEffect(() => {
-    if (getFeedPosts.length === 0) {
+    if (getFeedPosts.length === 0 && isAuthenticated) {
       getAPIFeedPosts();
     }
-  }, []);
-  // useEffect(() => {
-  //   if (getFeedCurrentPositionScroll) {
-  //     window.scroll(0, getFeedCurrentPositionScroll);
-  //   }
-  // }, []);
+  }, [isAuthenticated]);
 
   useEffect(() => {
     if (filter !== getGlobalCategory) {
@@ -238,6 +217,9 @@ const Feeds = () => {
             alignItems: "center",
             justifyContent: "space-between",
             gap: "10px",
+            backgroundColor: "#ffffff",
+            border: "1px solid #ccc",
+            padding: "10px",
           }}
         >
           <Typography
@@ -282,6 +264,9 @@ const Feeds = () => {
           hasMore={buttonLoadmore}
           style={{
             overflow: "unset",
+            backgroundColor: "#ffffff",
+            border: "1px solid #ccc",
+            padding: "10px",
           }}
         >
           <Box
@@ -289,7 +274,10 @@ const Feeds = () => {
               display: "grid",
               gridTemplateColumns: {
                 xs: "repeat(1, minmax(0,1fr))",
-                md: "repeat(2, minmax(0,1fr))",
+                sm: "repeat(2, minmax(0,1fr))",
+                md: "repeat(1, minmax(0,1fr))",
+                lg: "repeat(2, minmax(0,1fr))",
+                xl: "repeat(2, minmax(0,1fr))",
               },
               gap: "30px",
             }}
@@ -313,8 +301,7 @@ const Feeds = () => {
 
                         borderRadius: "30px",
                         overflow: "hidden",
-                        boxShadow: (theme) =>
-                          `0px 3px 20px 6px ${theme.palette.feeds.boxShadow}`,
+
                         display: "flex",
                         fontSize: "3rem",
                         color: "#ffffff",
@@ -421,10 +408,11 @@ const Feeds = () => {
                 <Item key={item._id} item={item} socket={socket} />
               ))}
           </Box>
+          {!isLoading && getFeedPosts.length === 0 && (
+            <EndList msg={"Chưa có bài viết nào 👏🏼"} />
+          )}
         </InfiniteScroll>
-        {!isLoading && getFeedPosts.length === 0 && (
-          <EndList msg={"Chưa có bài viết nào 👏🏼"} />
-        )}
+
         {buttonLoadmore && getFeedPosts.length > 0 && !isLoading && (
           <Button
             sx={{

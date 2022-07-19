@@ -1,12 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import React from "react";
 import { BiBookmark } from "react-icons/bi";
-const Save = ({
-  item,
-  setEditComment,
-  createCommentBoxRef,
-  setIsLoadingOption,
-}) => {
+const Save = ({}) => {
   return (
     <>
       <Box

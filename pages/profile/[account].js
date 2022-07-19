@@ -1,11 +1,19 @@
 import { Box, Typography } from "@mui/material";
 import { getSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import { useContext, useEffect, useRef } from "react";
 import Layout from "../../components/Layout/Layout";
-import CreateNewPost from "../../components/Post/CreateNewPost";
-import MenuRight from "../../components/Post/CreatePost/MenuRight";
+import Profile from "../../components/Profile/Profile";
+import SocketContext from "../../contexts/socket";
 import useAuth from "../../utils/useAuth";
-const CreatePost = () => {
+import MenuRight from "../../components/Profile/MenuRight";
+const Home = () => {
   const isAuthenticated = useAuth(true);
+
+  const router = useRouter();
+  useEffect(() => {
+    console.log(router.query.account);
+  }, [router.query.account]);
 
   return (
     <>
@@ -38,35 +46,38 @@ const CreatePost = () => {
                   fontSize: "1.7rem",
                   fontWeight: "bold",
                   color: (theme) => theme.palette.text.color.first,
+                  display: "flex",
+                  gap: "10px",
+                  alignItems: "center",
                 }}
               >
-                📝 Create a post
+                🗒️ Thông tin {router.query.account}
               </Typography>
-              {isAuthenticated && <CreateNewPost />}
+              <Profile account={router.query.account} />
             </Box>
           </Box>
         </Box>
-        <MenuRight />
+        <MenuRight account={router.query.account} />
       </Layout>
     </>
   );
 };
-export default CreatePost;
-
+export default Home;
 export const getServerSideProps = async (context) => {
-  const { req, res } = context;
+  const { req } = context;
+
   const session = await getSession({ req });
 
-  if (session && session.user) {
-    return {
-      props: {},
-    };
-  } else {
+  if (!session) {
     return {
       redirect: {
         permanent: false,
         destination: "/portal",
       },
+      props: {},
+    };
+  } else {
+    return {
       props: {},
     };
   }

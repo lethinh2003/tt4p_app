@@ -1,11 +1,7 @@
-import { Box, Switch, Typography, Avatar, Button, Badge } from "@mui/material";
-import { styled } from "@mui/material/styles";
-import { FiSearch } from "react-icons/fi";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import CreateIcon from "@mui/icons-material/Create";
-import { VscAdd } from "react-icons/vsc";
-import { IoNotificationsOutline } from "react-icons/io5";
+import { Box, Typography } from "@mui/material";
 import Link from "next/link";
+import { FiSearch } from "react-icons/fi";
+import { VscAdd } from "react-icons/vsc";
 import NotifyButton from "./NotifyButton";
 const OptionMenu = () => {
   return (

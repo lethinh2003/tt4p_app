@@ -29,9 +29,6 @@ const Item = ({ item, socket }) => {
               backgroundColor: item.color ? item.color : "#ccc",
               borderRadius: "30px",
 
-              boxShadow: (theme) =>
-                `0px 3px 20px 6px ${theme.palette.feeds.boxShadow}`,
-
               fontSize: "3rem",
               color: "#ffffff",
 
@@ -63,8 +60,6 @@ const Item = ({ item, socket }) => {
               display: "flex",
 
               alignItems: "center",
-              flex: 1,
-              width: "100%",
               gap: "10px",
             }}
           >
@@ -74,7 +69,7 @@ const Item = ({ item, socket }) => {
               sx={{
                 fontSize: "1.7rem",
                 fontWeight: "bold",
-                width: "200px",
+                maxWidth: "90px",
                 whiteSpace: "nowrap",
                 overflow: "hidden !important",
                 textOverflow: "ellipsis",

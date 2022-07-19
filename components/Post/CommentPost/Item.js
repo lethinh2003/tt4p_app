@@ -1,20 +1,19 @@
 import { Box, Typography } from "@mui/material";
-import { useSession } from "next-auth/react";
 import { memo, useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import checkIsCommentLoading from "../../../utils/checkIsCommentLoading";
 import convertChat from "../../../utils/convertChat";
 import convertTime from "../../../utils/convertTime";
+import useAuth from "../../../utils/useAuth";
 import AvatarUser from "../../Homepage/AvatarUser";
 import CreateRepComment from "../RepCommentPost/CreateRepComment";
 import CommentEmotion from "./CommentEmotion";
+import CreateEditComment from "./CreateEditComment";
 import DeleteComment from "./DeleteComment";
 import EditComment from "./EditComment";
 import ReplyComment from "./ReplyComment";
-import CreateEditComment from "./CreateEditComment";
-const Item = ({ isChildren, socket, item, setEditComment }) => {
-  const dispatch = useDispatch();
-  const { data: session, status } = useSession();
+const Item = ({ isChildren, socket, item, setEditComment, session }) => {
+  console.log(item, isChildren);
   const listCommentsLoading = useSelector((state) => state.listCommentsLoading);
   const [replyCommentData, setReplyCommentData] = useState("");
   const [editCommentData, setEditCommentData] = useState("");
@@ -32,7 +31,6 @@ const Item = ({ isChildren, socket, item, setEditComment }) => {
     dataItem && dataItem.rep_comments.length
   );
   const [isLoading, setIsLoading] = useState(false);
-  const [isOpenOption, setIsOpenOption] = useState(false);
   useEffect(() => {
     setElementsContent(vanilaContent.split("\n"));
   }, [vanilaContent]);
@@ -45,36 +43,18 @@ const Item = ({ isChildren, socket, item, setEditComment }) => {
             setHasChildren(true);
           }
           setDataItem(data);
-          console.log(data);
         }
       });
       socket.on("update-edit-post-comment", (data) => {
         if (data.commentId === dataItem._id) {
-          // setElementsContent(data.newContent.split("\n"));
           setVanilaContent(data.newContent);
-          console.log(data);
         }
       });
-      // socket.on("delete-post-rep-comment", (data) => {
-      //   if (data.commentId === dataItem._id) {
-      //     setDataItem("");
-      //     console.log("hide");
-      //   }
-      // });
-      // socket.on("create-rep-post-comment", (data) => {
-      //   dispatch(
-      //     _listPostComments({
-      //       type: INSERT_POST_COMMENTS,
-      //       data: [data.data],
-      //     })
-      //   );
-      // });
+
       return () => {
         socket.emit("leave-room-post-comment", dataItem._id);
         socket.off("create-new-post-rep-comment");
         socket.off("create-rep-post-comment");
-
-        // socket.off("delete-post-rep-comment");
       };
     }
   }, [socket]);
@@ -100,7 +80,7 @@ const Item = ({ isChildren, socket, item, setEditComment }) => {
   };
   return (
     <>
-      {dataItem && (
+      {dataItem && session && (
         <Box
           className="comment_post"
           sx={{
@@ -300,6 +280,7 @@ const Item = ({ isChildren, socket, item, setEditComment }) => {
                 setReplyComment={setReplyComment}
                 item={item}
                 socket={socket}
+                session={session}
                 setEditComment={setEditComment}
               />
             ))}

@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import React, { useState, useEffect } from "react";
+import { memo, useState, useEffect } from "react";
 import { BiHeart } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
@@ -11,7 +11,10 @@ import {
   REMOVE_ITEM_LIST_HEARTED_POSTS,
   SET_POST_ACTIVITY,
 } from "../../../redux/actions/constants";
-const Heart = ({ item, session, socket }) => {
+import useAuth from "../../../utils/useAuth";
+const Heart = ({ item, socket }) => {
+  const { isAuthenticated, dataSession: session } = useAuth(true);
+
   const dispatch = useDispatch();
   const dataUserHeatedPosts = useSelector((state) => state.userHearted);
 
@@ -91,13 +94,6 @@ const Heart = ({ item, session, socket }) => {
             number: 1,
           });
         }
-        // dispatch(
-        //   _listHeartedPosts({
-        //     type: ADD_ITEM_LIST_HEARTED_POSTS,
-        //     data: item._id,
-        //   })
-        // );
-        // dispatch(getPostActivity(session.user.id));
       } else if (res.data.message === "delete_success") {
         if (session.user.id != item.user[0]._id) {
           await Promise.all([
@@ -125,12 +121,6 @@ const Heart = ({ item, session, socket }) => {
             }
           );
         }
-        // dispatch(
-        //   _listHeartedPosts({
-        //     type: REMOVE_ITEM_LIST_HEARTED_POSTS,
-        //     data: item._id,
-        //   })
-        // );
       }
       const dataSocket = {
         postID: item._id,
@@ -180,4 +170,4 @@ const Heart = ({ item, session, socket }) => {
     </>
   );
 };
-export default React.memo(Heart);
+export default memo(Heart);

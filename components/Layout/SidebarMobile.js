@@ -1,7 +1,7 @@
 import { Box, useScrollTrigger, Slide, AppBar, Toolbar } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, memo } from "react";
 import { VscListSelection } from "react-icons/vsc";
 import { motion } from "framer-motion";
 import AccountMobile from "../Sidebar/AccountMobile";
@@ -26,7 +26,7 @@ function HideOnScroll(props) {
     </Slide>
   );
 }
-const SidebarMobile = (props) => {
+const SidebarMobile = () => {
   const router = useRouter();
   const getRouterValue = () => {
     let result;
@@ -79,4 +79,4 @@ const SidebarMobile = (props) => {
     </>
   );
 };
-export default SidebarMobile;
+export default memo(SidebarMobile);

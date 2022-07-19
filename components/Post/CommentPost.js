@@ -3,18 +3,19 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 import { ThreeDots } from "react-loading-icons";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import {
+  CREATE_POST_COMMENTS,
+  INSERT_POST_COMMENTS,
+  SET_POST_COMMENTS,
+} from "../../redux/actions/constants";
+import { _listPostComments } from "../../redux/actions/_listPostComments";
 import CreateComment from "./CommentPost/CreateComment";
 import Item from "./CommentPost/Item";
 import Loading from "./CommentPost/Loading";
-import { useDispatch, useSelector } from "react-redux";
-import { _listPostComments } from "../../redux/actions/_listPostComments";
-import {
-  SET_POST_COMMENTS,
-  INSERT_POST_COMMENTS,
-  CREATE_POST_COMMENTS,
-} from "../../redux/actions/constants";
-const CommentPost = (props) => {
+const CommentPost = ({ item, socket, isAuthenticated }) => {
+  const { data: session, status } = useSession();
   const PostComments = useSelector((state) => state.postComments);
 
   const dispatch = useDispatch();
@@ -31,9 +32,6 @@ const CommentPost = (props) => {
   const [dataComments, setDataComments] = useState([]);
   const [resultsNum, setResultsNum] = useState(100);
   const [resultsPage, setResultsPage] = useState(1);
-  const { data: session, status } = useSession();
-
-  const { item, socket } = props;
 
   const setEditComment = (data) => {
     if (replyCommentData) {
@@ -58,7 +56,7 @@ const CommentPost = (props) => {
         );
       });
 
-      if (status === "authenticated") {
+      if (isAuthenticated) {
         socket.emit("join-post-room", item);
 
         socket.on("typing-post-comment", (value) => {
@@ -72,10 +70,10 @@ const CommentPost = (props) => {
         socket.off("typing-post-comment");
       }
     };
-  }, [dataComments, socket, status]);
+  }, [dataComments, socket, isAuthenticated]);
 
   useEffect(() => {
-    if (status === "authenticated") {
+    if (isAuthenticated) {
       requestApiRef.current = getPostComments();
     }
   }, [valueFilter]);
@@ -333,6 +331,7 @@ const CommentPost = (props) => {
                   if (!item.parent_comment) {
                     return (
                       <Item
+                        session={session}
                         socket={socket}
                         setReplyComment={setReplyComment}
                         replyCommentData={replyCommentData}

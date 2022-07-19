@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Button, Box, Typography } from "@mui/material";
 import { motion } from "framer-motion";
+import { BigHead } from "@bigheads/core";
 
 const OptionChat = () => {
   return (
@@ -46,7 +47,9 @@ const OptionChat = () => {
                 backgroundColor: "#ccf1fa",
                 border: (theme) => `1px solid ${theme.palette.border.feeds}`,
               }}
-            ></Box>
+            >
+              <BigHead />
+            </Box>
             <Box
               sx={{
                 display: "flex",
@@ -77,7 +80,7 @@ const OptionChat = () => {
             </Box>
           </Box>
         </Link>
-        <Link href="/chat/random-vip">
+        {/* <Link href="/chat/random-vip">
           <Box
             as={motion.div}
             whileHover={{ scale: 1.02 }}
@@ -140,7 +143,7 @@ const OptionChat = () => {
               </Typography>
             </Box>
           </Box>
-        </Link>
+        </Link> */}
       </Box>
     </>
   );

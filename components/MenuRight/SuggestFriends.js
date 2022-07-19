@@ -1,30 +1,41 @@
 import { Avatar, Box, Skeleton, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo } from "react";
 import { useQuery } from "react-query";
 import Item from "../SuggestFriend/Item";
 import { useContext } from "react";
 import SocketContext from "../../contexts/socket";
-const SuggestFriends = ({ session, status }) => {
+import { useSession } from "next-auth/react";
+
+const SuggestFriends = () => {
+  const { data: session, status } = useSession();
+
   const socket = useContext(SocketContext);
-  // const [suggestionFriends, setSuggestionFriends] = useState([]);
   const AvatarProfile = styled(Avatar)(({ theme }) => ({
     "&.MuiAvatar-root": {
       border: `3px solid ${theme.palette.border.feeds}`,
     },
   }));
-  const callDataApi = async () => {
-    const results = await axios.get(
-      `${process.env.ENDPOINT_SERVER}/api/v1/users/suggestion-friends/${session.user.id}`
-    );
-    return results.data;
+  const callDataApi = async (session) => {
+    if (session) {
+      const results = await axios.get(
+        `${process.env.ENDPOINT_SERVER}/api/v1/users/suggestion-friends/${session.user.id}`
+      );
+      return results.data;
+    } else {
+      return null;
+    }
   };
-  const getListQuery = useQuery("get-suggest-friends", callDataApi, {
-    cacheTime: Infinity,
-    refetchOnWindowFocus: false,
-    staleTime: Infinity,
-  });
+  const getListQuery = useQuery(
+    ["get-suggest-friends", session],
+    () => callDataApi(session),
+    {
+      cacheTime: Infinity,
+      refetchOnWindowFocus: false,
+      staleTime: Infinity,
+    }
+  );
   const {
     data: suggestionFriends,
     isLoading,
@@ -126,6 +137,7 @@ const SuggestFriends = ({ session, status }) => {
             </>
           )}
           {!isLoading &&
+            suggestionFriends &&
             suggestionFriends.data &&
             suggestionFriends.data.length > 0 &&
             suggestionFriends.data.map((item, i) => (
@@ -141,4 +153,4 @@ const SuggestFriends = ({ session, status }) => {
     </>
   );
 };
-export default SuggestFriends;
+export default memo(SuggestFriends);
