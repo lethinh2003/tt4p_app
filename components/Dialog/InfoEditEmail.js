@@ -73,7 +73,7 @@ const InfoEditEmail = ({ user }) => {
           if (err.response) {
             if (err.response.data.message.name === "TokenExpiredError") {
               toast.error("Tài khoản hết hạn! Vui lòng đăng nhập lại!");
-              signOut();
+              // signOut();
             }
             toast.error(err.response.data.message);
           }

@@ -152,7 +152,7 @@ const Sidebar = () => {
       <ItemWrapper
         className="ms-sidebar"
         sx={{
-          display: { xs: "none", md: "flex" },
+          display: { xs: "none", md: "none", lg: "flex" },
         }}
       >
         <div className="ms-sidebar__wrapper">

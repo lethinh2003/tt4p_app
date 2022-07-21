@@ -9,11 +9,40 @@ import GoogleProvider from "next-auth/providers/google";
 import sendEmail from "../../../utils/email";
 var randomstring = require("randomstring");
 var jwt = require("jsonwebtoken");
+const JWT_EXPIRES = process.env.JWT_SECRET_KEY || 60 * 60;
+const JWT_REFRESH_TOKEN_EXPIRES =
+  process.env.JWT_REFRESH_TOKEN_EXPIRES || 24 * 60 * 60 * 365;
+
+async function refreshAccessToken(tokenObject) {
+  try {
+    // Get a new set of tokens with a refreshToken
+    const tokenResponse = await axios.post(
+      `${process.env.ENDPOINT_SERVER}/api/v1/users/refresh-token`,
+      {
+        token: tokenObject.refreshToken,
+      }
+    );
+
+    return {
+      ...tokenObject,
+      accessToken: tokenResponse.data.accessToken,
+      accessTokenExpiry: tokenResponse.data.accessTokenExpiry,
+      refreshToken: tokenResponse.data.refreshToken,
+      error: null,
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      ...tokenObject,
+      error: "RefreshAccessTokenError",
+    };
+  }
+}
 
 export default NextAuth({
   session: {
     strategy: "jwt",
-    maxAge: 30000 * 24 * 60 * 60,
+    maxAge: parseInt(JWT_REFRESH_TOKEN_EXPIRES),
   },
   providers: [
     GoogleProvider({
@@ -26,21 +55,28 @@ export default NextAuth({
       id: "login",
       name: "login",
       async authorize(credentials, req) {
-        await dbConnect();
-        const { account, password } = credentials;
-        const user = await User.findOne({
-          account: account,
-        });
+        try {
+          const { account, password } = credentials;
+          console.log(account, password);
+          const user = await axios.post(
+            `${process.env.ENDPOINT_SERVER}/api/v1/users/login`,
+            {
+              account,
+              password,
+            }
+          );
+          if (user.data.accessToken) {
+            return user.data;
+          }
 
-        if (!user) {
-          throw new Error("Tài khoản không tồn tại, vui lòng thử lại");
+          return null;
+        } catch (err) {
+          console.log(err);
+          if (err.response.data.message) {
+            throw new Error(err.response.data.message);
+          }
+          throw new Error(err);
         }
-        const authPassword = await bcrypt.compare(password, user.password);
-        if (!authPassword) {
-          throw new Error("Password không chính xác");
-        }
-
-        return user;
       },
     }),
   ],
@@ -96,59 +132,53 @@ export default NextAuth({
       }
       return true; // Do different verification for other providers that don't have `email_verified`
     },
+
+    async jwt({ token, user, account, profile, isNewUser }) {
+      if (user) {
+        // This will only be executed at login. Each next invocation will skip this part.
+        token.accessToken = user.accessToken;
+        token.accessTokenExpiry = user.accessTokenExpiry;
+        token.refreshToken = user.refreshToken;
+
+        token.account = user.data.account;
+        token.name = user.data.name;
+        token.sex = user.data.sex;
+        token.date = user.data.date;
+        token.findSex = user.data.findSex;
+        token.city = user.data.city;
+        token.role = user.data.role;
+        token.id = user.data._id;
+      }
+
+      // If accessTokenExpiry is 24 hours, we have to refresh token before 24 hours pass.
+      const shouldRefreshTime = Math.round(
+        token.accessTokenExpiry - 50 * 60 * 1000 - Date.now()
+      );
+
+      // If the token is still valid, just return it.
+      if (shouldRefreshTime > 0) {
+        return Promise.resolve(token);
+      }
+      // If the call arrives after 23 hours have passed, we allow to refresh the token.
+      token = await refreshAccessToken(token);
+
+      return Promise.resolve(token);
+    },
     async session({ session, user, token }) {
+      // Here we pass accessToken to the client to be used in authentication with your API
+      session.accessToken = token.accessToken;
+      session.accessTokenExpiry = token.accessTokenExpiry;
+      session.error = token.error;
       session.user.account = token.account;
       session.user.role = token.role;
       session.user.id = token.id;
-      session.user.avatar = token.avatar;
-      session.user.access_token = token.access_token;
+      session.user.access_token = token.accessToken;
       session.user.name = token.name;
       session.user.sex = token.sex;
       session.user.findSex = token.findSex;
       session.user.city = token.city;
       session.user.date = token.date;
-
-      return session;
-    },
-    async jwt({ token, user, account, profile, isNewUser }) {
-      if (profile) {
-        const generateToken = jwt.sign(
-          {
-            account: profile.account.account,
-            role: profile.account.role,
-            id: profile.account._id,
-          },
-          process.env.NEXTAUTH_SECRET,
-          {
-            expiresIn: 30000 * 24 * 60 * 60, ///Expire default jwt next-auth
-          }
-        );
-        token.account = profile.account.account;
-        token.role = profile.account.role;
-        token.id = profile.account._id;
-        token.avatar = profile.account.avatar;
-        token.access_token = generateToken;
-      } else if (user) {
-        const generateToken = jwt.sign(
-          { account: user.account, role: user.role, id: user._id },
-          process.env.NEXTAUTH_SECRET,
-          {
-            expiresIn: 30000 * 24 * 60 * 60, ///Expire default jwt next-auth
-          }
-        );
-        token.account = user.account;
-        token.name = user.name;
-        token.sex = user.sex;
-        token.date = user.date;
-        token.findSex = user.findSex;
-        token.city = user.city;
-        token.role = user.role;
-        token.id = user._id;
-        token.avatar = user.avatar;
-        token.access_token = generateToken;
-        console.log("token nek", user.access_token);
-      }
-      return token;
+      return Promise.resolve(session);
     },
   },
 });

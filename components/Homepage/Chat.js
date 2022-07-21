@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { ThreeDots } from "react-loading-icons";
 import ChatForm from "../Chat/ChatForm";
 import { useDispatch } from "react-redux";
-import { getMessagesCount } from "../../redux/actions/getMessagesCount";
+import { _messagesCount } from "../../redux/actions/_messagesCount";
 import { INC_MESSAGES_COUNT } from "../../redux/actions/constants";
 import convertChat from "../../utils/convertChat";
 import ChatContent from "../Chat/ChatContent";
@@ -29,7 +29,7 @@ const Chat = ({ socket, partner, isHideInfo, statusUser }) => {
 
       setMessages((prev) => [...prev, data]);
       dispatch(
-        getMessagesCount({
+        _messagesCount({
           type: INC_MESSAGES_COUNT,
           data: 1,
         })

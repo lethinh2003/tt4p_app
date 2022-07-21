@@ -23,10 +23,10 @@ export const getSuggestFriends = (accountID) => async (dispatch) => {
       message: err.response ? err.response.data.message : err,
     });
     if (err.response) {
-      if (err.response.data.message.name === "TokenExpiredError") {
-        toast.error("Tài khoản hết hạn! Vui lòng đăng nhập lại!");
-        signOut();
-      }
+      // if (err.response.data.message.name === "TokenExpiredError") {
+      //   toast.error("Tài khoản hết hạn! Vui lòng đăng nhập lại!");
+      //   signOut();
+      // }
     }
   }
 };

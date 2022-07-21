@@ -1,21 +1,25 @@
 import { Box, Typography } from "@mui/material";
-import React from "react";
-const ReplyComment = ({ item, setReplyComment, createCommentBoxRef }) => {
+import React, { useState } from "react";
+const ReplyComment = ({
+  item,
+  setReplyCommentData,
+  isClickRepComment,
+  setIsClickRepComment,
+}) => {
   const handleClickReply = (item) => {
-    const data = {
-      account: item.user[0].account,
-      name: item.user[0].name,
-      content: item.content,
-      commentId: item._id,
-      postId: item.post[0]._id,
-    };
-    setReplyComment(data);
-    if (createCommentBoxRef.current) {
-      createCommentBoxRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "end",
-      });
+    if (isClickRepComment) {
+      setReplyCommentData("");
+    } else {
+      const data = {
+        account: item.user[0].account,
+        name: item.user[0].name,
+        content: item.content,
+        commentId: item._id,
+        postId: item.post[0]._id,
+      };
+      setReplyCommentData(data);
     }
+    setIsClickRepComment(!isClickRepComment);
   };
   return (
     <>

@@ -1,9 +1,10 @@
 import { Box } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { memo } from "react";
 import LatestPost from "../MenuRight/LatestPost";
 import OptionMenu from "../MenuRight/OptionMenu";
 import SuggestFriends from "../MenuRight/SuggestFriends";
-const MenuRight = ({ session, status }) => {
+const MenuRight = () => {
   const ItemWrapper = styled(Box)(({ theme }) => ({
     backgroundColor: theme.palette.sidebar.background.default,
 
@@ -77,23 +78,21 @@ const MenuRight = ({ session, status }) => {
 
   return (
     <>
-      {status === "authenticated" && (
-        <ItemWrapper
-          className="ms-sidebar"
-          sx={{
-            display: { xs: "none", md: "flex" },
-          }}
-        >
-          <div className="ms-sidebar__wrapper">
-            <div className="ms-navbar">
-              <OptionMenu />
-              <SuggestFriends session={session} status={status} />
-              <LatestPost session={session} status={status} />
-            </div>
+      <ItemWrapper
+        className="ms-sidebar"
+        sx={{
+          display: { xs: "none", md: "flex" },
+        }}
+      >
+        <div className="ms-sidebar__wrapper">
+          <div className="ms-navbar">
+            <OptionMenu />
+            <SuggestFriends />
+            <LatestPost />
           </div>
-        </ItemWrapper>
-      )}
+        </div>
+      </ItemWrapper>
     </>
   );
 };
-export default MenuRight;
+export default memo(MenuRight);

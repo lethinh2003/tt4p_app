@@ -8,8 +8,8 @@ import { useSelector } from "react-redux";
 import { BigHead } from "@bigheads/core";
 
 const YourSelf = ({ dataUser }) => {
-  const partnersCount = useSelector((state) => state.partnersCount);
-  const messagesCount = useSelector((state) => state.messagesCount);
+  const partnersCount = useSelector((state) => state._partnersCount);
+  const messagesCount = useSelector((state) => state._messagesCount);
   const BoxTitleItem = styled(Box)(({ theme }) => ({
     width: "100%",
     padding: "5px",
@@ -129,6 +129,7 @@ const YourSelf = ({ dataUser }) => {
                 sx={{
                   fontSize: "1rem",
                   fontWeight: "500",
+                  textAlign: "center",
                   color: (theme) => theme.palette.text.color.second,
                 }}
               >

@@ -1,28 +1,22 @@
-import { Typography, Box } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
+import { Box, Typography } from "@mui/material";
+import { getSession } from "next-auth/react";
 import Layout from "../../components/Layout/Layout";
-import axios from "axios";
-import { motion } from "framer-motion";
 import CreateNewPost from "../../components/Post/CreateNewPost";
-import { useSession, getSession } from "next-auth/react";
 import MenuRight from "../../components/Post/CreatePost/MenuRight";
-import { useRouter } from "next/router";
-
+import useAuth from "../../utils/useAuth";
 const CreatePost = () => {
-  const { data: session, status } = useSession();
-
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      window.location.href = "/";
-    }
-  }, [status]);
+  const isAuthenticated = useAuth(true);
 
   return (
     <>
       <Layout>
         <Box
           sx={{
-            padding: { xs: "0px", md: "0px 410px 0px 280px" },
+            padding: {
+              xs: "0px",
+              md: "0px 410px 0px 5px",
+              lg: "0px 410px 0px 280px",
+            },
           }}
         >
           <Box
@@ -48,7 +42,7 @@ const CreatePost = () => {
               >
                 📝 Create a post
               </Typography>
-              <CreateNewPost />
+              {isAuthenticated && <CreateNewPost />}
             </Box>
           </Box>
         </Box>

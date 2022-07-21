@@ -1,3 +1,4 @@
+import InputUnstyled from "@mui/base/InputUnstyled";
 import { Box, Button, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import axios from "axios";
@@ -6,13 +7,11 @@ import { useSession } from "next-auth/react";
 import React, { memo, useEffect, useRef, useState } from "react";
 import { RiCloseFill } from "react-icons/ri";
 import { Oval } from "react-loading-icons";
+import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import convertChat from "../../../utils/convertChat";
 import Icon from "./Emotion/Icon";
-import { useDispatch } from "react-redux";
-import InputUnstyled from "@mui/base/InputUnstyled";
 
-import { getListCommentsLoading } from "../../../redux/actions/getListCommentsLoading";
 const blue = {
   100: "#DAECFF",
   200: "#80BFFF",
@@ -98,15 +97,7 @@ const CustomInput = React.forwardRef(function CustomInput(props, ref) {
   );
 });
 
-const CreateComment = ({
-  item,
-  socket,
-  setReplyComment,
-  replyCommentData,
-  createCommentBoxRef,
-  setEditComment,
-  editCommentData,
-}) => {
+const CreateComment = ({ item, socket }) => {
   const dispatch = useDispatch();
   const { data: session, status } = useSession();
   const [isLoading, setIsLoading] = useState(false);
@@ -115,98 +106,53 @@ const CreateComment = ({
   useEffect(() => {
     return () => clearTimeout(timeoutRef.current);
   }, []);
-  useEffect(() => {
-    if (editCommentData) {
-      setContent(editCommentData.content);
-    }
-  }, [editCommentData]);
-  const ErrorContent = styled(Typography)({
-    fontWeight: "400",
-    fontSize: "1.25rem",
-    lineHeight: 1.66,
-    textAlign: "left",
-    margin: "4px 14px 0 14px",
-    color: "#f44336",
-  });
+
   const handleClickCreateComment = async () => {
     try {
       if (content.length < 5) {
         return 0;
       }
       setIsLoading(true);
-      if (editCommentData) {
-        dispatch(getListCommentsLoading(editCommentData.commentId));
-        if (editCommentData.type === "comment") {
-          const res = await axios.post(
-            `${process.env.ENDPOINT_SERVER}/api/v1/posts/comments/edit/${editCommentData.commentId}`,
-            {
-              userId: session.user.id,
-              content: convertChat(content),
-            }
-          );
 
-          if (socket) {
-            const data = {
-              room: `post_${res.data.data.post[0]}`,
-            };
-
-            socket.emit("create-post-comment", data);
-          }
-        } else if (editCommentData.type === "rep_comment") {
-          const res = await axios.post(
-            `${process.env.ENDPOINT_SERVER}/api/v1/posts/comments/reps/edit/${editCommentData.commentId}`,
-            {
-              userId: session.user.id,
-              content: convertChat(content),
-            }
-          );
-
-          if (socket) {
-            const data = {
-              room: `post_${res.data.data.comment[0].post[0]}`,
-            };
-
-            socket.emit("create-post-comment", data);
-          }
+      const res = await axios.post(
+        `${process.env.ENDPOINT_SERVER}/api/v1/posts/comments/${item._id}`,
+        {
+          userId: session.user.id,
+          content: convertChat(content),
         }
-        dispatch(getListCommentsLoading(editCommentData.commentId));
-        setEditComment("");
-      } else if (replyCommentData) {
-        const res = await axios.post(
-          `${process.env.ENDPOINT_SERVER}/api/v1/posts/comments/reps/${replyCommentData.commentId}`,
+      );
+      if (session.user.id != item.user[0]._id) {
+        const sendNotify = await axios.post(
+          `${process.env.ENDPOINT_SERVER}/api/v1/users/notifies`,
           {
-            userId: session.user.id,
-            content: convertChat(content),
-            postId: item._id,
+            user_send: session.user.id,
+            user_receive: item.user[0]._id,
+            post: item._id,
+            post_comment: res.data.data._id,
+            type: "comment_post",
+            content: `${session.user.account} đã bình luận tại bài viết của bạn!`,
           }
         );
-        if (socket) {
-          const data = {
-            room: `post_${replyCommentData.postId}`,
-          };
-          console.log(data);
-          socket.emit("create-post-comment", data);
-        }
-        setReplyComment("");
-      } else {
-        const res = await axios.post(
-          `${process.env.ENDPOINT_SERVER}/api/v1/posts/comments/${item._id}`,
-          {
-            userId: session.user.id,
-            content: convertChat(content),
-          }
-        );
-
-        if (socket) {
-          const data = {
-            room: `post_${item._id}`,
-            commentId: res.data.data._id,
-          };
-          socket.emit("create-post-comment", data);
-        }
+        socket.emit("inc-notify-number", {
+          account: item.user[0].account,
+          number: 1,
+        });
       }
-      setContent("");
-      setIsLoading(false);
+
+      if (socket) {
+        const data = {
+          room: `post_${item._id}`,
+          commentId: res.data.data._id,
+        };
+        socket.emit("create-post-comment", data, (res) => {
+          if (res.status === "ok") {
+            setContent("");
+          } else {
+            toast.error("Lỗi hệ thống");
+          }
+          setIsLoading(false);
+        });
+      }
     } catch (err) {
       setIsLoading(false);
       if (err.response) {
@@ -236,7 +182,6 @@ const CreateComment = ({
   return (
     <>
       <Box
-        ref={createCommentBoxRef}
         sx={{
           width: "100%",
           display: "flex",
@@ -244,88 +189,6 @@ const CreateComment = ({
           flexDirection: "column",
         }}
       >
-        {editCommentData && (
-          <Box
-            sx={{
-              display: "flex",
-              gap: "10px",
-              alignItems: "center",
-              flexWrap: "wrap",
-            }}
-          >
-            <Typography
-              sx={{
-                fontSize: "1.7rem",
-                fontWeight: "bold",
-                color: (theme) => theme.palette.text.color.first,
-              }}
-            >
-              Đang chỉnh sửa cho: {editCommentData.content}
-            </Typography>
-            <Box
-              as={motion.div}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => setEditComment("")}
-              sx={{
-                cursor: "pointer",
-                overflow: "hidden",
-                backgroundColor: "#f7f7f7",
-                display: "flex",
-                gap: "5px",
-                alignItems: "center",
-                padding: "5px",
-                borderRadius: "10px",
-                border: (theme) => `1px solid ${theme.palette.border.dialog}`,
-                color: (theme) => theme.palette.text.color.second,
-              }}
-            >
-              <RiCloseFill />
-            </Box>
-          </Box>
-        )}
-        {replyCommentData && (
-          <Box
-            sx={{
-              display: "flex",
-              gap: "10px",
-              alignItems: "center",
-              flexWrap: "wrap",
-            }}
-          >
-            <Typography
-              sx={{
-                fontSize: "1.7rem",
-                fontWeight: "bold",
-                color: (theme) => theme.palette.text.color.first,
-              }}
-            >
-              Đang trả lời cho {replyCommentData.name}:
-              {replyCommentData.content}
-            </Typography>
-            <Box
-              as={motion.div}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => setReplyComment("")}
-              sx={{
-                cursor: "pointer",
-                overflow: "hidden",
-                backgroundColor: "#f7f7f7",
-                display: "flex",
-                gap: "5px",
-                alignItems: "center",
-                padding: "5px",
-                borderRadius: "10px",
-                border: (theme) => `1px solid ${theme.palette.border.dialog}`,
-                color: (theme) => theme.palette.text.color.second,
-              }}
-            >
-              <RiCloseFill />
-            </Box>
-          </Box>
-        )}
-
         <Box
           sx={{
             width: "100%",
@@ -364,7 +227,7 @@ const CreateComment = ({
               }}
               value={content}
               type="text"
-              placeholder="Type comment"
+              placeholder="Bạn đang nghĩ gì?"
               onChange={(e) => handleChangeContent(e.target.value)}
             />
           </Box>

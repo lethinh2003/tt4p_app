@@ -1,20 +1,28 @@
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import "../styles/globals.scss";
 import { SessionProvider } from "next-auth/react";
 import Head from "next/head";
+import { QueryClient, QueryClientProvider } from "react-query";
 import { Provider } from "react-redux";
-import { store } from "../redux/reducers/store";
+import "react-toastify/dist/ReactToastify.css";
 import DefaultLayout from "../components/Layout/DefaultLayout";
 import ThemeLayout from "../components/Layout/ThemeLayout";
 import SocketProvider from "../contexts/SocketProvider";
-import { QueryClientProvider, QueryClient } from "react-query";
+import { store } from "../redux/reducers/store";
+import { useState } from "react";
+import "../styles/globals.scss";
+import { usePreserveScroll } from "../utils/usePreserveScroll.ts";
+import RefreshTokenHandler from "../utils/RefreshTokenHandler";
 const queryClient = new QueryClient();
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
-  const Layout = DefaultLayout;
-
+  const [interval, setInterval] = useState(0);
+  const Layout = Component.Layout || DefaultLayout;
+  usePreserveScroll();
   return (
-    <SessionProvider session={session} refetchOnWindowFocus={false}>
+    <SessionProvider
+      session={session}
+      refetchOnWindowFocus={false}
+      refetchInterval={interval}
+    >
+      <RefreshTokenHandler setInterval={setInterval} />
       <QueryClientProvider client={queryClient}>
         <Provider store={store}>
           <SocketProvider>
@@ -54,7 +62,9 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
               <meta property="og:image:height" content="720" />
             </Head>
             <ThemeLayout>
-              <Component {...pageProps}></Component>
+              <Layout>
+                <Component {...pageProps}></Component>
+              </Layout>
             </ThemeLayout>
           </SocketProvider>
         </Provider>

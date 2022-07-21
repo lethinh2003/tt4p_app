@@ -3,23 +3,23 @@ import React from "react";
 
 const EditComment = ({
   item,
-  setEditComment,
-  createCommentBoxRef,
-  setIsLoadingOption,
+  setIsClickEditComment,
+  isClickEditComment,
+  setEditCommentData,
+  vanilaContent,
 }) => {
   const handleClickEdit = (item) => {
-    const data = {
-      content: item.content,
-      commentId: item._id,
-      type: "comment",
-    };
-    setEditComment(data);
-    if (createCommentBoxRef.current) {
-      createCommentBoxRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "end",
-      });
+    if (isClickEditComment) {
+      setEditCommentData("");
+    } else {
+      const data = {
+        content: vanilaContent,
+        commentId: item._id,
+        type: "comment",
+      };
+      setEditCommentData(data);
     }
+    setIsClickEditComment(!isClickEditComment);
   };
   return (
     <>

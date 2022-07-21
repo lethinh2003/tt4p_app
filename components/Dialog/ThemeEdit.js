@@ -2,7 +2,8 @@ import { useTheme } from "@emotion/react";
 import { Dialog, DialogContentText, Switch, Box } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useDispatch } from "react-redux";
-import { getDarkMode } from "../../redux/actions/getDarkMode";
+import { _darkMode } from "../../redux/actions/_darkMode";
+import { SET_DARKMODE } from "../../redux/actions/constants";
 import useModal from "../../utils/useModal";
 import Warning from "./Warning";
 import { useState } from "react";
@@ -101,10 +102,20 @@ const ThemeEdit = () => {
   };
   const handleChangeTheme = (value) => {
     if (value === "dark") {
-      dispatch(getDarkMode(true));
+      dispatch(
+        _darkMode({
+          type: SET_DARKMODE,
+          data: true,
+        })
+      );
       localStorage.setItem("darkMode", "true");
     } else {
-      dispatch(getDarkMode(false));
+      dispatch(
+        _darkMode({
+          type: SET_DARKMODE,
+          data: false,
+        })
+      );
       localStorage.setItem("darkMode", "false");
     }
   };

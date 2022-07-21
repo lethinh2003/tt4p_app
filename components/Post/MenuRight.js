@@ -1,48 +1,8 @@
 import { Box } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import TableOfContent from "./TableOfContent";
-import FeaturesPost from "./FeaturesPost";
+import AuthorInfo from "./MenuRight/AuthorInfo";
+import { memo } from "react";
 const MenuRight = ({ item }) => {
-  const BoxNav = styled(Box)(({ theme }) => ({
-    backgroundColor: theme.palette.sidebar.background.default,
-
-    width: "100%",
-    height: "50px",
-    display: "flex",
-    gap: "10px",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    paddingLeft: "20px",
-    transition: "all 0.2s linear",
-    "& .title": {
-      fontSize: "1.7rem",
-      fontWeight: "bold",
-      color: "#98a1b5",
-      "&.active": {
-        color: "inherit",
-      },
-    },
-
-    "& .icon": {
-      fontSize: "2.5rem",
-      fontWeight: "bold",
-      color: "#98a1b5",
-      "&.active": {
-        color: "#a974ff",
-      },
-    },
-    "&.box": {
-      "&.active": {
-        boxShadow: "1px 7px 11px 0px #cccccc82",
-      },
-    },
-    "&:hover": {
-      boxShadow: "1px 7px 11px 0px #cccccc82",
-    },
-  }));
   const ItemWrapper = styled(Box)(({ theme }) => ({
     backgroundColor: theme.palette.sidebar.background.default,
 
@@ -124,12 +84,11 @@ const MenuRight = ({ item }) => {
       >
         <div className="ms-sidebar__wrapper">
           <div className="ms-navbar">
-            <TableOfContent item={item} />
-            <FeaturesPost item={item} />
+            <AuthorInfo user={item.user[0]} />
           </div>
         </div>
       </ItemWrapper>
     </>
   );
 };
-export default MenuRight;
+export default memo(MenuRight);

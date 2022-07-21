@@ -1,45 +1,7 @@
 import { Box } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import TermCreate from "./TermCreate";
 const MenuRight = () => {
-  const BoxNav = styled(Box)(({ theme }) => ({
-    width: "100%",
-    height: "50px",
-    display: "flex",
-    gap: "10px",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    paddingLeft: "20px",
-    transition: "all 0.2s linear",
-    "& .title": {
-      fontSize: "1.7rem",
-      fontWeight: "bold",
-      color: "#98a1b5",
-      "&.active": {
-        color: "inherit",
-      },
-    },
-
-    "& .icon": {
-      fontSize: "2.5rem",
-      fontWeight: "bold",
-      color: "#98a1b5",
-      "&.active": {
-        color: "#a974ff",
-      },
-    },
-    "&.box": {
-      "&.active": {
-        boxShadow: "1px 7px 11px 0px #cccccc82",
-      },
-    },
-    "&:hover": {
-      boxShadow: "1px 7px 11px 0px #cccccc82",
-    },
-  }));
   const ItemWrapper = styled(Box)(({ theme }) => ({
     backgroundColor: theme.palette.sidebar.background.default,
     right: 0,
