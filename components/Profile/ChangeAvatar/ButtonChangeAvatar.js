@@ -39,7 +39,7 @@ const ButtonChangeAvatar = ({ account, user }) => {
     <>
       {isOpenModal && (
         <Modal
-          title={"Thay đổi Avatar"}
+          title={"Change Avatar"}
           isOpenModal={isOpenModal}
           setIsOpenModal={setIsOpenModal}
         >
