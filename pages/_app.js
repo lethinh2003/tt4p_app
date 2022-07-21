@@ -14,7 +14,7 @@ import RefreshTokenHandler from "../utils/RefreshTokenHandler";
 const queryClient = new QueryClient();
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   const [interval, setInterval] = useState(0);
-  const Layout = DefaultLayout;
+  const Layout = Component.Layout || DefaultLayout;
   usePreserveScroll();
   return (
     <SessionProvider
@@ -62,7 +62,9 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
               <meta property="og:image:height" content="720" />
             </Head>
             <ThemeLayout>
-              <Component {...pageProps}></Component>
+              <Layout>
+                <Component {...pageProps}></Component>
+              </Layout>
             </ThemeLayout>
           </SocketProvider>
         </Provider>

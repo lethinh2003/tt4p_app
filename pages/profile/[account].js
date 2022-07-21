@@ -7,12 +7,15 @@ import Profile from "../../components/Profile/Profile";
 import SocketContext from "../../contexts/socket";
 import useAuth from "../../utils/useAuth";
 import MenuRight from "../../components/Profile/MenuRight";
+import Link from "next/link";
 const Home = () => {
   const isAuthenticated = useAuth(true);
 
   const router = useRouter();
+  const { account } = router.query;
+
   useEffect(() => {
-    console.log(router.query.account);
+    console.log(router.query);
   }, [router.query.account]);
 
   return (
@@ -42,6 +45,7 @@ const Home = () => {
               }}
             >
               <Typography
+                onClick={() => handelClickRouter()}
                 sx={{
                   fontSize: "1.7rem",
                   fontWeight: "bold",
@@ -51,13 +55,14 @@ const Home = () => {
                   alignItems: "center",
                 }}
               >
-                🗒️ Thông tin {router.query.account}
+                🗒️ Thông tin {account}
               </Typography>
-              <Profile account={router.query.account} />
+
+              <Profile account={account} />
             </Box>
           </Box>
         </Box>
-        <MenuRight account={router.query.account} />
+        <MenuRight account={account} />
       </Layout>
     </>
   );

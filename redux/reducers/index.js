@@ -20,6 +20,7 @@ import _listPostCommentsReducer from "./_listPostCommentsReducer";
 import _postActivityReducer from "./_postActivityReducer";
 import _feedCurrentPageReducer from "./_feedCurrentPageReducer";
 import _feedCurrentPositionScrollReducer from "./_feedCurrentPositionScrollReducer";
+import _avatarChangeReducer from "./_avatarChangeReducer";
 import _notifyReducer from "./_notifyReducer";
 const reducers = combineReducers({
   notifyNumber: _notifyReducer,
@@ -32,6 +33,7 @@ const reducers = combineReducers({
   feedCurrentPage: _feedCurrentPageReducer,
   feedCurrentPositionScroll: _feedCurrentPositionScrollReducer,
   _partnersCount: _partnersCountReducer,
+  _avatarChange: _avatarChangeReducer,
   _messagesCount: _messagesCountReducer,
   suggestFriends: getSuggestFriendsReducer,
   userFollowing: _listFollowingsReducer,

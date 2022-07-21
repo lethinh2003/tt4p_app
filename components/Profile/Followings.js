@@ -5,8 +5,10 @@ import { useQuery } from "react-query";
 import { toast } from "react-toastify";
 import Item from "./Followings/Item";
 import { useSession } from "next-auth/react";
+import SuggestFollowings from "./Followings/SuggestFollowings";
 const Followings = ({ account }) => {
   const { data: session } = useSession();
+
   const [buttonLoadMore, setButtonLoadMore] = useState(false);
   const [dataUsers, setDataUsers] = useState([]);
   const currentPage = useRef(1);
@@ -88,6 +90,9 @@ const Followings = ({ account }) => {
           padding: "10px",
         }}
       >
+        {session && session.user.account === account.account && (
+          <SuggestFollowings account={account} />
+        )}
         <Box
           sx={{
             display: "grid",
