@@ -10,12 +10,13 @@ import Comments from "./Comments";
 import { useSession } from "next-auth/react";
 import Followings from "./Followings";
 import Followers from "./Followers";
-
+import Link from "next/link";
+import ButtonChangeAvatar from "./ChangeAvatar/ButtonChangeAvatar";
 const Profile = ({ account }) => {
   const { data: session } = useSession();
   const [key, setKey] = useState("posts");
   const callDataApi = async (account) => {
-    if (!account) {
+    if (!account && !session) {
       return null;
     }
     const results = await axios.get(
@@ -24,7 +25,7 @@ const Profile = ({ account }) => {
     return results.data;
   };
   const getListQuery = useQuery(
-    ["get-detail-user", account],
+    ["get-detail-user", session, account],
     () => callDataApi(account),
     {
       cacheTime: Infinity,
@@ -67,6 +68,9 @@ const Profile = ({ account }) => {
       title: "followers",
     },
   ];
+  const handClick = (item) => {
+    setKey(item);
+  };
 
   return (
     <>
@@ -143,25 +147,7 @@ const Profile = ({ account }) => {
                   @{data.data.account}
                 </Typography>
                 {session.user.account === data.data.account && (
-                  <Box
-                    sx={{
-                      background: "linear-gradient(90deg,#ec0623,#ff8717)",
-                      width: "100%",
-                      borderRadius: "20px",
-                    }}
-                  >
-                    <Typography
-                      sx={{
-                        cursor: "pointer",
-                        fontSize: "1.4rem",
-                        fontWeight: "bold",
-                        color: "#ffffff",
-                        padding: "5px 10px",
-                      }}
-                    >
-                      Change Avatar
-                    </Typography>
-                  </Box>
+                  <ButtonChangeAvatar account={account} user={data.data} />
                 )}
               </Box>
             </Box>
@@ -174,11 +160,12 @@ const Profile = ({ account }) => {
               border: "1px solid #ccc",
               padding: "0 10px",
               backgroundColor: "#ffffff",
+              overflowX: "auto",
             }}
           >
             {menuOption.map((item, i) => (
               <Box
-                onClick={() => setKey(item.key)}
+                onClick={() => handClick(item.key)}
                 key={item.key}
                 sx={{
                   cursor: "pointer",

@@ -34,6 +34,7 @@ const Account = () => {
   const setIntervalJoinUserOnline = useRef(null);
   const countCallApi = useRef(1);
   const countCallApiGetPostActivity = useRef(1);
+  const countCallApiGetFollowings = useRef(1);
   const countCallApiGetUser = useRef(1);
   const dataUser = useSelector((state) => state.user.data);
   const dataUserFollowings = useSelector((state) => state.userFollowing);
@@ -94,16 +95,7 @@ const Account = () => {
       if (dataUser.data.status === false) {
         dispatch(getToggleBanned(true));
       }
-      //Get List Users Following
-      if (dataUserFollowings.length === 0) {
-        const listFollowingsData = dataUser.data.following;
-        dispatch(
-          _listFollowings({
-            type: SET_LIST_FOLLOWINGS,
-            data: listFollowingsData,
-          })
-        );
-      }
+
       dispatch(
         _messagesCount({
           type: SET_MESSAGES_COUNT,
@@ -120,6 +112,14 @@ const Account = () => {
       if (dataUserHearts.length === 0 && countCallApi.current === 1) {
         getListHearted();
       }
+      // Get List followings
+      if (
+        dataUserFollowings.length === 0 &&
+        countCallApiGetFollowings.current === 1
+      ) {
+        getListFollowings();
+      }
+      // Get acitivity
       if (!dataUserPostActivity && countCallApiGetPostActivity.current === 1) {
         getPostActivity();
       }
@@ -144,6 +144,32 @@ const Account = () => {
       );
     } catch (err) {
       countCallApi.current = 1;
+      if (err.response) {
+        toast.error(err.response.data.message);
+      }
+    }
+  };
+  const getListFollowings = async () => {
+    try {
+      countCallApiGetFollowings.current = 2;
+      const res = await axios.get(
+        `${process.env.ENDPOINT_SERVER}/api/v1/users/get-all-followings/${
+          dataUser.data._id
+        }?pageSize=${1000}`
+      );
+      const resData = res.data.data;
+      let listTemps = [];
+      resData.forEach((item, i) => {
+        listTemps.push(item.following._id);
+      });
+      dispatch(
+        _listFollowings({
+          type: SET_LIST_FOLLOWINGS,
+          data: listTemps,
+        })
+      );
+    } catch (err) {
+      countCallApiGetFollowings.current = 1;
       if (err.response) {
         toast.error(err.response.data.message);
       }

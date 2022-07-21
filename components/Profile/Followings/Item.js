@@ -3,7 +3,7 @@ import Link from "next/link";
 import { memo, useState, useContext } from "react";
 import SocketContext from "../../../contexts/socket";
 import { useDispatch, useSelector } from "react-redux";
-
+import { useEffect } from "react";
 import AvatarUser from "../../Homepage/AvatarUser";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -11,15 +11,25 @@ import {
   ADD_ITEM_LIST_FOLLOWINGS,
   REMOVE_ITEM_LIST_FOLLOWINGS,
 } from "../../../redux/actions/constants";
+import { _listFollowings } from "../../../redux/actions/_listFollowings";
 const Item = ({ item, session, account }) => {
   const socket = useContext(SocketContext);
   const dispatch = useDispatch();
+  const dataUserFollowing = useSelector((state) => state.userFollowing);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isOpenOptionMenu, setIsOpenOptionMenu] = useState(false);
   const [isHide, setIsHide] = useState(false);
   const [message, setMessage] = useState("Unfollow");
-
+  useEffect(() => {
+    if (dataUserFollowing) {
+      if (dataUserFollowing.includes(item.following._id)) {
+        setMessage("Unfollow");
+      } else {
+        setMessage("Follow");
+      }
+    }
+  }, [dataUserFollowing]);
   const handleClickFollow = async () => {
     try {
       setMessage("Loading");
@@ -74,6 +84,7 @@ const Item = ({ item, session, account }) => {
       }
       setIsLoading(false);
     } catch (err) {
+      setMessage("Unfollow");
       setIsLoading(false);
       if (err.response) {
         toast.error(err.response.data.message);
