@@ -6,7 +6,6 @@ export const usePreserveScroll = () => {
 
   const scrollPositions = useRef<{ [url: string]: number }>({})
   const isBack = useRef(false)
-console.log(scrollPositions)
   useEffect(() => {
     router.beforePopState(() => {
       isBack.current = true

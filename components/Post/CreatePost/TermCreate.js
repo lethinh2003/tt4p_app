@@ -26,78 +26,83 @@ const TermCreate = () => {
     <>
       <Box
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "20px",
-          width: "100%",
-          alignItems: "center",
+          paddingBottom: "30px",
+          borderBottom: (theme) => `1px solid ${theme.palette.border.dialog}`,
         }}
       >
-        <Typography
+        <Box
           sx={{
-            fontSize: "1.7rem",
-            fontWeight: "bold",
-
-            color: (theme) => theme.palette.text.color.first,
             display: "flex",
-            gap: "10px",
+            flexDirection: "column",
+            gap: "20px",
+            width: "100%",
             alignItems: "center",
           }}
         >
-          ⚠️ Quy định đăng bài
-        </Typography>
-
-        <Box
-          as={motion.div}
-          sx={{
-            // height: "250px",
-            overflowY: "auto",
-            border: (theme) => `3px solid ${theme.palette.border.feeds}`,
-            maxWidth: "400px",
-            width: "100%",
-            borderRadius: "10px",
-
-            boxShadow: (theme) =>
-              `0px 3px 20px 6px ${theme.palette.feeds.boxShadow}`,
-            display: "flex",
-            fontSize: "3rem",
-            color: "#ffffff",
-
-            alignItems: "flex-start",
-            fontWeight: "bold",
-            padding: "20px",
-            flexDirection: "column",
-            gap: "5px",
-            color: (theme) => theme.palette.text.color.first,
-          }}
-        >
           <Typography
             sx={{
               fontSize: "1.7rem",
               fontWeight: "bold",
+
+              color: (theme) => theme.palette.text.color.first,
+              display: "flex",
+              gap: "10px",
+              alignItems: "center",
             }}
           >
-            1. Không được đăng bài với nội dung thô tục, khiêu dâm, chửi thề,
-            bàn luận chính trị, các tệ nạn xã hội,...
+            ⚠️ Quy định đăng bài
           </Typography>
-          <Typography
+
+          <Box
             sx={{
-              fontSize: "1.7rem",
+              // height: "250px",
+              overflowY: "auto",
+
+              maxWidth: "400px",
+              width: "100%",
+              borderRadius: "10px",
+              backgroundColor: (theme) =>
+                theme.palette.latestPost.background.first,
+              display: "flex",
+              fontSize: "3rem",
+              color: "#ffffff",
+
+              alignItems: "flex-start",
               fontWeight: "bold",
+              padding: "20px",
+              flexDirection: "column",
+              gap: "5px",
+              color: (theme) => theme.palette.text.color.first,
             }}
           >
-            2. Mọi bài viết liên quan đến điều khoản 1 sẽ bị xóa và banned tài
-            khoản vĩnh viễn.
-          </Typography>
-          <Typography
-            sx={{
-              fontSize: "1.7rem",
-              fontWeight: "bold",
-            }}
-          >
-            3. Chúng tôi không chịu trách nhiệm cho mọi hành vi vi phạm pháp
-            luật của bạn.
-          </Typography>
+            <Typography
+              sx={{
+                fontSize: "1.7rem",
+                fontWeight: "bold",
+              }}
+            >
+              1. Không được đăng bài với nội dung thô tục, khiêu dâm, chửi thề,
+              bàn luận chính trị, các tệ nạn xã hội,...
+            </Typography>
+            <Typography
+              sx={{
+                fontSize: "1.7rem",
+                fontWeight: "bold",
+              }}
+            >
+              2. Mọi bài viết liên quan đến điều khoản 1 sẽ bị xóa và banned tài
+              khoản vĩnh viễn.
+            </Typography>
+            <Typography
+              sx={{
+                fontSize: "1.7rem",
+                fontWeight: "bold",
+              }}
+            >
+              3. Chúng tôi không chịu trách nhiệm cho mọi hành vi vi phạm pháp
+              luật của bạn.
+            </Typography>
+          </Box>
         </Box>
       </Box>
     </>

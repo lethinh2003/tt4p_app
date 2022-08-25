@@ -81,9 +81,9 @@ const Comments = ({ account }) => {
           flexDirection: "column",
 
           overflowX: "auto",
-          backgroundColor: "#ffffff",
-
-          border: "1px solid #ccc",
+          border: (theme) => `1px solid ${theme.palette.border.dialog}`,
+          backgroundColor: (theme) => theme.palette.latestPost.background.first,
+          borderRadius: "5px",
         }}
       >
         {isLoading &&
@@ -94,8 +94,11 @@ const Comments = ({ account }) => {
                 cursor: "pointer",
                 borderRadius: "10px",
                 width: "100%",
-                backgroundColor: "#f2f8fd",
+                backgroundColor: (theme) =>
+                  theme.palette.sidebar.background.default,
+                border: (theme) => `2px solid ${theme.palette.border.dialog}`,
                 gap: "0px",
+                marginBottom: "10px",
 
                 display: "flex",
                 fontSize: "3rem",

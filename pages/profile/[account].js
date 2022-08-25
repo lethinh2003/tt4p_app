@@ -14,10 +14,6 @@ const Home = () => {
   const router = useRouter();
   const { account } = router.query;
 
-  useEffect(() => {
-    console.log(router.query);
-  }, [router.query.account]);
-
   return (
     <>
       <Layout>
@@ -45,7 +41,6 @@ const Home = () => {
               }}
             >
               <Typography
-                onClick={() => handelClickRouter()}
                 sx={{
                   fontSize: "1.7rem",
                   fontWeight: "bold",

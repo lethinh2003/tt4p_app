@@ -1,33 +1,74 @@
-import { Box, Typography } from "@mui/material";
-import React from "react";
-import { BiBookmark } from "react-icons/bi";
-const Save = ({}) => {
+import ShareIcon from "@mui/icons-material/Share";
+import { Box } from "@mui/material";
+import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
+import BookmarkIcon from "@mui/icons-material/Bookmark";
+import React, { useState } from "react";
+const Save = ({
+  item,
+  setEditComment,
+  createCommentBoxRef,
+  setIsLoadingOption,
+}) => {
+  const [isSaved, setIsSaved] = useState(false);
+  const handleClickSave = () => {
+    setIsSaved(!isSaved);
+  };
   return (
     <>
       <Box
+        onClick={() => handleClickSave()}
         sx={{
           display: "flex",
           gap: "5px",
           alignItems: "center",
           padding: "5px",
+          color: isSaved
+            ? "#c43be8"
+            : (theme) => theme.palette.text.color.first,
           "&:hover": {
-            backgroundColor: "#e8ecf9",
+            color: "#c43be8",
+            "& .icon": {
+              backgroundColor: (theme) =>
+                theme.palette.button.background.iconSave,
+              color: "#c43be8",
+            },
           },
         }}
       >
-        <Typography
+        <Box
           sx={{
             fontSize: "inherit",
             cursor: "pointer",
-            color: (theme) => theme.palette.text.color.first,
+
             fontWeight: 600,
             display: "flex",
             alignItems: "center",
             gap: "5px",
+            fontSize: "1.4rem",
           }}
         >
-          <BiBookmark /> Save
-        </Typography>
+          <Box
+            className="icon"
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "10px",
+              borderRadius: "5px",
+            }}
+          >
+            {isSaved ? (
+              <BookmarkIcon
+                sx={{
+                  color: "#c43be8",
+                }}
+              />
+            ) : (
+              <BookmarkBorderIcon />
+            )}
+          </Box>
+          Save
+        </Box>
       </Box>
     </>
   );

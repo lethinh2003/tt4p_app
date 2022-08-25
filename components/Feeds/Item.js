@@ -18,14 +18,14 @@ const Item = ({ item, socket }) => {
           gap: "30px",
         }}
       >
-        <Link href={`/posts/${item.slug}`}>
+        <Link href={`/posts/${item._id}`}>
           <Box
             sx={{
               textAlign: "center",
               cursor: "pointer",
               height: "250px",
               overflowWrap: "break-word",
-              border: (theme) => `3px solid ${theme.palette.border.feeds}`,
+              border: (theme) => `2px solid ${theme.palette.border.dialog}`,
               backgroundColor: item.color ? item.color : "#ccc",
               borderRadius: "30px",
 
@@ -34,13 +34,19 @@ const Item = ({ item, socket }) => {
 
               fontWeight: "bold",
               padding: "20px",
+
+              "&:hover": {
+                border: (theme) =>
+                  `2px solid ${theme.palette.border.dialogHover}`,
+              },
             }}
           >
             <Box
               sx={{
                 width: "100%",
                 height: "100%",
-                overflowY: "auto",
+                WebkitMaskImage: "linear-gradient(180deg,#000 60%,transparent)",
+                maskImage: "linear-gradient(180deg,#000 60%,transparent)",
               }}
             >
               <Box>{item.title}</Box>
@@ -67,12 +73,13 @@ const Item = ({ item, socket }) => {
 
             <Typography
               sx={{
-                fontSize: "1.7rem",
+                fontSize: "1.4rem",
                 fontWeight: "bold",
                 maxWidth: "90px",
                 whiteSpace: "nowrap",
                 overflow: "hidden !important",
                 textOverflow: "ellipsis",
+                color: (theme) => theme.palette.text.color.first,
               }}
             >
               {item.user[0].name}

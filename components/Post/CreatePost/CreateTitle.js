@@ -12,10 +12,11 @@ const CreateTitle = ({
   titleErrMessage,
   setTitleErrMessage,
 }) => {
-  const LabelInput = styled(Typography)({
+  const LabelInput = styled(Typography)(({ theme }) => ({
     fontWeight: "500",
     opacity: "0.7",
-  });
+    color: theme.palette.text.color.first,
+  }));
   useEffect(() => {
     if (title) {
       document.title = title;
@@ -23,7 +24,6 @@ const CreateTitle = ({
       document.title = "Tạo bài đăng mới";
     }
   }, [title]);
-  console.log("render title");
   return (
     <>
       <FormControl

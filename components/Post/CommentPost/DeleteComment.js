@@ -111,14 +111,16 @@ const DeleteComment = ({ socket, item, setDataItem, setIsLoadingOption }) => {
           alignItems: "center",
           padding: "5px",
           "&:hover": {
-            backgroundColor: "#e8ecf9",
+            backgroundColor: (theme) =>
+              theme.palette.button.background.iconOthers,
+            color: "#39e58c",
           },
         }}
       >
         <Typography
           sx={{
             cursor: "pointer",
-            color: (theme) => theme.palette.text.color.second,
+
             fontWeight: 600,
           }}
           onClick={() => handleClickDelete(item)}

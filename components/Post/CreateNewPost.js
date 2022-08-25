@@ -85,46 +85,54 @@ const CreateNewPost = () => {
       <Loading isLoading={isLoading} />
       <Box
         sx={{
-          width: "100%",
-          display: "flex",
-          flexDirection: "column",
-          gap: "10px",
+          backgroundColor: (theme) => theme.palette.latestPost.background.first,
+          borderRadius: "5px",
+          padding: "10px",
         }}
       >
-        {!isLoading && (
-          <>
-            <CreateTitle
-              title={title}
-              setTitle={setTitle}
-              titleErrMessage={titleErrMessage}
-              setTitleErrMessage={setTitleErrMessage}
-            />
-            <CreateColorTitle
-              title={title}
-              backgroundColorTitle={backgroundColorTitle}
-              setBackgroundColorTitle={setBackgroundColorTitle}
-            />
-            <CreateContent
-              isLoadingUploadImage={isLoadingUploadImage}
-              setIsLoadingUploadImage={setIsLoadingUploadImage}
-              dataContent={dataContent}
-              setDataContent={setDataContent}
-              contentErrMessage={contentErrMessage}
-            />
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+          }}
+        >
+          {!isLoading && (
+            <>
+              <CreateTitle
+                title={title}
+                setTitle={setTitle}
+                titleErrMessage={titleErrMessage}
+                setTitleErrMessage={setTitleErrMessage}
+              />
+              <CreateColorTitle
+                title={title}
+                backgroundColorTitle={backgroundColorTitle}
+                setBackgroundColorTitle={setBackgroundColorTitle}
+              />
+              <CreateContent
+                isLoadingUploadImage={isLoadingUploadImage}
+                setIsLoadingUploadImage={setIsLoadingUploadImage}
+                dataContent={dataContent}
+                setDataContent={setDataContent}
+                contentErrMessage={contentErrMessage}
+              />
 
-            <Button
-              sx={{
-                alignSelf: "flex-end",
-                pointerEvents: isLoadingUploadImage ? "none" : "visible",
-                opacity: isLoadingUploadImage ? "0.7" : "1",
-              }}
-              onClick={onSubmit}
-              type="submit"
-            >
-              {isLoadingUploadImage ? "Đang tải ảnh..." : "Post"}
-            </Button>
-          </>
-        )}
+              <Button
+                sx={{
+                  alignSelf: "flex-end",
+                  pointerEvents: isLoadingUploadImage ? "none" : "visible",
+                  opacity: isLoadingUploadImage ? "0.7" : "1",
+                }}
+                onClick={onSubmit}
+                type="submit"
+              >
+                {isLoadingUploadImage ? "Đang tải ảnh..." : "Post"}
+              </Button>
+            </>
+          )}
+        </Box>
       </Box>
     </>
   );

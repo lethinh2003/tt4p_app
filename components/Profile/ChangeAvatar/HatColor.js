@@ -33,15 +33,16 @@ const HatColor = ({ avatarSVG, sx, item }) => {
               width: sx && sx.width ? sx.width : "50px",
               height: sx && sx.height ? sx.height : "50px",
               cursor: "pointer",
-
+              backgroundColor: (theme) =>
+                theme.palette.latestPost.background.first,
               borderRadius: "10px",
               position: "relative",
               overflow: "hidden",
               border:
                 avatarChange.hatColor === item
                   ? "3px solid #419fe8"
-                  : "2px solid #23303a",
-              boxShadow: "0px 3px 15px 0px #e1e1e1",
+                  : (theme) => `2px solid ${theme.palette.border.dialog}`,
+
               maxWidth: "200px",
             }}
           >

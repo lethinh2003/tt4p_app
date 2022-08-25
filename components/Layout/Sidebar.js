@@ -37,7 +37,7 @@ const Sidebar = () => {
     alignItems: "center",
     justifyContent: "flex-start",
     paddingLeft: "40px",
-    transition: "all 0.2s linear",
+    transition: "all 0.1s linear",
     "& .title": {
       fontSize: "1.7rem",
       fontWeight: "bold",
@@ -57,11 +57,11 @@ const Sidebar = () => {
     },
     "&.box": {
       "&.active": {
-        boxShadow: "1px 7px 11px 0px #ebeef982",
+        backgroundColor: theme.palette.button.background.hover,
       },
     },
     "&:hover": {
-      boxShadow: "1px 7px 11px 0px #ebeef982",
+      backgroundColor: theme.palette.button.background.hover,
     },
   }));
   const ItemWrapper = styled(Box)(({ theme }) => ({
@@ -74,6 +74,7 @@ const Sidebar = () => {
     flexDirection: "column",
     height: "100%",
     transform: "translateX(0)",
+    borderRight: `1px solid ${theme.palette.border.dialog}`,
 
     boxShadow: `2px 2px 9px 0px ${theme.palette.sidebar.boxShadow}`,
     "& .ms-sidebar__wrapper": {
@@ -179,6 +180,7 @@ const Sidebar = () => {
                   fontWeight: "bold",
                   paddingLeft: "40px",
                   paddingBottom: "20px",
+                  color: (theme) => theme.palette.text.color.second,
                 }}
               >
                 Menu
@@ -187,15 +189,11 @@ const Sidebar = () => {
                 sx={{
                   display: "flex",
                   flexDirection: "column",
-                  gap: "10px",
                 }}
               >
                 {SidebarMenu.map((item, i) => (
                   <Link href={item.link} key={i}>
                     <BoxNav
-                      as={motion.div}
-                      whileHover={{ scale: 1.01 }}
-                      whileTap={{ scale: 0.9 }}
                       className={value === item.value ? "box active" : "box"}
                     >
                       <div
@@ -218,32 +216,6 @@ const Sidebar = () => {
               </Box>
             </Box>
             <Account />
-
-            {/* <div
-              onClick={() => setIsOpenSetting(true)}
-              className={
-                router.pathname === "/settings"
-                  ? "ms-navbar__item active"
-                  : "ms-navbar__item"
-              }
-            >
-              <span className="ms-navbar__item--icon">
-                <SettingsOutlinedIcon />
-              </span>
-            </div>
-
-            <div
-              onClick={() => signOut()}
-              className={
-                router.pathname === "/sign-out"
-                  ? "ms-navbar__item active"
-                  : "ms-navbar__item"
-              }
-            >
-              <span className="ms-navbar__item--icon">
-                <LogoutOutlinedIcon />
-              </span>
-            </div> */}
           </div>
         </div>
       </ItemWrapper>

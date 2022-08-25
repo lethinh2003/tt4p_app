@@ -33,15 +33,23 @@ const CreatePost = () => {
                 gap: "30px",
               }}
             >
-              <Typography
+              <Box
                 sx={{
-                  fontSize: "1.7rem",
-                  fontWeight: "bold",
-                  color: (theme) => theme.palette.text.color.first,
+                  borderBottom: (theme) =>
+                    `1px solid ${theme.palette.border.dialog}`,
+                  paddingBottom: "20px",
                 }}
               >
-                📝 Create a post
-              </Typography>
+                <Typography
+                  sx={{
+                    fontSize: "1.7rem",
+                    fontWeight: "bold",
+                    color: (theme) => theme.palette.text.color.first,
+                  }}
+                >
+                  📝 Create a post
+                </Typography>
+              </Box>
               {isAuthenticated && <CreateNewPost />}
             </Box>
           </Box>

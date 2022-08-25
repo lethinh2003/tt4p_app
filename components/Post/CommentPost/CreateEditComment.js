@@ -68,7 +68,7 @@ const StyledTextareaElement = styled("textarea")(
     font-weight: 400;
     line-height: 1.5;
     color: ${theme.palette.mode === "dark" ? grey[300] : grey[900]};
- 
+    background-color: ${theme.palette.mode === "dark" ? "#0e1217" : "#ffffff"};
     border: 1px solid ${theme.palette.mode === "dark" ? grey[800] : grey[300]};
     border-radius: 8px;
     padding: 12px 12px;
@@ -208,51 +208,9 @@ const CreateEditComment = ({
           display: "flex",
           gap: "10px",
           flexDirection: "column",
+          borderBottom: (theme) => `1px solid ${theme.palette.border.dialog}`,
         }}
       >
-        {/* {replyCommentData && (
-          <Box
-            sx={{
-              display: "flex",
-              gap: "10px",
-              alignItems: "center",
-              flexWrap: "wrap",
-            }}
-          >
-            <Typography
-              sx={{
-                fontSize: "1.7rem",
-                fontWeight: "bold",
-                color: (theme) => theme.palette.text.color.first,
-              }}
-            >
-              Đang trả lời cho {replyCommentData.name}:
-              {replyCommentData.content}
-            </Typography>
-            <Box
-              onClick={() => {
-                setReplyCommentData("");
-                setIsClickRepComment(false);
-              }}
-              sx={{
-                fontSize: "1.2rem",
-                cursor: "pointer",
-                overflow: "hidden",
-                backgroundColor: "#f7f7f7",
-                display: "flex",
-                gap: "5px",
-                alignItems: "center",
-                padding: "5px",
-                borderRadius: "10px",
-                border: (theme) => `1px solid ${theme.palette.border.dialog}`,
-                color: (theme) => theme.palette.text.color.second,
-              }}
-            >
-              ❌
-            </Box>
-          </Box>
-        )} */}
-
         <Box
           sx={{
             width: "100%",
@@ -265,8 +223,7 @@ const CreateEditComment = ({
             display: "flex",
             fontSize: "3rem",
             color: "#ffffff",
-            boxShadow: (theme) =>
-              `0px 3px 10px 1px ${theme.palette.feeds.boxShadow}`,
+
             alignItems: "flex-start",
             fontWeight: "bold",
             padding: "10px",

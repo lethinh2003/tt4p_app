@@ -168,7 +168,9 @@ const getDesignTokens = (mode) => ({
             first: "#e1e1e1",
             second: "#c9adc5",
             third: "#cb8daf",
-            dialog: "#a8b3cf66",
+            dialog: "#a8b3cf33",
+
+            dialogHover: "#a8b3cf66",
             sidebar: "#6176f3",
             feeds: "#ffffff",
             menuright_option: "#d8e4f2",
@@ -177,7 +179,8 @@ const getDesignTokens = (mode) => ({
             first: "#e1e1e1",
             second: "#c9adc5",
             third: "#cb8daf",
-            dialog: "#52586666",
+            dialog: "#52586633",
+            dialogHover: "#52586666",
             sidebar: "#6176f3",
             feeds: "#ffffff",
             menuright_option: "#d8e4f2",
@@ -206,7 +209,7 @@ const getDesignTokens = (mode) => ({
           }
         : {
             background: {
-              default: "#f0f5fd",
+              default: "#ffffff",
             },
             shadow: {
               default: "#d1d1d1",
@@ -217,9 +220,207 @@ const getDesignTokens = (mode) => ({
       ...(mode === "dark"
         ? {
             default: "#20b8fb",
+            background: {
+              first: "#0e1217",
+              iconHeart: "#d61168",
+              iconUnheart: "#4078d6",
+
+              iconOthers: "#12432c",
+              iconSave: "#39184a",
+
+              hover: "#1a1f25",
+            },
+            color: {
+              first: "#ffffff",
+            },
           }
         : {
             default: "#20b8fb",
+            background: {
+              first: "#ffffff",
+              hover: "#e8ecf9",
+              iconHeart: "#ffecf7",
+              iconUnheart: "#a8d7fd",
+              iconOthers: "#1ddc6f3d",
+              iconSave: "#f0ccfb",
+            },
+            color: {
+              first: "#25396f",
+            },
+          }),
+    },
+    notification: {
+      ...(mode === "dark"
+        ? {
+            background: {
+              first: "#1c1f26",
+              new: "#152d40",
+              arrow: "#a8b3cf66",
+              optionMenu: "#0e1217",
+            },
+            color: {
+              first: "#ffffff",
+              second: "#a4b6e1",
+              optionMenuHover: "#9296a0",
+            },
+            boxShadow: {
+              optionMenu: "#2f2c2c82",
+            },
+            borderRadius: "5px",
+          }
+        : {
+            background: {
+              first: "#ffffff",
+              arrow: "#52586666",
+              new: "#e9f5fd",
+              optionMenu: "#ffffff",
+            },
+            color: {
+              first: "#25396f",
+              second: "#a4b6e1",
+              optionMenuHover: "#1c1f26",
+            },
+            boxShadow: {
+              optionMenu: "#cccccc82",
+            },
+            borderRadius: "5px",
+          }),
+    },
+    feed: {
+      ...(mode === "dark"
+        ? {
+            title: {
+              background: {
+                default: "#1a1f26",
+                hover: "#a8b3cf1f",
+                active: "transparent",
+              },
+              border: {
+                default: "#1a1f26",
+                hover: "#a8b3cf1f",
+                active: "#ffffff",
+              },
+            },
+            background: {
+              first: "#1c1f26",
+              new: "#152d40",
+              arrow: "#a8b3cf66",
+              optionMenu: "#0e1217",
+            },
+            color: {
+              first: "#ffffff",
+              second: "#a4b6e1",
+              optionMenuHover: "#9296a0",
+            },
+            boxShadow: {
+              optionMenu: "#2f2c2c82",
+            },
+            borderRadius: "5px",
+          }
+        : {
+            title: {
+              background: {
+                default: "#52586614",
+                hover: "#5258661f",
+                active: "transparent",
+              },
+              border: {
+                default: "#1a1f26",
+                hover: "#a8b3cf1f",
+                active: "#000000",
+              },
+            },
+            background: {
+              first: "#f0f5fd",
+              arrow: "#52586666",
+              new: "#e9f5fd",
+              optionMenu: "#ffffff",
+            },
+            color: {
+              first: "#25396f",
+              second: "#a4b6e1",
+              optionMenuHover: "#1c1f26",
+            },
+            boxShadow: {
+              optionMenu: "#cccccc82",
+            },
+            borderRadius: "5px",
+          }),
+    },
+    accountOptionMenu: {
+      ...(mode === "dark"
+        ? {
+            background: {
+              first: "#0e1217",
+              new: "#152d40",
+              arrow: "#a8b3cf66",
+              optionMenu: "#0e1217",
+              hover: "#1c1f26",
+            },
+            color: {
+              first: "#ffffff",
+              second: "#a4b6e1",
+              optionMenuHover: "#9296a0",
+            },
+            boxShadow: {
+              optionMenu: "#2f2c2c82",
+            },
+            borderRadius: "5px",
+          }
+        : {
+            background: {
+              first: "#ffffff",
+              arrow: "#52586666",
+              new: "#e9f5fd",
+              optionMenu: "#ffffff",
+              hover: "#e8ecf9",
+            },
+            color: {
+              first: "#25396f",
+              second: "#a4b6e1",
+              optionMenuHover: "#1c1f26",
+            },
+            boxShadow: {
+              optionMenu: "#cccccc82",
+            },
+            borderRadius: "5px",
+          }),
+    },
+    latestPost: {
+      ...(mode === "dark"
+        ? {
+            background: {
+              first: "#1c1f26",
+              new: "#152d40",
+              arrow: "#a8b3cf66",
+              optionMenu: "#0e1217",
+            },
+            color: {
+              first: "#ffffff",
+              second: "#a4b6e1",
+              optionMenuHover: "#9296a0",
+            },
+            boxShadow: {
+              optionMenu: "#2f2c2c82",
+            },
+            borderRadius: "5px",
+          }
+        : {
+            background: {
+              first: "#f0f5fd",
+              arrow: "#52586666",
+              new: "#e9f5fd",
+              optionMenu: "#ffffff",
+            },
+            color: {
+              first: "#25396f",
+              second: "#a4b6e1",
+              optionMenuHover: "#1c1f26",
+            },
+            boxShadow: {
+              optionMenu: "#cccccc82",
+            },
+            borderRadius: "5px",
           }),
     },
     sidebar: {

@@ -90,22 +90,24 @@ const Like = ({ item, socket }) => {
           padding: "5px",
 
           color: isHearted
-            ? "#ff5775"
+            ? "#fb9fa1"
             : (theme) => theme.palette.text.color.second,
           pointerEvents: isLoading ? "none" : "visible",
           opacity: isLoading ? "0.5" : "1",
           "&:hover": {
-            backgroundColor: "#e8ecf9",
+            backgroundColor: (theme) =>
+              theme.palette.button.background.iconHeart,
+            color: "#fb9fa1",
           },
           "&:hover > .hearts": {
-            color: "#ff5775",
+            color: "#fb9fa1",
           },
         }}
       >
         <IoHeartSharp className="hearts" />
         <Typography
           sx={{
-            color: (theme) => theme.palette.text.color.second,
+            color: isHearted ? "#fb9fa1" : null,
             fontWeight: 600,
           }}
         >

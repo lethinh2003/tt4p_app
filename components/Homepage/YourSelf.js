@@ -98,8 +98,9 @@ const YourSelf = ({ user }) => {
             <Typography
               sx={{
                 fontWeight: "bold",
-                fontSize: "20px",
+                fontSize: "1.7rem",
                 alignSelf: "center",
+                color: (theme) => theme.palette.text.color.first,
               }}
             >
               Hii {user.name}

@@ -4,16 +4,16 @@ import Link from "next/link";
 import { useSelector } from "react-redux";
 import AvatarUser from "../Homepage/AvatarUser";
 import { motion } from "framer-motion";
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
 import EndList from "../Homepage/EndList";
 const LatestPost = () => {
-  const latestActivityPost = useSelector((state) => state.postActivity);
-
+  const activityPosts = useSelector((state) => state.postActivity);
   return (
     <>
       <Box
         sx={{
           padding: "30px 0px",
+          borderBottom: (theme) => `1px solid ${theme.palette.border.dialog}`,
         }}
       >
         <Box
@@ -32,13 +32,13 @@ const LatestPost = () => {
               color: (theme) => theme.palette.text.color.first,
             }}
           >
-            ⌚ Hoạt động gần đây
+            ⌚ Bài viết gần đây
           </Typography>
         </Box>
         <Box
           sx={{
-            border: (theme) => `3px solid ${theme.palette.border.feeds}`,
-            backgroundColor: "#f5f9ff",
+            backgroundColor: (theme) =>
+              theme.palette.latestPost.background.first,
             borderRadius: "30px",
             overflow: "hidden",
             display: "flex",
@@ -47,12 +47,12 @@ const LatestPost = () => {
             flexDirection: "column",
             padding: "20px 0px",
             gap: "20px",
-            boxShadow: (theme) =>
-              `0px 3px 20px 6px${theme.palette.feeds.boxShadow}`,
           }}
         >
-          {!latestActivityPost && <EndList msg={"Chưa có hoạt động nào 👏🏼"} />}
-          {latestActivityPost && (
+          {/* {activityPosts.length === 0 && (
+            <EndList msg={"Chưa có hoạt động nào 👏🏼"} />
+          )} */}
+          {activityPosts.length > 0 && (
             <Box
               sx={{
                 display: "flex",
@@ -61,7 +61,7 @@ const LatestPost = () => {
                 flexDirection: "column",
               }}
             >
-              <Link href={`/posts/${latestActivityPost.slug}`}>
+              <Link href={`/posts/${activityPosts[0]._id}`}>
                 <Box
                   sx={{
                     textAlign: "center",
@@ -69,12 +69,10 @@ const LatestPost = () => {
                     width: "250px",
                     height: "150px",
                     border: (theme) =>
-                      `3px solid ${theme.palette.border.feeds}`,
-                    backgroundColor: latestActivityPost.color
-                      ? latestActivityPost.color
+                      `2px solid ${theme.palette.border.dialog}`,
+                    backgroundColor: activityPosts[0].color
+                      ? activityPosts[0].color
                       : "#ccc",
-                    boxShadow: (theme) =>
-                      `0px 3px 20px 6px ${theme.palette.feeds.boxShadow}`,
 
                     borderRadius: "30px",
                     overflow: "hidden",
@@ -85,16 +83,23 @@ const LatestPost = () => {
                     alignItems: "center",
                     fontWeight: "bold",
                     padding: "20px",
+
+                    "&:hover": {
+                      border: (theme) =>
+                        `2px solid ${theme.palette.border.dialogHover}`,
+                    },
                   }}
                 >
                   <Box
                     sx={{
                       width: "100%",
                       height: "100%",
-                      overflow: "auto",
+                      WebkitMaskImage:
+                        "linear-gradient(180deg,#000 60%,transparent)",
+                      maskImage: "linear-gradient(180deg,#000 60%,transparent)",
                     }}
                   >
-                    {latestActivityPost.title}
+                    {activityPosts[0].title}
                   </Box>
                 </Box>
               </Link>
@@ -118,18 +123,19 @@ const LatestPost = () => {
                     gap: "10px",
                   }}
                 >
-                  <AvatarUser user={latestActivityPost.user[0]} />
+                  <AvatarUser user={activityPosts[0].user[0]} />
                   <Typography
                     sx={{
-                      fontSize: "1.7rem",
+                      fontSize: "1.4rem",
                       fontWeight: "bold",
                       width: "150px",
                       whiteSpace: "nowrap",
                       overflow: "hidden !important",
                       textOverflow: "ellipsis",
+                      color: (theme) => theme.palette.text.color.first,
                     }}
                   >
-                    {latestActivityPost.user[0].name}
+                    {activityPosts[0].user[0].name}
                   </Typography>
                 </Box>
               </Box>

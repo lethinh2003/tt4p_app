@@ -11,6 +11,7 @@ const OptionItem = ({
   handleClickOpenOptionMenu,
   setIsStatus,
   isStatus,
+  setIsOpenOptionMenu,
 }) => {
   const handleClickDeletePost = async () => {
     try {
@@ -23,7 +24,7 @@ const OptionItem = ({
       );
 
       setIsHide(true);
-
+      setIsOpenOptionMenu(false);
       setIsLoading(false);
     } catch (err) {
       setIsLoading(false);
@@ -44,7 +45,7 @@ const OptionItem = ({
       );
 
       setIsStatus(!isStatus);
-
+      setIsOpenOptionMenu(false);
       setIsLoading(false);
     } catch (err) {
       setIsLoading(false);

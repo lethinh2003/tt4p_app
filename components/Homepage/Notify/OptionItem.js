@@ -37,7 +37,9 @@ const OptionItem = ({ item, setIsHide, setIsLoading, isLoading }) => {
           cursor: "pointer",
           marginBottom: "5px",
           position: "absolute",
-          backgroundColor: "#ffffff",
+          backgroundColor: (theme) =>
+            theme.palette.notification.background.optionMenu,
+          border: (theme) => `1px solid ${theme.palette.border.dialog}`,
           padding: "15px",
           display: "flex",
           flexDirection: "column",
@@ -45,14 +47,19 @@ const OptionItem = ({ item, setIsHide, setIsLoading, isLoading }) => {
           width: "90%",
           bottom: "15px",
           borderRadius: "5px",
-          boxShadow: "1px 7px 11px 0px #cccccc82",
+          boxShadow: (theme) =>
+            `1px 7px 11px 0px ${theme.palette.notification.boxShadow.optionMenu}`,
         }}
       >
         <Typography
           onClick={() => handleClickDeleteNotify()}
           sx={{
             fontSize: "1.4rem",
-            fontWeight: "bold",
+            fontWeight: "500",
+            "&:hover": {
+              color: (theme) =>
+                theme.palette.notification.color.optionMenuHover,
+            },
           }}
         >
           Delete this notification

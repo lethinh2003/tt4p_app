@@ -14,7 +14,7 @@ const MenuAccount = ({ setIsOpenMenuOptions, session }) => {
     minHeight: "50px",
 
     "&:hover": {
-      backgroundColor: "#e8ecf9",
+      backgroundColor: theme.palette.accountOptionMenu.background.hover,
     },
   }));
   return (
@@ -24,13 +24,15 @@ const MenuAccount = ({ setIsOpenMenuOptions, session }) => {
           sx={{
             position: "absolute",
 
-            backgroundColor: "#ffffff",
+            backgroundColor: (theme) =>
+              theme.palette.accountOptionMenu.background.first,
+            border: (theme) => `1px solid ${theme.palette.border.dialog}`,
             transform: "translateX(103%)",
             top: 0,
             height: "320px",
-            boxShadow: (theme) => `1px 1px 15px 0px #eaebecab`,
+            boxShadow: "0 4px 4px rgb(0 0 0 / 25%)",
             width: "100%",
-            overflowY: "scroll",
+            overflowY: "auto",
           }}
         >
           <Box
@@ -70,7 +72,6 @@ const MenuAccount = ({ setIsOpenMenuOptions, session }) => {
                 sx={{
                   paddingLeft: "35px",
                   fontSize: "1.7rem",
-                  fontWeight: "bold",
                 }}
               >
                 Dark Mode
@@ -116,7 +117,6 @@ const MenuAccount = ({ setIsOpenMenuOptions, session }) => {
                   sx={{
                     paddingLeft: "35px",
                     fontSize: "1.7rem",
-                    fontWeight: "bold",
                   }}
                 >
                   Profile
@@ -128,7 +128,6 @@ const MenuAccount = ({ setIsOpenMenuOptions, session }) => {
                 sx={{
                   paddingLeft: "35px",
                   fontSize: "1.7rem",
-                  fontWeight: "bold",
                 }}
               >
                 Settings
@@ -139,7 +138,6 @@ const MenuAccount = ({ setIsOpenMenuOptions, session }) => {
                 sx={{
                   paddingLeft: "35px",
                   fontSize: "1.7rem",
-                  fontWeight: "bold",
                 }}
               >
                 Log out

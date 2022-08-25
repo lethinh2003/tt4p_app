@@ -29,15 +29,21 @@ const EditComment = ({
           gap: "5px",
           alignItems: "center",
           padding: "5px",
+          backgroundColor: isClickEditComment
+            ? (theme) => theme.palette.button.background.iconOthers
+            : null,
+          color: isClickEditComment ? "#39e58c" : null,
           "&:hover": {
-            backgroundColor: "#e8ecf9",
+            backgroundColor: (theme) =>
+              theme.palette.button.background.iconOthers,
+            color: "#39e58c",
           },
         }}
       >
         <Typography
           sx={{
             cursor: "pointer",
-            color: (theme) => theme.palette.text.color.second,
+
             fontWeight: 600,
           }}
           onClick={() => handleClickEdit(item)}

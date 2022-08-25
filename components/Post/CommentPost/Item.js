@@ -13,7 +13,6 @@ import DeleteComment from "./DeleteComment";
 import EditComment from "./EditComment";
 import ReplyComment from "./ReplyComment";
 const Item = ({ isChildren, socket, item, setEditComment, session }) => {
-  console.log(item, isChildren);
   const listCommentsLoading = useSelector((state) => state.listCommentsLoading);
   const [replyCommentData, setReplyCommentData] = useState("");
   const [editCommentData, setEditCommentData] = useState("");
@@ -28,7 +27,7 @@ const Item = ({ isChildren, socket, item, setEditComment, session }) => {
     vanilaContent.split("\n")
   );
   const [hasChildren, setHasChildren] = useState(
-    dataItem && dataItem.rep_comments.length
+    dataItem && dataItem.rep_comments.length > 0
   );
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
@@ -58,14 +57,6 @@ const Item = ({ isChildren, socket, item, setEditComment, session }) => {
       };
     }
   }, [socket]);
-  useEffect(() => {
-    const getCommentPost = document.querySelectorAll(".comment_post");
-    for (let i = 0; i < getCommentPost.length; i++) {
-      if (getCommentPost[i].lastChild.textContent === "0") {
-        getCommentPost[i].lastChild.textContent = null;
-      }
-    }
-  }, [dataItem]);
 
   useEffect(() => {
     if (checkIsCommentLoading(dataItem._id, listCommentsLoading)) {
@@ -104,7 +95,7 @@ const Item = ({ isChildren, socket, item, setEditComment, session }) => {
               top: !isChildren ? "60px" : "40px",
               backgroundColor: "#a1acb9",
               left: "20px",
-              width: "2px",
+              width: "1px",
               height: !isChildren
                 ? "calc(100% - 40px - 20px - 20px)"
                 : "calc(100% - 40px)",
@@ -164,7 +155,7 @@ const Item = ({ isChildren, socket, item, setEditComment, session }) => {
                   >
                     <Typography
                       sx={{
-                        fontSize: "1.7rem",
+                        fontSize: "1.3rem",
                         fontWeight: "bold",
                         color: (theme) => theme.palette.text.color.first,
                       }}
@@ -204,7 +195,7 @@ const Item = ({ isChildren, socket, item, setEditComment, session }) => {
             >
               <Box
                 sx={{
-                  color: "#757474",
+                  color: (theme) => theme.palette.text.color.first,
                   fontSize: "1.7rem",
                   fontWeight: 500,
                 }}

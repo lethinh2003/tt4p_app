@@ -1,3 +1,4 @@
+import { useTheme } from "@emotion/react";
 import { Box, Button, Skeleton, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import axios from "axios";
@@ -39,6 +40,7 @@ const Feeds = ({ isAuthenticated }) => {
   const [filter, setFilter] = useState(getGlobalCategory);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingLoadMore, setIsLoadingLoadMore] = useState(false);
+  const theme = useTheme();
 
   useEffect(() => {
     if (getFeedPosts.length === 0 && isAuthenticated) {
@@ -175,23 +177,27 @@ const Feeds = ({ isAuthenticated }) => {
   ];
   const TitleFeeds = styled(Typography)(({ theme }) => ({
     fontSize: "1.7rem",
-    fontWeight: "bold",
+    fontWeight: "500",
     color: theme.palette.text.color.second,
+    backgroundColor: theme.palette.feed.title.background.default,
     display: "flex",
     alignItems: "center",
     gap: "5px",
     padding: "8px",
     borderRadius: "15px",
     cursor: "pointer",
+    border: "2px solid transparent",
     "&:hover": {
-      backgroundColor: "#e8ecf9",
+      backgroundColor: theme.palette.feed.title.background.hover,
+      color: theme.palette.text.color.first,
     },
     "&:active": {
-      backgroundColor: "#dbe1f5",
+      backgroundColor: theme.palette.feed.title.background.active,
     },
     "&.active": {
-      backgroundColor: "#dbe1f5",
-      color: theme.palette.text.color.active,
+      backgroundColor: theme.palette.feed.title.background.active,
+      border: `2px solid ${theme.palette.feed.title.border.active}`,
+      color: theme.palette.text.color.first,
     },
   }));
   const handleClickFilter = (key) => {
@@ -217,8 +223,6 @@ const Feeds = ({ isAuthenticated }) => {
             alignItems: "center",
             justifyContent: "space-between",
             gap: "10px",
-            backgroundColor: "#ffffff",
-            border: "1px solid #ccc",
             padding: "10px",
           }}
         >
@@ -257,161 +261,171 @@ const Feeds = ({ isAuthenticated }) => {
         >
           {/* {isFetching && <ThreeDots width={30} fill={"20b8fb"} />} */}
         </Box>
-
-        <InfiniteScroll
-          dataLength={getFeedPosts.length}
-          next={handleUpdateNewPage}
-          hasMore={buttonLoadmore}
-          style={{
-            overflow: "unset",
-            backgroundColor: "#ffffff",
-            border: "1px solid #ccc",
-            padding: "10px",
+        <Box
+          sx={{
+            backgroundColor: (theme) => theme.palette.feed.background.first,
+            border: (theme) => `1px solid ${theme.palette.border.dialog}`,
           }}
         >
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: {
-                xs: "repeat(1, minmax(0,1fr))",
-                sm: "repeat(2, minmax(0,1fr))",
-                md: "repeat(1, minmax(0,1fr))",
-                lg: "repeat(2, minmax(0,1fr))",
-                xl: "repeat(2, minmax(0,1fr))",
-              },
-              gap: "30px",
+          <InfiniteScroll
+            dataLength={getFeedPosts.length}
+            next={handleUpdateNewPage}
+            hasMore={buttonLoadmore}
+            style={{
+              overflow: "unset",
+              backgroundColor: "inherit",
+
+              padding: "10px",
             }}
           >
-            {isLoading && (
-              <>
-                {Array.from({ length: 5 }).map((item, i) => (
-                  <Box
-                    key={i}
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "30px",
-                    }}
-                  >
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: {
+                  xs: "repeat(1, minmax(0,1fr))",
+                  sm: "repeat(2, minmax(0,1fr))",
+                  md: "repeat(1, minmax(0,1fr))",
+                  lg: "repeat(2, minmax(0,1fr))",
+                  xl: "repeat(2, minmax(0,1fr))",
+                },
+                gap: "30px",
+              }}
+            >
+              {isLoading && (
+                <>
+                  {Array.from({ length: 5 }).map((item, i) => (
                     <Box
-                      sx={{
-                        height: "250px",
-                        border: (theme) =>
-                          `3px solid ${theme.palette.border.feeds}`,
-
-                        borderRadius: "30px",
-                        overflow: "hidden",
-
-                        display: "flex",
-                        fontSize: "3rem",
-                        color: "#ffffff",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      <Skeleton
-                        animation="wave"
-                        variant="rectangular"
-                        height={"100%"}
-                        width={"100%"}
-                      />
-                    </Box>
-                    <Box
+                      key={i}
                       sx={{
                         display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        gap: "10px",
+                        flexDirection: "column",
+                        gap: "30px",
                       }}
                     >
                       <Box
                         sx={{
-                          display: "flex",
+                          height: "250px",
+                          border: (theme) =>
+                            `2px solid ${theme.palette.border.dialog}`,
 
+                          borderRadius: "30px",
+                          overflow: "hidden",
+
+                          display: "flex",
+                          fontSize: "3rem",
+                          color: "#ffffff",
+                          justifyContent: "center",
                           alignItems: "center",
-                          flex: 1,
-                          width: "100%",
-                          gap: "10px",
+                          fontWeight: "bold",
                         }}
                       >
                         <Skeleton
                           animation="wave"
-                          variant="circular"
-                          height={40}
-                          width={40}
+                          variant="rectangular"
+                          height={"100%"}
+                          width={"100%"}
                         />
-
-                        <Typography
-                          sx={{
-                            fontSize: "1.7rem",
-                            fontWeight: "bold",
-                            width: "100px",
-                            whiteSpace: "nowrap",
-                            overflow: "hidden !important",
-                            textOverflow: "ellipsis",
-                          }}
-                        >
-                          <Skeleton animation="wave" width={100} height={20} />
-                        </Typography>
                       </Box>
                       <Box
                         sx={{
                           display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
                           gap: "10px",
-                          fontSize: "1.7rem",
-                          height: "100%",
-                          fontWeight: "bold",
-                          color: (theme) => theme.palette.text.color.second,
                         }}
                       >
                         <Box
                           sx={{
                             display: "flex",
-                            gap: "5px",
+
                             alignItems: "center",
+                            flex: 1,
+                            width: "100%",
+                            gap: "10px",
                           }}
                         >
                           <Skeleton
                             animation="wave"
                             variant="circular"
-                            height={20}
-                            width={20}
+                            height={40}
+                            width={40}
                           />
-                          <Skeleton animation="wave" width={50} height={20} />
+
+                          <Typography
+                            sx={{
+                              fontSize: "1.7rem",
+                              fontWeight: "bold",
+                              width: "100px",
+                              whiteSpace: "nowrap",
+                              overflow: "hidden !important",
+                              textOverflow: "ellipsis",
+                            }}
+                          >
+                            <Skeleton
+                              animation="wave"
+                              width={100}
+                              height={20}
+                            />
+                          </Typography>
                         </Box>
                         <Box
                           sx={{
                             display: "flex",
-                            gap: "5px",
-                            alignItems: "center",
+                            gap: "10px",
+                            fontSize: "1.7rem",
+                            height: "100%",
+                            fontWeight: "bold",
+                            color: (theme) => theme.palette.text.color.second,
                           }}
                         >
-                          <Skeleton
-                            animation="wave"
-                            variant="circular"
-                            height={20}
-                            width={20}
-                          />
-                          <Skeleton animation="wave" width={50} height={20} />
+                          <Box
+                            sx={{
+                              display: "flex",
+                              gap: "5px",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Skeleton
+                              animation="wave"
+                              variant="circular"
+                              height={20}
+                              width={20}
+                            />
+                            <Skeleton animation="wave" width={50} height={20} />
+                          </Box>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              gap: "5px",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Skeleton
+                              animation="wave"
+                              variant="circular"
+                              height={20}
+                              width={20}
+                            />
+                            <Skeleton animation="wave" width={50} height={20} />
+                          </Box>
                         </Box>
                       </Box>
                     </Box>
-                  </Box>
-                ))}
-              </>
-            )}
+                  ))}
+                </>
+              )}
 
-            {!isLoading &&
-              getFeedPosts.length > 0 &&
-              getFeedPosts.map((item, i) => (
-                <Item key={item._id} item={item} socket={socket} />
-              ))}
-          </Box>
-          {!isLoading && getFeedPosts.length === 0 && (
+              {!isLoading &&
+                getFeedPosts.length > 0 &&
+                getFeedPosts.map((item, i) => (
+                  <Item key={item._id} item={item} socket={socket} />
+                ))}
+            </Box>
+            {/* {!isLoading && getFeedPosts.length === 0 && (
             <EndList msg={"Chưa có bài viết nào 👏🏼"} />
-          )}
-        </InfiniteScroll>
+          )} */}
+          </InfiniteScroll>
+        </Box>
 
         {buttonLoadmore && getFeedPosts.length > 0 && !isLoading && (
           <Button

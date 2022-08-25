@@ -206,6 +206,7 @@ const Chat = ({ socket, partner, isHideInfo, statusUser }) => {
                 fontWeight: "bold",
                 fontSize: "20px",
                 alignSelf: "center",
+                color: (theme) => theme.palette.text.color.first,
               }}
             >
               Đối phương đã rời phòng, bấm Thoát Chat để tìm bạn mới.
@@ -217,6 +218,7 @@ const Chat = ({ socket, partner, isHideInfo, statusUser }) => {
                 fontWeight: "bold",
                 fontSize: "20px",
                 alignSelf: "center",
+                color: (theme) => theme.palette.text.color.first,
               }}
             >
               Đối phương đã thoát ứng dụng, vui lòng đợi đối phương kết nối lại
@@ -229,6 +231,7 @@ const Chat = ({ socket, partner, isHideInfo, statusUser }) => {
                 fontWeight: "bold",
                 fontSize: "20px",
                 alignSelf: "center",
+                color: (theme) => theme.palette.text.color.first,
               }}
             >
               Hãy bắt chuyện trước nhé!!

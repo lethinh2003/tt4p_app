@@ -9,12 +9,11 @@ const IntroducePost = ({ item }) => {
         sx={{
           textAlign: "center",
           minHeight: "250px",
-          border: (theme) => `3px solid ${theme.palette.border.feeds}`,
+          border: (theme) => `2px solid ${theme.palette.border.dialog}`,
           backgroundColor: item.color ? item.color : "#ccc",
           borderRadius: "30px",
           overflow: "hidden",
-          boxShadow: (theme) =>
-            `0px 3px 20px 6px${theme.palette.feeds.boxShadow}`,
+
           display: "flex",
           fontSize: "3rem",
           color: "#ffffff",
@@ -22,6 +21,10 @@ const IntroducePost = ({ item }) => {
           alignItems: "center",
           fontWeight: "bold",
           padding: "20px",
+
+          "&:hover": {
+            border: (theme) => `2px solid ${theme.palette.border.dialogHover}`,
+          },
         }}
       >
         <Typography
@@ -56,9 +59,9 @@ const IntroducePost = ({ item }) => {
 
           <Typography
             sx={{
-              fontSize: "1.7rem",
+              fontSize: "1.4rem",
               fontWeight: "bold",
-
+              color: (theme) => theme.palette.text.color.first,
               whiteSpace: "nowrap",
               overflow: "hidden !important",
               textOverflow: "ellipsis",

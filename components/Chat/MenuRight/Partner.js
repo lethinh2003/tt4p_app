@@ -5,7 +5,7 @@ import { BsListStars } from "react-icons/bs";
 import { IoWarningOutline } from "react-icons/io5";
 import { useSelector } from "react-redux";
 import Image from "next/image";
-
+import AvatarUser from "../../Homepage/AvatarUser";
 const Partner = ({}) => {
   const partner = useSelector((state) => state.partner);
   const BoxTitleItem = styled(Box)(({ theme }) => ({
@@ -62,31 +62,20 @@ const Partner = ({}) => {
               gap: "10px",
             }}
           >
-            <Box
+            <AvatarUser
+              user={partner}
               sx={{
                 width: "100px",
                 height: "100px",
-
-                borderRadius: "50%",
-                position: "relative",
-                overflow: "hidden",
-                border: "2px solid #23303a",
-                boxShadow: "0px 3px 15px 0px #23303a",
               }}
-            >
-              <Image
-                src={partner.avatar}
-                alt={partner.name}
-                objectFit="cover"
-                layout="fill"
-              />
-            </Box>
+            />
 
             <Box>
               <Typography
                 sx={{
-                  fontSize: "1.7rem",
+                  fontSize: "1.4rem",
                   fontWeight: "bold",
+                  color: (theme) => theme.palette.text.color.first,
                 }}
               >
                 {partner.name}
@@ -115,9 +104,7 @@ const Partner = ({}) => {
           >
             <Box
               sx={{
-                boxShadow: (theme) =>
-                  `0px 3px 20px 1px ${theme.palette.feeds.boxShadow}`,
-                backgroundColor: "#ccf1fa",
+                backgroundColor: (theme) => theme.palette.feed.background.first,
                 width: "100px",
                 alignItems: "center",
                 borderRadius: "10px",
@@ -129,10 +116,10 @@ const Partner = ({}) => {
               <Typography
                 sx={{
                   fontSize: "1.2rem",
-                  color: "#464e5a",
+                  color: (theme) => theme.palette.text.color.second,
                 }}
               >
-                Users
+                Partners
               </Typography>
               <Typography
                 sx={{
@@ -146,9 +133,7 @@ const Partner = ({}) => {
             </Box>
             <Box
               sx={{
-                boxShadow: (theme) =>
-                  `0px 3px 20px 1px ${theme.palette.feeds.boxShadow}`,
-                backgroundColor: "#ccf1fa",
+                backgroundColor: (theme) => theme.palette.feed.background.first,
                 width: "100px",
                 alignItems: "center",
                 borderRadius: "10px",
@@ -160,7 +145,7 @@ const Partner = ({}) => {
               <Typography
                 sx={{
                   fontSize: "1.2rem",
-                  color: "#464e5a",
+                  color: (theme) => theme.palette.text.color.second,
                 }}
               >
                 Messages

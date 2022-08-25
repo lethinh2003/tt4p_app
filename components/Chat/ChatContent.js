@@ -2,6 +2,7 @@ import { Typography, Box } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import Image from "next/image";
+import AvatarUser from "../Homepage/AvatarUser";
 
 const ChatContent = ({ item, name, message, type }) => {
   const handleClickChatDetail = (item) => {
@@ -38,18 +39,21 @@ const ChatContent = ({ item, name, message, type }) => {
     <>
       {type === "left" && (
         <>
-          <BoxAvatar
-            sx={{
-              display: { xs: "none", md: "block" },
-            }}
-          >
-            <Image src={item.to.avatar} alt={name} width={50} height={50} />
-          </BoxAvatar>
+          <Box>
+            <AvatarUser
+              user={item.from}
+              sx={{
+                width: "50px",
+                height: "50px",
+              }}
+            />
+          </Box>
           <Box className="box-content">
             <Typography
               className="box-content--userName"
               sx={{
                 display: { xs: "none", md: "block" },
+                color: (theme) => theme.palette.text.color.first,
               }}
             >
               {name}
@@ -70,6 +74,7 @@ const ChatContent = ({ item, name, message, type }) => {
               className="box-content--userName"
               sx={{
                 display: { xs: "none", md: "block" },
+                color: (theme) => theme.palette.text.color.first,
               }}
             >
               {name}
@@ -81,28 +86,34 @@ const ChatContent = ({ item, name, message, type }) => {
               {message}
             </Typography>
           </Box>
-          <BoxAvatar
-            sx={{
-              display: { xs: "none", md: "block" },
-            }}
-          >
-            <Image src={item.from.avatar} alt={name} width={50} height={50} />
-          </BoxAvatar>
+          <Box>
+            <AvatarUser
+              user={item.from}
+              sx={{
+                width: "50px",
+                height: "50px",
+              }}
+            />
+          </Box>
         </>
       )}
       {type === "typing" && (
         <>
-          <BoxAvatar
-            sx={{
-              display: { xs: "none", md: "block" },
-            }}
-          >
-            <Image src={item.avatar} alt={name} width={50} height={50} />
-          </BoxAvatar>
+          <Box>
+            <AvatarUser
+              user={item}
+              sx={{
+                width: "50px",
+                height: "50px",
+              }}
+            />
+          </Box>
+
           <Box className="box-content">
             <Typography
               className="box-content--userName"
               sx={{
+                color: (theme) => theme.palette.text.color.first,
                 display: { xs: "none", md: "block" },
               }}
             >

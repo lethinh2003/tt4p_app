@@ -93,22 +93,24 @@ const Dislike = ({ item, socket }) => {
           padding: "5px",
 
           color: isHearted
-            ? "#ff5775"
+            ? "#66b7d4"
             : (theme) => theme.palette.text.color.second,
           pointerEvents: isLoading ? "none" : "visible",
           opacity: isLoading ? "0.5" : "1",
           "&:hover": {
-            backgroundColor: "#e8ecf9",
+            backgroundColor: (theme) =>
+              theme.palette.button.background.iconUnheart,
+            color: "#66b7d4",
           },
           "&:hover > .angry": {
-            color: "#ff5775",
+            color: "#66b7d4",
           },
         }}
       >
         <ImAngry2 className="angry" />
         <Typography
           sx={{
-            color: (theme) => theme.palette.text.color.second,
+            color: isHearted ? "#66b7d4" : null,
             fontWeight: 600,
           }}
         >

@@ -8,11 +8,13 @@ const ButtonPost = ({ item, socket }) => {
     <>
       <Box
         sx={{
+          padding: "5px 0px",
+          marginTop: "10px",
           fontSize: "1.7rem",
           display: "flex",
           flexWrap: "wrap",
           alignItems: "center",
-
+          borderTop: (theme) => `1px solid ${theme.palette.border.dialog}`,
           color: (theme) => theme.palette.text.color.second,
         }}
       >

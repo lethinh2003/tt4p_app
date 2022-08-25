@@ -40,7 +40,7 @@ const StyledInputElement = styled("input")(
     font-weight: 400;
     line-height: 1.5;
     color: ${theme.palette.mode === "dark" ? grey[300] : grey[900]};
-  
+
     border: 1px solid ${theme.palette.mode === "dark" ? grey[800] : grey[300]};
     border-radius: 8px;
     padding: 12px 12px;
@@ -66,7 +66,7 @@ const StyledTextareaElement = styled("textarea")(
     font-weight: 400;
     line-height: 1.5;
     color: ${theme.palette.mode === "dark" ? grey[300] : grey[900]};
- 
+    background-color: ${theme.palette.mode === "dark" ? "#0e1217" : "#ffffff"};
     border: 1px solid ${theme.palette.mode === "dark" ? grey[800] : grey[300]};
     border-radius: 8px;
     padding: 12px 12px;
@@ -121,6 +121,8 @@ const CreateComment = ({ item, socket }) => {
           content: convertChat(content),
         }
       );
+
+      //send notification
       if (session.user.id != item.user[0]._id) {
         const sendNotify = await axios.post(
           `${process.env.ENDPOINT_SERVER}/api/v1/users/notifies`,
@@ -187,6 +189,7 @@ const CreateComment = ({ item, socket }) => {
           display: "flex",
           gap: "10px",
           flexDirection: "column",
+          borderBottom: (theme) => `1px solid ${theme.palette.border.dialog}`,
         }}
       >
         <Box
@@ -201,8 +204,7 @@ const CreateComment = ({ item, socket }) => {
             display: "flex",
             fontSize: "3rem",
             color: "#ffffff",
-            boxShadow: (theme) =>
-              `0px 3px 10px 1px ${theme.palette.feeds.boxShadow}`,
+
             alignItems: "flex-start",
             fontWeight: "bold",
             padding: "10px",
@@ -222,7 +224,7 @@ const CreateComment = ({ item, socket }) => {
                 height: "100%",
                 border: 0,
                 outline: "none",
-                backgroundColor: "inherit",
+
                 color: content && content.length < 5 ? "red" : "",
               }}
               value={content}

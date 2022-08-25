@@ -117,7 +117,7 @@ const Item = ({ item, session, socket }) => {
           >
             <Typography
               sx={{
-                fontSize: "1.7rem",
+                fontSize: "1.4rem",
                 fontWeight: "bold",
                 color: (theme) => theme.palette.text.color.first,
               }}

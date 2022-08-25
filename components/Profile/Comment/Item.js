@@ -25,7 +25,7 @@ const Item = ({ isChildren, item, account }) => {
       {!isHide && session && (
         <Box
           sx={{
-            backgroundColor: "#ffffff",
+            backgroundColor: "unset",
             padding: "10px",
           }}
         >
@@ -35,9 +35,10 @@ const Item = ({ isChildren, item, account }) => {
               cursor: "pointer",
               borderRadius: "10px",
               width: "100%",
-              backgroundColor: "#f2f8fd",
+              backgroundColor: (theme) =>
+                theme.palette.sidebar.background.default,
               gap: isChildren ? "0px" : "0px",
-
+              border: (theme) => `2px solid ${theme.palette.border.dialog}`,
               display: "flex",
               fontSize: "3rem",
               color: "#ffffff",
@@ -50,7 +51,10 @@ const Item = ({ isChildren, item, account }) => {
               marginLeft: "0px",
               opacity: isLoading ? 0.5 : 1,
               pointerEvents: isLoading ? "none" : "visible",
-              "&:hover": { opacity: 0.8 },
+              "&:hover": {
+                border: (theme) =>
+                  `2px solid ${theme.palette.border.dialogHover}`,
+              },
             }}
           >
             <Box
@@ -95,7 +99,7 @@ const Item = ({ isChildren, item, account }) => {
                     >
                       <Typography
                         sx={{
-                          fontSize: "1.7rem",
+                          fontSize: "1.4rem",
                           fontWeight: "bold",
                           color: (theme) => theme.palette.text.color.first,
                         }}
@@ -135,7 +139,7 @@ const Item = ({ isChildren, item, account }) => {
               >
                 <Box
                   sx={{
-                    color: "#757474",
+                    color: (theme) => theme.palette.text.color.first,
                     fontSize: "1.7rem",
                     fontWeight: 500,
                   }}

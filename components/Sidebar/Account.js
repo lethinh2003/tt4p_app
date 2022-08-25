@@ -120,7 +120,10 @@ const Account = () => {
         getListFollowings();
       }
       // Get acitivity
-      if (!dataUserPostActivity && countCallApiGetPostActivity.current === 1) {
+      if (
+        dataUserPostActivity.length === 0 &&
+        countCallApiGetPostActivity.current === 1
+      ) {
         getPostActivity();
       }
     }
@@ -183,10 +186,15 @@ const Account = () => {
       );
       const resData = res.data.data;
       if (resData.length > 0) {
+        const newAcitivity = [];
+        resData.forEach((item) => {
+          newAcitivity.push(item.post[0]);
+        });
+        console.log(newAcitivity);
         dispatch(
           _postActivity({
             type: SET_POST_ACTIVITY,
-            data: resData[0].post[0],
+            data: newAcitivity,
           })
         );
       }
@@ -215,6 +223,7 @@ const Account = () => {
               fontWeight: "bold",
               paddingLeft: "40px",
               paddingBottom: "20px",
+              color: (theme) => theme.palette.text.color.second,
             }}
           >
             Account
@@ -236,6 +245,7 @@ const Account = () => {
                 justifyContent: "space-between",
                 width: "100%",
                 alignItems: "center",
+                color: (theme) => theme.palette.text.color.second,
               }}
             >
               <Box
@@ -246,8 +256,9 @@ const Account = () => {
               >
                 <Typography
                   sx={{
-                    fontSize: "1.7rem",
+                    fontSize: "1.4rem",
                     fontWeight: "bold",
+                    color: (theme) => theme.palette.text.color.first,
                   }}
                 >
                   {dataUser.data.name}
@@ -262,14 +273,32 @@ const Account = () => {
                   @{dataUser.data.account}
                 </Typography>
               </Box>
-              <IoIosArrowForward
-                onClick={() => handleClickOpenMenuOptions()}
-                style={{
-                  fontSize: "2rem",
+              <Box
+                sx={{
                   marginRight: "10px",
-                  cursor: "pointer",
+                  padding: "5px",
+                  borderRadius: "5px",
+                  backgroundColor: isOpenMenuOptions
+                    ? (theme) => theme.palette.button.background.hover
+                    : (theme) => theme.palette.button.background.first,
+
+                  color: (theme) => theme.palette.button.color.first,
+                  "&:hover": {
+                    backgroundColor: (theme) =>
+                      theme.palette.button.background.hover,
+                  },
                 }}
-              />
+              >
+                <IoIosArrowForward
+                  onClick={() => handleClickOpenMenuOptions()}
+                  style={{
+                    fontSize: "2rem",
+
+                    cursor: "pointer",
+                    color: "inherit",
+                  }}
+                />
+              </Box>
             </Box>
           </Box>
           {isOpenMenuOptions && (

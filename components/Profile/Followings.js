@@ -85,8 +85,9 @@ const Followings = ({ account }) => {
           flexDirection: "column",
           gap: "30px",
           overflowX: "auto",
-          border: "1px solid #ccc",
-          backgroundColor: "#ffffff",
+          border: (theme) => `1px solid ${theme.palette.border.dialog}`,
+          backgroundColor: (theme) => theme.palette.latestPost.background.first,
+          borderRadius: "5px",
           padding: "10px",
         }}
       >
@@ -121,7 +122,7 @@ const Followings = ({ account }) => {
                     sx={{
                       height: "250px",
                       border: (theme) =>
-                        `3px solid ${theme.palette.border.feeds}`,
+                        `2px solid ${theme.palette.border.dialog}`,
 
                       borderRadius: "30px",
                       overflow: "hidden",

@@ -10,14 +10,14 @@ const CreateColorTitle = ({
 }) => {
   const [isOpenMenuColorPicker, setIsOpenMenuColorPicker] = useState(false);
 
-  const LabelInput = styled(Typography)({
+  const LabelInput = styled(Typography)(({ theme }) => ({
     fontWeight: "500",
     opacity: "0.7",
-  });
+    color: theme.palette.text.color.first,
+  }));
   const handleChangeBackgroundColorTitle = (color) => {
     setBackgroundColorTitle(color.hex);
   };
-  console.log("render color title");
   return (
     <>
       <LabelInput>Chọn màu nền tiêu đề</LabelInput>
@@ -48,26 +48,27 @@ const CreateColorTitle = ({
           />
         )}
         <Box
-          // whileHover={{ scale: 1.02 }}
           sx={{
             textAlign: "center",
             cursor: "pointer",
             overflowWrap: "break-word",
             height: "250px",
-            border: (theme) => `3px solid ${theme.palette.border.feeds}`,
+            border: (theme) => `2px solid ${theme.palette.border.dialog}`,
             backgroundColor: backgroundColorTitle
               ? backgroundColorTitle
               : "#ccc",
             borderRadius: "30px",
-
-            boxShadow: (theme) =>
-              `0px 3px 20px 6px${theme.palette.feeds.boxShadow}`,
 
             fontSize: "3rem",
             color: "#ffffff",
 
             fontWeight: "bold",
             padding: "20px",
+
+            "&:hover": {
+              border: (theme) =>
+                `2px solid ${theme.palette.border.dialogHover}`,
+            },
           }}
         >
           <Box

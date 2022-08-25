@@ -50,12 +50,10 @@ const AvatarUser = ({ user, sx }) => {
                 width: sx && sx.width ? sx.width : "50px",
                 height: sx && sx.height ? sx.height : "50px",
                 cursor: "pointer",
-
                 borderRadius: "50%",
                 position: "relative",
                 overflow: "hidden",
-                border: "2px solid #23303a",
-                boxShadow: "0px 3px 15px 0px #e1e1e1",
+                border: (theme) => `2px solid ${theme.palette.border.dialog}`,
                 maxWidth: "200px",
               }}
             >

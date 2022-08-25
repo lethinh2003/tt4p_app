@@ -43,8 +43,9 @@ const NotifyContent = ({ session, socket }) => {
       <Box
         sx={{
           height: "200px",
-          overflow: "scroll",
-          backgroundColor: "#ffffff",
+          overflow: "auto",
+          backgroundColor: (theme) =>
+            theme.palette.notification.background.first,
         }}
       >
         {isLoading &&

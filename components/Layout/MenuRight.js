@@ -6,8 +6,8 @@ import OptionMenu from "../MenuRight/OptionMenu";
 import SuggestFriends from "../MenuRight/SuggestFriends";
 const MenuRight = () => {
   const ItemWrapper = styled(Box)(({ theme }) => ({
+    borderLeft: `1px solid ${theme.palette.border.dialog}`,
     backgroundColor: theme.palette.sidebar.background.default,
-
     right: 0,
     bottom: 0,
     padding: "20px 5px",

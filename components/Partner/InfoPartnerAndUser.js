@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useEffect, useState, useRef } from "react";
 import { toast } from "react-toastify";
 import { memo } from "react";
+import AvatarUser from "../Homepage/AvatarUser";
 const InfoPartnerAndUser = ({
   partner,
   user,
@@ -79,6 +80,7 @@ const InfoPartnerAndUser = ({
           fontWeight: "bold",
           fontSize: "2rem",
           alignSelf: "center",
+          color: (theme) => theme.palette.text.color.first,
         }}
       >
         Khu vực tâm sự
@@ -107,26 +109,23 @@ const InfoPartnerAndUser = ({
             animate={{ opacity: 1 }}
             sx={{
               fontWeight: "bold",
-              fontSize: "20px",
+              fontSize: "1.4rem",
               alignSelf: "center",
               maxWidth: { xs: "100px", md: "200px" },
+              color: (theme) => theme.palette.text.color.first,
             }}
             className="three-dots"
           >
             {user.name}
           </Typography>
 
-          <BoxAvatar
+          <AvatarUser
+            user={user}
             sx={{
-              width: { xs: "100px", md: "200px" },
-              height: { xs: "100px", md: "200px" },
+              width: "100px",
+              height: "100px",
             }}
-            as={motion.div}
-            initial={{ opacity: 0, x: "-100%" }}
-            animate={{ opacity: 1, x: 0 }}
-          >
-            <Image src={user.avatar} alt={user.name} width={200} height={200} />
-          </BoxAvatar>
+          />
         </Box>
 
         <motion.div
@@ -165,31 +164,23 @@ const InfoPartnerAndUser = ({
             animate={{ opacity: 1 }}
             sx={{
               fontWeight: "bold",
-              fontSize: "20px",
+              fontSize: "1.4rem",
               alignSelf: "center",
               maxWidth: { xs: "100px", md: "200px" },
+              color: (theme) => theme.palette.text.color.first,
             }}
             className="three-dots"
           >
             {namePartner}
           </Typography>
 
-          <BoxAvatar
+          <AvatarUser
+            user={partner}
             sx={{
-              width: { xs: "100px", md: "200px" },
-              height: { xs: "100px", md: "200px" },
+              width: "100px",
+              height: "100px",
             }}
-            as={motion.div}
-            initial={{ opacity: 0, x: "100%" }}
-            animate={{ opacity: 1, x: 0 }}
-          >
-            <Image
-              src={partner.avatar}
-              alt={namePartner}
-              width={200}
-              height={200}
-            />
-          </BoxAvatar>
+          />
         </Box>
       </Box>
     </>

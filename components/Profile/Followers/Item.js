@@ -73,11 +73,12 @@ const Item = ({ item, session, account }) => {
           <Box
             sx={{
               textAlign: "center",
-              cursor: "pointer",
+
               height: "250px",
               overflowWrap: "break-word",
-              border: (theme) => `3px solid ${theme.palette.border.feeds}`,
-              backgroundColor: "#ccc",
+              border: (theme) => `2px solid ${theme.palette.border.dialog}`,
+              backgroundColor: (theme) =>
+                theme.palette.sidebar.background.default,
               borderRadius: "30px",
 
               fontSize: "3rem",
@@ -85,6 +86,10 @@ const Item = ({ item, session, account }) => {
 
               fontWeight: "bold",
               padding: "20px",
+              "&:hover": {
+                border: (theme) =>
+                  `2px solid ${theme.palette.border.dialogHover}`,
+              },
             }}
           >
             <Box sx={{}}>
@@ -105,7 +110,7 @@ const Item = ({ item, session, account }) => {
             >
               <Typography
                 sx={{
-                  fontSize: "1.7rem",
+                  fontSize: "1.4rem",
                   fontWeight: "bold",
                   color: (theme) => theme.palette.text.color.first,
                 }}

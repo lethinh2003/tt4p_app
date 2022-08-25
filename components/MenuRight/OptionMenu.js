@@ -20,15 +20,17 @@ const OptionMenu = () => {
             sx={{
               width: "150px",
               height: "50px",
-              backgroundColor: "#f1f6fc",
               borderRadius: "10px",
               flex: 1,
               display: "flex",
-
+              backgroundColor: (theme) => theme.palette.button.background.first,
+              color: (theme) => theme.palette.button.color.first,
               justifyContent: "center",
               alignItems: "center",
               "&:hover": {
-                border: "2px solid #e8ecf9",
+                border: (theme) => `1px solid ${theme.palette.border.dialog}`,
+                backgroundColor: (theme) =>
+                  theme.palette.button.background.hover,
               },
             }}
           >
@@ -44,15 +46,12 @@ const OptionMenu = () => {
                 style={{
                   fontSize: "2.5rem",
                   fontWeight: "bold",
-                  color: "#98a1b5",
                 }}
               />
               <Typography
                 sx={{
                   fontSize: "1.7rem",
                   fontWeight: "bold",
-
-                  color: (theme) => theme.palette.text.color.second,
                 }}
               >
                 Search
@@ -72,14 +71,17 @@ const OptionMenu = () => {
                   cursor: "pointer",
                   width: "50px",
                   height: "50px",
-
+                  backgroundColor: (theme) =>
+                    theme.palette.button.background.first,
+                  color: (theme) => theme.palette.button.color.first,
                   borderRadius: "10px",
                   display: "flex",
                   fontSize: "2.5rem",
                   justifyContent: "center",
                   alignItems: "center",
                   "&:hover": {
-                    backgroundColor: "#e8ecf9",
+                    backgroundColor: (theme) =>
+                      theme.palette.button.background.hover,
                   },
                 }}
               >

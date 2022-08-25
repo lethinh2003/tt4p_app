@@ -12,11 +12,7 @@ const SuggestFriends = () => {
   const { data: session, status } = useSession();
 
   const socket = useContext(SocketContext);
-  const AvatarProfile = styled(Avatar)(({ theme }) => ({
-    "&.MuiAvatar-root": {
-      border: `3px solid ${theme.palette.border.feeds}`,
-    },
-  }));
+
   const callDataApi = async (session) => {
     if (session) {
       const results = await axios.get(
@@ -90,7 +86,7 @@ const SuggestFriends = () => {
             gap: "20px",
           }}
         >
-          {isLoading && (
+          {/* {isLoading && (
             <>
               {Array.from({ length: 3 }).map((item, i) => (
                 <Box
@@ -135,7 +131,7 @@ const SuggestFriends = () => {
                 </Box>
               ))}
             </>
-          )}
+          )} */}
           {!isLoading &&
             suggestionFriends &&
             suggestionFriends.data &&

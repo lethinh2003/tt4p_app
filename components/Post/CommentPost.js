@@ -216,7 +216,7 @@ const CommentPost = ({ item, socket, isAuthenticated }) => {
             <Box
               sx={{
                 display: "flex",
-                backgroundColor: "#ffffff",
+                backgroundColor: (theme) => theme.palette.feed.background.first,
                 fontSize: "1.7rem",
                 fontWeight: "600",
                 alignItems: "center",
@@ -236,7 +236,9 @@ const CommentPost = ({ item, socket, isAuthenticated }) => {
                   display: "flex",
                   alignItems: "center",
                   backgroundColor:
-                    valueFilter === "latest" ? "#f7f7f7" : "inherit",
+                    valueFilter === "latest"
+                      ? (theme) => theme.palette.feed.background.first
+                      : "unset",
                 }}
               >
                 <Box
@@ -254,7 +256,9 @@ const CommentPost = ({ item, socket, isAuthenticated }) => {
                   display: "flex",
                   alignItems: "center",
                   backgroundColor:
-                    valueFilter === "popular" ? "#f7f7f7" : "inherit",
+                    valueFilter === "popular"
+                      ? (theme) => theme.palette.feed.background.first
+                      : "unset",
                 }}
               >
                 <Box
@@ -270,16 +274,14 @@ const CommentPost = ({ item, socket, isAuthenticated }) => {
 
           <Box
             sx={{
-              border: (theme) => `3px solid ${theme.palette.border.feeds}`,
+              border: (theme) => `1px solid ${theme.palette.border.dialog}`,
               gap: "5px",
               borderRadius: "10px",
 
-              boxShadow: (theme) =>
-                `0px 3px 10px 1px ${theme.palette.feeds.boxShadow}`,
               display: "flex",
               fontSize: "3rem",
               color: "#ffffff",
-              backgroundColor: "#ffffff",
+              backgroundColor: (theme) => theme.palette.feed.background.first,
               alignItems: "flex-start",
               fontWeight: "bold",
               padding: "20px",
@@ -331,6 +333,7 @@ const CommentPost = ({ item, socket, isAuthenticated }) => {
                   if (!item.parent_comment) {
                     return (
                       <Item
+                        isChildren={false}
                         session={session}
                         socket={socket}
                         setReplyComment={setReplyComment}

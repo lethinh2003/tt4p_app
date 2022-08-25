@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import AvatarUser from "../Homepage/AvatarUser";
 import Overview from "./Overview";
 import Posts from "./Posts";
+import Activities from "./Activities";
 import Comments from "./Comments";
 import { useSession } from "next-auth/react";
 import Followings from "./Followings";
@@ -84,8 +85,10 @@ const Profile = ({ account }) => {
               flexDirection: "column",
               gap: "30px",
               position: "relative",
-              backgroundColor: "#ffffff",
-              border: "1px solid #ccc",
+              backgroundColor: (theme) =>
+                theme.palette.latestPost.background.first,
+              border: (theme) => `1px solid ${theme.palette.border.dialog}`,
+              borderRadius: "5px",
             }}
           >
             <Box
@@ -96,6 +99,8 @@ const Profile = ({ account }) => {
                 display: "flex",
                 flexDirection: "column",
                 gap: "30px",
+                borderTopLeftRadius: "5px",
+                borderTopRightRadius: "5px",
               }}
             ></Box>
             <Box
@@ -131,8 +136,9 @@ const Profile = ({ account }) => {
               >
                 <Typography
                   sx={{
-                    fontSize: "1.7rem",
+                    fontSize: "1.4rem",
                     fontWeight: "bold",
+                    color: (theme) => theme.palette.text.color.first,
                   }}
                 >
                   {data.data.name}
@@ -157,10 +163,12 @@ const Profile = ({ account }) => {
               width: "100%",
               display: "flex",
               gap: "10px",
-              border: "1px solid #ccc",
               padding: "0 10px",
-              backgroundColor: "#ffffff",
+              border: (theme) => `1px solid ${theme.palette.border.dialog}`,
+              backgroundColor: (theme) =>
+                theme.palette.latestPost.background.first,
               overflowX: "auto",
+              borderRadius: "5px",
             }}
           >
             {menuOption.map((item, i) => (
@@ -178,7 +186,10 @@ const Profile = ({ account }) => {
                   sx={{
                     fontSize: "1.7rem",
                     fontWeight: "bold",
-                    color: key === item.key ? "#0079D3" : "black",
+                    color:
+                      key === item.key
+                        ? "#0079D3"
+                        : (theme) => theme.palette.text.color.first,
                     borderBottom: key === item.key ? "2px solid #0079D3" : null,
                     padding: "10px 0px",
                     textTransform: "uppercase",
@@ -191,9 +202,41 @@ const Profile = ({ account }) => {
                 </Typography>
               </Box>
             ))}
+            {session.user.account === data.data.account && (
+              <Box
+                onClick={() => handClick("activities")}
+                sx={{
+                  cursor: "pointer",
+                  height: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: "1.7rem",
+                    fontWeight: "bold",
+                    color:
+                      key === "activities"
+                        ? "#0079D3"
+                        : (theme) => theme.palette.text.color.first,
+                    borderBottom:
+                      key === "activities" ? "2px solid #0079D3" : null,
+                    padding: "10px 0px",
+                    textTransform: "uppercase",
+                    "&:hover": {
+                      color: "#0079D3",
+                    },
+                  }}
+                >
+                  Acitivies
+                </Typography>
+              </Box>
+            )}
           </Box>
           {key === "overview" && <Overview account={data.data} />}
           {key === "posts" && <Posts account={data.data} />}
+          {key === "activities" && <Activities account={data.data} />}
           {key === "comments" && <Comments account={data.data} />}
           {key === "followings" && <Followings account={data.data} />}
           {key === "followers" && <Followers account={data.data} />}

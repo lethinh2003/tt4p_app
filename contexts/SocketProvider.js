@@ -10,12 +10,10 @@ const SocketProvider = (props) => {
   useEffect(() => {
     if (status === "authenticated") {
       socketInitializer();
-      console.log("conect nek");
     }
 
     return () => {
       if (value) {
-        console.log("huy conect nek");
         value.disconnect();
       }
     };

@@ -49,6 +49,7 @@ const UsersInRoomRandom = ({ socket }) => {
         sx={{
           fontWeight: "bold",
           fontSize: "2rem",
+          color: (theme) => theme.palette.text.color.first,
         }}
       >
         Hiện đang có {boy} bạn nam, {girl} bạn nữ, {lgbt} bạn LGBT đang trong

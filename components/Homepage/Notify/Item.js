@@ -22,7 +22,9 @@ const Item = ({ item }) => {
             opacity: isLoading ? "0.5" : "1",
             marginBottom: "5px",
             height: "115px",
-            backgroundColor: !item.read ? "#e9f5fd" : null,
+            backgroundColor: !item.read
+              ? (theme) => theme.palette.notification.background.new
+              : null,
             padding: "15px",
             display: "flex",
             justifyContent: "space-between",
@@ -55,6 +57,7 @@ const Item = ({ item }) => {
               sx={{
                 fontSize: "1.4rem",
                 fontWeight: "bold",
+                color: (theme) => theme.palette.text.color.first,
               }}
             >
               {item.user_send.account}
@@ -68,6 +71,7 @@ const Item = ({ item }) => {
                 display: "-webkit-box",
                 WebkitLineClamp: "2",
                 WebkitBoxOrient: "vertical",
+                color: (theme) => theme.palette.text.color.first,
               }}
             >
               {item.content}
@@ -92,8 +96,12 @@ const Item = ({ item }) => {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
+              backgroundColor: isOpenOptionMenu
+                ? (theme) => theme.palette.button.background.hover
+                : null,
               "&:hover": {
-                backgroundColor: "#e8ecf9",
+                backgroundColor: (theme) =>
+                  theme.palette.button.background.hover,
               },
             }}
           >

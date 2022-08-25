@@ -1,16 +1,11 @@
-import { Box, Typography, DialogContentText } from "@mui/material";
-import axios from "axios";
-import { useSession } from "next-auth/react";
+import { Box, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useQuery } from "react-query";
-import { toast } from "react-toastify";
-import Modal from "../../Modal/Modal";
-import { BigHead } from "@bigheads/core";
-import CurrentAvatar from "./CurrentAvatar";
-import ChangeAvatar from "./ChangeAvatar";
-import { useSelector, useDispatch } from "react-redux";
-import { _avatarChange } from "../../../redux/actions/_avatarChange";
+import { useDispatch, useSelector } from "react-redux";
 import { SET_AVATAR_USER } from "../../../redux/actions/constants";
+import { _avatarChange } from "../../../redux/actions/_avatarChange";
+import Modal from "../../Modal/Modal";
+import CurrentAvatar from "./CurrentAvatar";
+import StoriesAvatar from "./StoriesAvatar";
 const ButtonChangeAvatar = ({ account, user }) => {
   const dispatch = useDispatch();
   const dataUser = useSelector((state) => state.user.data);
@@ -55,29 +50,10 @@ const ButtonChangeAvatar = ({ account, user }) => {
               flexDirection: { xs: "column-reverse", lg: "row" },
             }}
           >
+            <StoriesAvatar setAvatarSVG={setAvatarSVG} avatarSVG={avatarSVG} />
             <Box
               sx={{
-                border: "1px solid #2a2c2d",
-                borderRadius: "6px",
-                flex: 1,
-                height: "calc(100vh - 40px)",
-                padding: "10px",
-              }}
-            >
-              <Box sx={{ height: "100%", overflow: "auto" }}>
-                <ChangeAvatar
-                  sx={{
-                    width: "150px",
-                    height: "150px",
-                  }}
-                  setAvatarSVG={setAvatarSVG}
-                  avatarSVG={avatarSVG}
-                />
-              </Box>
-            </Box>
-            <Box
-              sx={{
-                width: "40%",
+                width: "60%",
                 display: "flex",
                 justifyContent: "center",
                 flexDirection: "column",

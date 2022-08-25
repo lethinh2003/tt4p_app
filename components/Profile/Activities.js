@@ -5,7 +5,7 @@ import { useQuery } from "react-query";
 import { toast } from "react-toastify";
 import { useSession } from "next-auth/react";
 import Item from "./Post/Item";
-const Posts = ({ account }) => {
+const Activities = ({ account }) => {
   const { data: session } = useSession();
   const [buttonLoadMore, setButtonLoadMore] = useState(false);
   const [dataPosts, setDataPosts] = useState([]);
@@ -17,12 +17,12 @@ const Posts = ({ account }) => {
       return null;
     }
     const results = await axios.get(
-      `${process.env.ENDPOINT_SERVER}/api/v1/users/get-all-posts/${account._id}?page=${currentPage.current}&pageSize=${resultsOnPage}`
+      `${process.env.ENDPOINT_SERVER}/api/v1/users/get-all-activities/${account._id}?page=${currentPage.current}&pageSize=${resultsOnPage}`
     );
     return results.data;
   };
   const getListQuery = useQuery(
-    ["get-all-posts-detail-user", account],
+    ["get-all-activities-detail-user", account],
     () => callDataApi(account),
     {
       cacheTime: Infinity,
@@ -50,15 +50,20 @@ const Posts = ({ account }) => {
         setButtonLoadMore(true);
         currentPage.current = 2;
       }
+      const currentData = data.data;
+      const newData = [];
 
-      setDataPosts(data.data);
+      currentData.forEach((item) => {
+        newData.push(item.post[0]);
+      });
+      setDataPosts(newData);
     }
   }, [data]);
 
   const handleUpdateNewPage = async () => {
     try {
       const results = await axios.get(
-        `${process.env.ENDPOINT_SERVER}/api/v1/users/get-all-posts/${account._id}?page=${currentPage.current}&pageSize=${resultsOnPage}`
+        `${process.env.ENDPOINT_SERVER}/api/v1/users/get-all-activities/${account._id}?page=${currentPage.current}&pageSize=${resultsOnPage}`
       );
       if (results.data.results < resultsOnPage) {
         setButtonLoadMore(false);
@@ -66,8 +71,14 @@ const Posts = ({ account }) => {
         setButtonLoadMore(true);
         currentPage.current = currentPage.current + 1;
       }
+      const currentData = results.data.data;
+      const newData = [];
 
-      setDataPosts((state) => [...state, ...results.data.data]);
+      currentData.forEach((item) => {
+        newData.push(item.post[0]);
+      });
+
+      setDataPosts((state) => [...state, ...newData]);
     } catch (err) {
       if (err.response) {
         toast.error(err.response.data.message);
@@ -86,8 +97,8 @@ const Posts = ({ account }) => {
           overflowX: "auto",
           border: (theme) => `1px solid ${theme.palette.border.dialog}`,
           backgroundColor: (theme) => theme.palette.latestPost.background.first,
-          padding: "10px",
           borderRadius: "5px",
+          padding: "10px",
         }}
       >
         <Box
@@ -255,4 +266,4 @@ const Posts = ({ account }) => {
     </>
   );
 };
-export default Posts;
+export default Activities;

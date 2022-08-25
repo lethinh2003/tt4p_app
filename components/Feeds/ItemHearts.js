@@ -12,6 +12,7 @@ import { _notify } from "../../redux/actions/_notify";
 import {
   ADD_ITEM_LIST_HEARTED_POSTS,
   SET_POST_ACTIVITY,
+  ADD_ITEM_POST_ACTIVITY,
   REMOVE_ITEM_LIST_HEARTED_POSTS,
   INC_NOTIFY_NUMBER,
 } from "../../redux/actions/constants";
@@ -32,9 +33,10 @@ const ItemHearts = ({ item, session, status, socket }) => {
         if (data.postID === item._id) {
           if (data.userID === session.user.id) {
             if (data.type === "create_success") {
+              console.log(item);
               dispatch(
                 _postActivity({
-                  type: SET_POST_ACTIVITY,
+                  type: ADD_ITEM_POST_ACTIVITY,
                   data: item,
                 })
               );

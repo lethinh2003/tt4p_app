@@ -58,7 +58,7 @@ const AuthorInfo = ({ user }) => {
               alignItems: "center",
             }}
           >
-            {user.sex === "boy" ? "👨🏻" : "👩🏻"} Thông tin cá nhân
+            {user.sex === "boy" ? "👨🏻" : "👩🏻"} Thông tin chủ tọa
           </Typography>
           <Box
             sx={{
@@ -85,8 +85,9 @@ const AuthorInfo = ({ user }) => {
             >
               <Typography
                 sx={{
-                  fontSize: "1.7rem",
+                  fontSize: "1.4rem",
                   fontWeight: "bold",
+                  color: (theme) => theme.palette.text.color.first,
                 }}
               >
                 {user.name}
@@ -104,7 +105,7 @@ const AuthorInfo = ({ user }) => {
               </Typography>
               <Typography
                 sx={{
-                  fontSize: "1.4rem",
+                  fontSize: "1rem",
                   fontWeight: "500",
                   color: (theme) => theme.palette.text.color.second,
 
@@ -132,9 +133,8 @@ const AuthorInfo = ({ user }) => {
             {!isFetching && (
               <Box
                 sx={{
-                  boxShadow: (theme) =>
-                    `0px 3px 20px 1px ${theme.palette.feeds.boxShadow}`,
-                  backgroundColor: "#ccf1fa",
+                  backgroundColor: (theme) =>
+                    theme.palette.feed.background.first,
                   width: "100px",
                   alignItems: "center",
                   borderRadius: "10px",
@@ -147,6 +147,7 @@ const AuthorInfo = ({ user }) => {
                   sx={{
                     fontSize: "1.2rem",
                     color: "#464e5a",
+                    color: (theme) => theme.palette.text.color.second,
                   }}
                 >
                   Posts
@@ -168,9 +169,8 @@ const AuthorInfo = ({ user }) => {
             {!isFetching && (
               <Box
                 sx={{
-                  boxShadow: (theme) =>
-                    `0px 3px 20px 1px ${theme.palette.feeds.boxShadow}`,
-                  backgroundColor: "#ccf1fa",
+                  backgroundColor: (theme) =>
+                    theme.palette.feed.background.first,
                   width: "100px",
                   alignItems: "center",
                   borderRadius: "10px",
@@ -182,7 +182,7 @@ const AuthorInfo = ({ user }) => {
                 <Typography
                   sx={{
                     fontSize: "1.2rem",
-                    color: "#464e5a",
+                    color: (theme) => theme.palette.text.color.second,
                   }}
                 >
                   Followers

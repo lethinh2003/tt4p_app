@@ -1,6 +1,6 @@
-import { Box, Typography } from "@mui/material";
+import IosShareIcon from "@mui/icons-material/IosShare";
+import { Box } from "@mui/material";
 import React from "react";
-import { BiShare } from "react-icons/bi";
 const Share = ({
   item,
   setEditComment,
@@ -15,24 +15,43 @@ const Share = ({
           gap: "5px",
           alignItems: "center",
           padding: "5px",
+          color: (theme) => theme.palette.text.color.first,
           "&:hover": {
-            backgroundColor: "#e8ecf9",
+            color: "#39e58c",
+            "& .icon": {
+              backgroundColor: (theme) =>
+                theme.palette.button.background.iconOthers,
+              color: "#39e58c",
+            },
           },
         }}
       >
-        <Typography
+        <Box
           sx={{
             fontSize: "inherit",
             cursor: "pointer",
-            color: (theme) => theme.palette.text.color.first,
+
             fontWeight: 600,
             display: "flex",
             alignItems: "center",
             gap: "5px",
+            fontSize: "1.4rem",
           }}
         >
-          <BiShare /> Share
-        </Typography>
+          <Box
+            className="icon"
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "10px",
+              borderRadius: "5px",
+            }}
+          >
+            <IosShareIcon />
+          </Box>
+          Share
+        </Box>
       </Box>
     </>
   );

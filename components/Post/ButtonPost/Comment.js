@@ -2,6 +2,7 @@ import { Box, Typography } from "@mui/material";
 import Link from "next/link";
 import React from "react";
 import { BiMessage } from "react-icons/bi";
+import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import { useSelector } from "react-redux";
 const Comment = ({}) => {
   const CommentsCount = useSelector((state) => state.postComments);
@@ -25,24 +26,42 @@ const Comment = ({}) => {
           alignItems: "center",
           padding: "5px",
           cursor: "pointer",
+          color: (theme) => theme.palette.text.color.first,
           "&:hover": {
-            backgroundColor: "#e8ecf9",
+            color: "#39e58c",
+            "& .icon": {
+              backgroundColor: (theme) =>
+                theme.palette.button.background.iconOthers,
+              color: "#39e58c",
+            },
           },
         }}
       >
-        <Typography
+        <Box
           sx={{
             fontSize: "inherit",
+            fontSize: "1.4rem",
 
-            color: (theme) => theme.palette.text.color.first,
             fontWeight: 600,
             display: "flex",
             alignItems: "center",
             gap: "5px",
           }}
         >
-          <BiMessage /> {CommentsCount.length} Comments
-        </Typography>
+          <Box
+            className="icon"
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "10px",
+              borderRadius: "5px",
+            }}
+          >
+            <ChatBubbleOutlineIcon />
+          </Box>
+          {CommentsCount.length} Comments
+        </Box>
       </Box>
     </>
   );

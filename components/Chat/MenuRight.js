@@ -44,6 +44,7 @@ const MenuRight = () => {
   }));
   const ItemWrapper = styled(Box)(({ theme }) => ({
     backgroundColor: theme.palette.sidebar.background.default,
+    borderLeft: `1px solid ${theme.palette.border.dialog}`,
     right: 0,
     bottom: 0,
     padding: "20px 0px",

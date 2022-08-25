@@ -20,6 +20,7 @@ const Introduce = () => {
         sx={{
           fontWeight: "bold",
           fontSize: "2rem",
+          color: (theme) => theme.palette.text.color.first,
         }}
       >
         Hôm nay là {convertDay(new Date().getDay())}, thời điểm vàng để tìm bạn

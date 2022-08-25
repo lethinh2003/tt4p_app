@@ -18,14 +18,11 @@ const CountFindPartner = ({ handleTimeoutFindPartner }) => {
     <>
       <Box
         sx={{
-          cursor: "pointer",
           minWidth: "80px",
-          border: (theme) => `3px solid ${theme.palette.border.feeds}`,
 
           borderRadius: "10px",
           overflow: "hidden",
-          boxShadow: (theme) =>
-            `0px 3px 20px 6px ${theme.palette.feeds.boxShadow}`,
+
           display: "flex",
           fontSize: "3rem",
           color: "#ffffff",
@@ -33,7 +30,7 @@ const CountFindPartner = ({ handleTimeoutFindPartner }) => {
           alignItems: "center",
           fontWeight: "bold",
           padding: "20px",
-
+          border: (theme) => `1px solid ${theme.palette.border.dialog}`,
           color: (theme) => theme.palette.text.color.second,
         }}
       >

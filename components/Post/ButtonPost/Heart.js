@@ -1,6 +1,8 @@
 import { Box, Typography } from "@mui/material";
 import { memo, useState, useEffect } from "react";
 import { BiHeart } from "react-icons/bi";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -10,10 +12,13 @@ import {
   ADD_ITEM_LIST_HEARTED_POSTS,
   REMOVE_ITEM_LIST_HEARTED_POSTS,
   SET_POST_ACTIVITY,
+  ADD_ITEM_POST_ACTIVITY,
 } from "../../../redux/actions/constants";
 import useAuth from "../../../utils/useAuth";
+import { useSession } from "next-auth/react";
 const Heart = ({ item, socket }) => {
-  const { isAuthenticated, dataSession: session } = useAuth(true);
+  const isAuthenticated = useAuth(true);
+  const { data: session } = useSession();
 
   const dispatch = useDispatch();
   const dataUserHeatedPosts = useSelector((state) => state.userHearted);
@@ -27,6 +32,7 @@ const Heart = ({ item, socket }) => {
     if (socket) {
       socket.on("update-likes-post", (data) => {
         if (data.userID === session.user.id) {
+          console.log(data);
           if (data.type === "create_success") {
             dispatch(
               _listHeartedPosts({
@@ -34,9 +40,10 @@ const Heart = ({ item, socket }) => {
                 data: item._id,
               })
             );
+            console.log(item);
             dispatch(
               _postActivity({
-                type: SET_POST_ACTIVITY,
+                type: ADD_ITEM_POST_ACTIVITY,
                 data: item,
               })
             );
@@ -148,24 +155,51 @@ const Heart = ({ item, socket }) => {
           alignItems: "center",
           padding: "5px",
           cursor: "pointer",
+          color: isHearted
+            ? "#fb9fa1"
+            : (theme) => theme.palette.text.color.first,
           "&:hover": {
-            backgroundColor: "#e8ecf9",
+            color: "#fb9fa1",
+            "& .icon": {
+              backgroundColor: (theme) =>
+                theme.palette.button.background.iconHeart,
+              color: "#fb9fa1",
+            },
           },
         }}
       >
-        <Typography
+        <Box
           sx={{
             fontSize: "inherit",
-
-            color: (theme) => theme.palette.text.color.first,
+            fontSize: "1.4rem",
             fontWeight: 600,
             display: "flex",
             alignItems: "center",
             gap: "5px",
           }}
         >
-          <BiHeart fill={isHearted ? "red" : null} /> {heartsCount} Likes
-        </Typography>
+          <Box
+            className="icon"
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "10px",
+              borderRadius: "5px",
+            }}
+          >
+            {isHearted ? (
+              <FavoriteIcon
+                sx={{
+                  color: "#fb9fa1",
+                }}
+              />
+            ) : (
+              <FavoriteBorderIcon />
+            )}
+          </Box>
+          {heartsCount} Likes
+        </Box>
       </Box>
     </>
   );

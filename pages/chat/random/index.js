@@ -45,15 +45,47 @@ export default function Home() {
             <Box
               sx={{
                 width: "100%",
-                alignItems: "center",
+
                 display: "flex",
                 flexDirection: "column",
                 gap: "30px",
               }}
             >
-              <Introduce />
-              <UsersInRoomRandom socket={socket} />
-              <FindPartnerRandom socket={socket} />
+              <Box
+                sx={{
+                  display: "flex",
+
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: "1.7rem",
+                    fontWeight: "bold",
+                    color: (theme) => theme.palette.text.color.first,
+                  }}
+                >
+                  Chat Random
+                </Typography>
+              </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "30px",
+                  alignItems: "center",
+                  backgroundColor: (theme) =>
+                    theme.palette.feed.background.first,
+                  padding: "10px",
+                  border: (theme) => `1px solid ${theme.palette.border.dialog}`,
+                  borderRadius: "5px",
+                }}
+              >
+                <Introduce />
+                <UsersInRoomRandom socket={socket} />
+                <FindPartnerRandom socket={socket} />
+              </Box>
             </Box>
           </Box>
         </Box>

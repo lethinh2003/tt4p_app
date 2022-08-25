@@ -27,14 +27,14 @@ const Item = ({ item, session, account }) => {
             opacity: isLoading ? "0.5" : "1",
           }}
         >
-          <Link href={`/posts/${item.slug}`}>
+          <Link href={`/posts/${item._id}`}>
             <Box
               sx={{
                 textAlign: "center",
                 cursor: "pointer",
                 height: "250px",
                 overflowWrap: "break-word",
-                border: (theme) => `3px solid ${theme.palette.border.feeds}`,
+                border: (theme) => `2px solid ${theme.palette.border.dialog}`,
                 backgroundColor: !isStatus
                   ? "black"
                   : item.color
@@ -47,13 +47,39 @@ const Item = ({ item, session, account }) => {
 
                 fontWeight: "bold",
                 padding: "20px",
+                position: "relative",
+                "&:hover": {
+                  border: (theme) =>
+                    `2px solid ${theme.palette.border.dialogHover}`,
+                },
               }}
             >
+              {!isStatus && (
+                <Box
+                  sx={{
+                    zIndex: 1,
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                  }}
+                >
+                  <img
+                    src="https://i.imgur.com/B74D0zI.png"
+                    style={{
+                      width: "50px",
+                    }}
+                  />
+                </Box>
+              )}
               <Box
                 sx={{
                   width: "100%",
                   height: "100%",
-                  overflowY: "auto",
+
+                  WebkitMaskImage:
+                    "linear-gradient(180deg,#000 60%,transparent)",
+                  maskImage: "linear-gradient(180deg,#000 60%,transparent)",
                 }}
               >
                 <Box>{item.title}</Box>
@@ -93,6 +119,7 @@ const Item = ({ item, session, account }) => {
                   handleClickOpenOptionMenu={handleClickOpenOptionMenu}
                   setIsStatus={setIsStatus}
                   isStatus={isStatus}
+                  setIsOpenOptionMenu={setIsOpenOptionMenu}
                 />
               )}
             </>

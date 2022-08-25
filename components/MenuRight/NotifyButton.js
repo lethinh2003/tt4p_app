@@ -128,14 +128,18 @@ const NotifyButton = () => {
             cursor: "pointer",
             width: "50px",
             height: "50px",
-            backgroundColor: isOpen ? "#e8ecf9" : null,
+            backgroundColor: isOpen
+              ? (theme) => theme.palette.button.background.hover
+              : (theme) => theme.palette.button.background.first,
+
+            color: (theme) => theme.palette.button.color.first,
             borderRadius: "10px",
             display: "flex",
             fontSize: "2.5rem",
             justifyContent: "center",
             alignItems: "center",
             "&:hover": {
-              backgroundColor: "#e8ecf9",
+              backgroundColor: (theme) => theme.palette.button.background.hover,
             },
           }}
         >
@@ -148,22 +152,26 @@ const NotifyButton = () => {
             <Box
               sx={{
                 position: "absolute",
-                backgroundColor: "#ffffff",
-
+                backgroundColor: (theme) =>
+                  theme.palette.notification.background.first,
+                border: (theme) => `1px solid ${theme.palette.border.dialog}`,
+                color: (theme) => theme.palette.notification.color.first,
+                borderRadius: (theme) =>
+                  theme.palette.notification.borderRadius,
                 width: "330px",
                 right: -50,
                 zIndex: 99,
                 top: 65,
                 boxShadow: "0 4px 4px rgb(0 0 0 / 25%)",
-                border: "1px solid #EDEFF1",
 
                 "&::after": {
-                  border: "1px solid #EDEFF1",
+                  border: (theme) => `1px solid ${theme.palette.border.dialog}`,
                   position: "absolute",
                   content: `""`,
                   width: "15px",
                   height: "10px",
-                  backgroundColor: "rgb(0 0 0 / 25%)",
+                  backgroundColor: (theme) =>
+                    theme.palette.notification.background.arrow,
                   clipPath: "polygon(50% 0, 100% 100%, 0 100%)",
 
                   right: "65px",
@@ -177,6 +185,8 @@ const NotifyButton = () => {
                   justifyContent: "space-between",
                   padding: "15px",
                   alignItems: "center",
+                  borderBottom: (theme) =>
+                    `1px solid ${theme.palette.border.dialog}`,
                 }}
               >
                 <Typography
@@ -195,6 +205,8 @@ const NotifyButton = () => {
                   justifyContent: "center",
                   padding: "15px",
                   alignItems: "center",
+                  borderTop: (theme) =>
+                    `1px solid ${theme.palette.border.dialog}`,
                 }}
               >
                 <Typography

@@ -267,6 +267,7 @@ const FindPartnerRandom = ({ socket }) => {
     });
     socket.on("find-partner-success-random", (data) => {
       let { partner, message } = data;
+      console.log("Find success", partner, user);
       clearInterval(TimeIntervalFindPartner.current);
       setStatusUser("chatting");
       dispatch(
@@ -371,7 +372,7 @@ const FindPartnerRandom = ({ socket }) => {
                 "Tham gia vào phòng chờ thành công. Đang tiến hành tìm đối phương!"
               );
               TimeIntervalFindPartner.current = setInterval(() => {
-                socket.emit("find-partner-random");
+                socket.emit("find-partner-random", user);
               }, 1000);
               setStatusUser("waiting");
             } else {
@@ -481,8 +482,6 @@ const FindPartnerRandom = ({ socket }) => {
               {!statusUser && (
                 <>
                   <Button
-                    as={motion.div}
-                    whileHover={{ scale: 1.02 }}
                     type="submit"
                     onClick={() => handleClickJoinWaitingRoom()}
                   >
