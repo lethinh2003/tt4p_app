@@ -25,11 +25,6 @@ const User = () => {
   const getToggleStatusBanned = useSelector((state) => state.toggleBanned.on);
 
   useEffect(() => {
-    if (data && data.data) {
-      setUser(data.data);
-    }
-  }, [data]);
-  useEffect(() => {
     return () => clearInterval(TimeIntervalFindPartner.current);
   }, []);
 
@@ -44,9 +39,7 @@ const User = () => {
       {requesting && !data && <ThreeDots fill="#06bcee" />}
       {data && data.data && (
         <>
-          {/* <Loading isLoading={isLoading} /> */}
-
-          <YourSelf user={user} />
+          <YourSelf user={data.data} />
           {!isError && !getToggleStatusBanned && <OptionChat />}
         </>
       )}

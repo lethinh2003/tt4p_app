@@ -10,6 +10,7 @@ import MenuRight from "../../components/Profile/MenuRight";
 import Link from "next/link";
 const Home = () => {
   const isAuthenticated = useAuth(true);
+  const socket = useContext(SocketContext);
 
   const router = useRouter();
   const { account } = router.query;
@@ -53,7 +54,7 @@ const Home = () => {
                 🗒️ Thông tin {account}
               </Typography>
 
-              <Profile account={account} />
+              <Profile account={account} socket={socket} />
             </Box>
           </Box>
         </Box>

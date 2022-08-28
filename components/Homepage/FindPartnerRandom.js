@@ -1,29 +1,35 @@
-import { Button } from "@mui/material";
+import { Button, Typography, Box } from "@mui/material";
 import axios from "axios";
 import { motion } from "framer-motion";
 import { signOut, useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 import { ThreeDots } from "react-loading-icons";
 import { useDispatch, useSelector } from "react-redux";
+import { BigHead } from "@bigheads/core";
 import { toast } from "react-toastify";
 import {
   INC_PARTNERS_COUNT,
   SET_MESSAGES_COUNT,
   SET_PARTNERS_COUNT,
-  SET_PARTNER,
+  SET_PARTNER_CHAT_RANDOM,
+  INSERT_MESSAGE_CHAT_RANDOM,
+  SET_MESSAGES_CHAT_RANDOM,
+  SET_STATUS_CHAT_RANDOM,
 } from "../../redux/actions/constants";
 import { _partner } from "../../redux/actions/_partner";
 import { getToggleBanned } from "../../redux/actions/getToggleBanned";
 import { getUser } from "../../redux/actions/getUser";
 import { _messagesCount } from "../../redux/actions/_messagesCount";
 import { _partnersCount } from "../../redux/actions/_partnersCount";
+import { _messagesRandomChat } from "../../redux/actions/_messagesRandomChat";
+import { _statusRandomChat } from "../../redux/actions/_statusRandomChat";
 import useLoading from "../../utils/useLoading";
 import CountFindPartner from "../Chat/CountFindPartner";
 import Loading from "../Loading/Loading";
 import Chat from "./Chat";
 import PartnerRandom from "./PartnerRandom";
 import YourSelf from "./YourSelf";
-
+import Modal from "../Modal/Modal";
 const FindPartnerRandom = ({ socket }) => {
   const { data: session, status } = useSession();
   const socketDisconnectNoti = useRef(null);
@@ -32,121 +38,144 @@ const FindPartnerRandom = ({ socket }) => {
   const countCallApiCheckUserInRoom = useRef(1);
 
   const TimeOutFindPartner = useRef(null);
-  const [isWaitingRoom, setIsWaitingRoom] = useState(false);
   const [isError, setIsError] = useState(false);
-  const [isPending, setIsPending] = useState(false);
-  const [isPartnerOutChat, setIsPartnerOutChat] = useState(false);
   const { isLoading, setIsLoading } = useLoading();
-  const [isInRoom, setIsInRoom] = useState(false);
-  const [partner, setPartner] = useState();
-  const [statusUser, setStatusUser] = useState("");
+
   const [isHideInfo, setIsHideInfo] = useState(true);
+  const [isOpenModal, setIsOpenModal] = useState(false);
   const [user, setUser] = useState();
   const data = useSelector((state) => state.user.data);
   const requesting = useSelector((state) => state.user.requesting);
   const errorGetUser = useSelector((state) => state.user.error);
   const errorMessageGetUser = useSelector((state) => state.user.message);
   const getToggleStatusBanned = useSelector((state) => state.toggleBanned.on);
+  const dataPartner = useSelector((state) => state.partner);
+  const statusUserChatRandom = useSelector((state) => state.statusChatRandom);
 
   const dispatch = useDispatch();
   useEffect(() => {
     if (
-      status === "authenticated" &&
-      countCallApiCheckUserInRoom.current === 1
+      socket &&
+      countCallApiCheckUserInRoom.current === 1 &&
+      statusUserChatRandom === ""
     ) {
       countCallApiCheckUserInRoom.current = 2;
       //
-      checkUserInRoom();
+      // checkUserInRoom();
+      checkRoom();
     }
-  }, [status]);
-  const checkUserInRoom = async () => {
+  }, [socket]);
+
+  useEffect(() => {
+    if (statusUserChatRandom === "waiting") {
+      updateStatusUserChatRoom();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (statusUserChatRandom === "multiple-accounts") {
+      setIsOpenModal(true);
+    }
+  }, [statusUserChatRandom]);
+  const updateStatusUserChatRoom = async () => {
+    try {
+      if (socket) {
+        socket.emit("out-waiting-room-random-server");
+      }
+      setIsLoading(true);
+      dispatch(
+        _statusRandomChat({
+          type: SET_STATUS_CHAT_RANDOM,
+          data: "",
+        })
+      );
+      const res = await axios.post(
+        `${process.env.ENDPOINT_SERVER}/api/v1/chat-rooms/update-status`,
+        {
+          accountID: session.user.id,
+        }
+      );
+      setIsLoading(false);
+    } catch (err) {
+      setIsLoading(false);
+      if (err.response) {
+        toast.error(err.response.data.message);
+      }
+    }
+  };
+  const checkRoom = async () => {
     try {
       setIsLoading(true);
-      setIsWaitingRoom(false);
-      setStatusUser("");
+      dispatch(
+        _statusRandomChat({
+          type: SET_STATUS_CHAT_RANDOM,
+          data: "",
+        })
+      );
+      dispatch(
+        _messagesRandomChat({
+          type: SET_MESSAGES_CHAT_RANDOM,
+          data: [],
+        })
+      );
       dispatch(
         _partner({
-          type: SET_PARTNER,
+          type: SET_PARTNER_CHAT_RANDOM,
           data: null,
         })
       );
 
-      socket.emit("delete-unmounted-chat", async (res) => {
-        const statusEmit = res.status;
-        if (statusEmit === "ok") {
-          const res = await axios.post(
-            `${process.env.ENDPOINT_SERVER}/api/v1/chat-rooms/check-user-in-room`,
-            {
-              account: session.user.account,
-            }
-          );
-          if (!res.data.statusUser) {
-            socket.emit("join-list-users-random", (res) => {
-              if (res.status === "ok") {
-                toast.info(
-                  "Tham gia vào phòng chờ thành công. Đang tiến hành tìm đối phương!"
-                );
-                TimeIntervalFindPartner.current = setInterval(() => {
-                  socket.emit("find-partner-random");
-                }, 1000);
-
-                setStatusUser("waiting");
-              } else {
-                toast.error("Lỗi hệ thống");
-              }
-              setIsLoading(false);
-            });
-          } else {
-            const {
-              status: statusRes,
-              account: accountRes,
-              partner: partnerRes,
-              room: roomRes,
-            } = res.data.data;
-
-            if (statusRes === "waiting") {
-              toast.info(
-                "Bạn đang trong phòng chờ ở trên thiết bị khác, vui lòng thoát thiết bị đó!"
-              );
-              setIsLoading(false);
-            } else if (statusRes === "disconnected") {
-              socket.emit(
-                "restore-data-chat-room-for-user-reconnect",
-                {
-                  user: accountRes,
-                  partner: partnerRes,
-                  room: roomRes,
-                },
-                (res) => {
-                  if (res.status === "ok") {
-                  } else {
-                    toast.error("Lỗi hệ thống");
-                  }
-                  setIsLoading(false);
-                }
-              );
-            } else if (statusRes === "chatting") {
-              await socket.emit(
-                "restore-data-chat-room-for-user-chatting",
-                {
-                  user: accountRes,
-                  partner: partnerRes,
-                  room: roomRes,
-                },
-                (res) => {
-                  if (res.status === "ok") {
-                  } else {
-                    toast.error("Lỗi hệ thống");
-                  }
-                  setIsLoading(false);
-                }
-              );
-            }
-          }
-        } else {
-          toast.error("Lỗi hệ thống, vui lòng thử lại!");
+      const res = await axios.post(
+        `${process.env.ENDPOINT_SERVER}/api/v1/chat-rooms/check-room`,
+        {
+          accountID: session.user.id,
         }
-      });
+      );
+      if (res.data.data.status === "waiting" || res.data.data.partner) {
+        dispatch(
+          _statusRandomChat({
+            type: SET_STATUS_CHAT_RANDOM,
+            data: "multiple-accounts",
+          })
+        );
+        setIsLoading(false);
+        return;
+      }
+      if (!res.data.data.partner) {
+        socket.emit("join-list-users-random", (res) => {
+          if (res.status === "ok") {
+            dispatch(
+              _partner({
+                type: SET_PARTNER_CHAT_RANDOM,
+                data: null,
+              })
+            );
+            dispatch(
+              _messagesRandomChat({
+                type: SET_MESSAGES_CHAT_RANDOM,
+                data: [],
+              })
+            );
+            dispatch(
+              _statusRandomChat({
+                type: SET_STATUS_CHAT_RANDOM,
+                data: "waiting",
+              })
+            );
+            toast.info(
+              "Tham gia vào phòng chờ thành công. Đang tiến hành tìm đối phương!"
+            );
+            // socket.emit("find-partner-random");
+            TimeIntervalFindPartner.current = setInterval(() => {
+              socket.emit("find-partner-random");
+            }, 5000);
+            setIsLoading(false);
+          } else {
+            setIsLoading(false);
+            toast.error("Lỗi hệ thống");
+          }
+        });
+      }
     } catch (err) {
       setIsLoading(false);
       countCallApiCheckUserInRoom.current === 1;
@@ -156,10 +185,10 @@ const FindPartnerRandom = ({ socket }) => {
     }
   };
   useEffect(() => {
-    if (status === "authenticated" && !data) {
+    if (socket && !data) {
       dispatch(getUser(session.user.account));
     }
-  }, [status]);
+  }, [socket]);
   useEffect(() => {
     if (socket) {
       socketInitializer();
@@ -167,23 +196,18 @@ const FindPartnerRandom = ({ socket }) => {
     return () => {
       if (socket) {
         socket.off("find-partner-random");
-
         socket.off("find-partner-success-random");
-        socket.off("out-chat-room-for-partner-random");
         socket.off("banned-account");
         socket.off("send-noti-partner-out-chat-room");
         socket.off("send-noti-current-user-out-chat-room");
         socket.off("send-noti-partner-disconnected");
-        socket.off("reject-restore");
-        socket.off("success-restore");
-        socket.off("success-restore-for-partner");
         socket.off("auto-join-room-for-partner-random");
         socket.off("update-status-user");
       }
     };
   }, [socket]);
+
   const socketInitializer = async () => {
-    // await socket.emit("delete-unmounted-chat");
     socket.on("find-partner-random", (data) => {
       setIsLoading(false);
       if (data.status === "fail") {
@@ -191,88 +215,68 @@ const FindPartnerRandom = ({ socket }) => {
       }
     });
 
-    socket.on("reject-restore", (msg) => {
-      setStatusUser("");
+    socket.on("update-status-user", (status) => {
       dispatch(
-        _partner({
-          type: SET_PARTNER,
-          data: null,
+        _statusRandomChat({
+          type: SET_STATUS_CHAT_RANDOM,
+          data: status,
         })
       );
-      toast.info(msg);
-    });
-    socket.on("update-status-user", (status) => {
-      setStatusUser(status);
       if (status === "") {
         clearInterval(TimeIntervalFindPartner.current);
       }
     });
-    socket.on(
-      "success-restore-for-partner",
-      ({ msg, partner, roomGeneral }) => {
-        socket.emit(
-          "success-restore-for-partner",
-          { partner, roomGeneral },
-          (res) => {
-            if (res.status === "ok") {
-              setStatusUser("chatting");
-              dispatch(
-                _partner({
-                  type: SET_PARTNER,
-                  data: partner,
-                })
-              );
-              setPartner(partner);
-              toast.info(msg);
-            } else {
-              toast.error("Lỗi hệ thống");
-            }
-          }
-        );
-      }
-    );
-    socket.on("success-restore", ({ msg, partner }) => {
-      setStatusUser("chatting");
-      toast.info(msg);
+    socket.on("send-noti-partner-out-chat-room", (msg) => {
+      //update database, server
+      socket.emit("send-noti-partner-out-chat-room");
       dispatch(
-        _partner({
-          type: SET_PARTNER,
-          data: partner,
+        _statusRandomChat({
+          type: SET_STATUS_CHAT_RANDOM,
+          data: "partner-outed-chat",
         })
       );
-      setPartner(partner);
-    });
-    socket.on("send-noti-partner-out-chat-room", (msg) => {
-      socket.emit("send-noti-partner-out-chat-room");
-      setStatusUser("partner-outed-chat");
       toast.info(msg);
     });
     socket.on("send-noti-current-user-out-chat-room", (msg) => {
-      setStatusUser("");
+      dispatch(
+        _statusRandomChat({
+          type: SET_STATUS_CHAT_RANDOM,
+          data: "",
+        })
+      );
       dispatch(
         _partner({
-          type: SET_PARTNER,
+          type: SET_PARTNER_CHAT_RANDOM,
           data: null,
         })
       );
     });
     socket.on("send-noti-partner-disconnected", (msg) => {
       socket.emit("send-noti-partner-disconnected");
-      setStatusUser("partner-disconnected");
+      dispatch(
+        _statusRandomChat({
+          type: SET_STATUS_CHAT_RANDOM,
+          data: "partner-outed-chat",
+        })
+      );
       toast.info(msg);
     });
 
-    socket.on("auto-join-room-for-partner-random", ({ partner }) => {
-      socket.emit("auto-join-room-for-partner-random", partner);
+    socket.on("auto-join-room-for-partner-random", (data) => {
+      socket.emit("auto-join-room-for-partner-random", data);
     });
     socket.on("find-partner-success-random", (data) => {
       let { partner, message } = data;
-      console.log("Find success", partner, user);
       clearInterval(TimeIntervalFindPartner.current);
-      setStatusUser("chatting");
+      dispatch(
+        _statusRandomChat({
+          type: SET_STATUS_CHAT_RANDOM,
+          data: "chatting",
+        })
+      );
       dispatch(
         _partner({
-          type: SET_PARTNER,
+          type: SET_PARTNER_CHAT_RANDOM,
           data: partner,
         })
       );
@@ -282,7 +286,7 @@ const FindPartnerRandom = ({ socket }) => {
           data: 1,
         })
       );
-      setPartner(partner);
+
       message = message.replace(
         message,
         `Tìm bạn thành công, hãy tâm sự vui vẻ nhé!`
@@ -290,16 +294,16 @@ const FindPartnerRandom = ({ socket }) => {
       toast.success(message);
     });
 
-    socket.on("banned-account", async (status) => {
-      if (isWaitingRoom && !isInRoom) {
-        await socket.emit("out-waiting-room-random");
-      } else if (isWaitingRoom && isInRoom && partner) {
-        await socket.emit("out-chat-room-random", partner);
-      }
-      setIsWaitingRoom(false);
-      setIsInRoom(false);
-      dispatch(getToggleBanned(!status));
-    });
+    // socket.on("banned-account", async (status) => {
+    //   if (isWaitingRoom && !isInRoom) {
+    //     await socket.emit("out-waiting-room-random");
+    //   } else if (isWaitingRoom && isInRoom && partner) {
+    //     await socket.emit("out-chat-room-random", partner);
+    //   }
+    //   setIsWaitingRoom(false);
+    //   setIsInRoom(false);
+    //   dispatch(getToggleBanned(!status));
+    // });
   };
 
   useEffect(() => {
@@ -334,10 +338,10 @@ const FindPartnerRandom = ({ socket }) => {
   }, [data, socket]);
 
   useEffect(() => {
-    if (partner) {
-      setIsHideInfo(partner.hideInfo);
+    if (dataPartner) {
+      setIsHideInfo(dataPartner.hideInfo);
     }
-  }, [partner]);
+  }, [dataPartner]);
 
   useEffect(() => {
     if (errorGetUser) {
@@ -351,80 +355,62 @@ const FindPartnerRandom = ({ socket }) => {
     } else {
       try {
         setIsLoading(true);
-        setIsWaitingRoom(false);
         dispatch(
           _partner({
-            type: SET_PARTNER,
+            type: SET_PARTNER_CHAT_RANDOM,
             data: null,
           })
         );
-        setStatusUser("");
+        dispatch(
+          _statusRandomChat({
+            type: SET_STATUS_CHAT_RANDOM,
+            data: "",
+          })
+        );
+        dispatch(
+          _messagesRandomChat({
+            type: SET_MESSAGES_CHAT_RANDOM,
+            data: [],
+          })
+        );
+
         const res = await axios.post(
-          `${process.env.ENDPOINT_SERVER}/api/v1/chat-rooms/check-user-in-room`,
+          `${process.env.ENDPOINT_SERVER}/api/v1/chat-rooms/check-room`,
           {
-            account: session.user.account,
+            accountID: session.user.id,
           }
         );
-        if (!res.data.statusUser) {
+        if (res.data.data.status === "waiting" || res.data.data.partner) {
+          dispatch(
+            _statusRandomChat({
+              type: SET_STATUS_CHAT_RANDOM,
+              data: "multiple-accounts",
+            })
+          );
+          setIsLoading(false);
+          return;
+        }
+        if (!res.data.data.partner) {
           socket.emit("join-list-users-random", (res) => {
             if (res.status === "ok") {
+              dispatch(
+                _statusRandomChat({
+                  type: SET_STATUS_CHAT_RANDOM,
+                  data: "waiting",
+                })
+              );
               toast.info(
                 "Tham gia vào phòng chờ thành công. Đang tiến hành tìm đối phương!"
               );
+              // socket.emit("find-partner-random");
               TimeIntervalFindPartner.current = setInterval(() => {
-                socket.emit("find-partner-random", user);
-              }, 1000);
-              setStatusUser("waiting");
+                socket.emit("find-partner-random");
+              }, 5000);
             } else {
               toast.error("Lỗi hệ thống");
             }
             setIsLoading(false);
           });
-        } else if (res.data.statusUser === "waiting") {
-          toast.info(
-            "Bạn đang trong phòng chờ ở trên thiết bị khác, vui lòng thoát thiết bị đó!"
-          );
-          setIsLoading(false);
-        } else {
-          const {
-            status: statusRes,
-            account: accountRes,
-            partner: partnerRes,
-            room: roomRes,
-          } = res.data.data;
-          if (statusRes === "disconnected") {
-            socket.emit(
-              "restore-data-chat-room-for-user-reconnect",
-              {
-                user: accountRes,
-                partner: partnerRes,
-                room: roomRes,
-              },
-              (res) => {
-                if (res.status === "ok") {
-                } else {
-                  toast.error("Lỗi hệ thống");
-                }
-                setIsLoading(false);
-              }
-            );
-          } else if (statusRes === "chatting") {
-            socket.emit(
-              "restore-data-chat-room-for-user-chatting",
-              {
-                user: accountRes,
-                partner: partnerRes,
-                room: roomRes,
-              },
-              (res) => {
-                if (res.status === "ok") {
-                } else {
-                  toast.error("Lỗi hệ thống");
-                }
-                setIsLoading(false);
-              }
-            );
-          }
         }
       } catch (err) {
         setIsLoading(false);
@@ -446,15 +432,22 @@ const FindPartnerRandom = ({ socket }) => {
       setIsLoading(true);
       socket.emit("out-waiting-room-random", (res) => {
         if (res.status === "ok") {
-          socket.emit("update-status-user", {
-            room: `${session.user.account}-room`,
-            status: "",
-          });
-          setStatusUser("");
+          dispatch(
+            _statusRandomChat({
+              type: SET_STATUS_CHAT_RANDOM,
+              data: "",
+            })
+          );
           dispatch(
             _partner({
-              type: SET_PARTNER,
+              type: SET_PARTNER_CHAT_RANDOM,
               data: null,
+            })
+          );
+          dispatch(
+            _messagesRandomChat({
+              type: SET_MESSAGES_CHAT_RANDOM,
+              data: [],
             })
           );
         } else {
@@ -475,11 +468,65 @@ const FindPartnerRandom = ({ socket }) => {
       {!requesting && user && user && (
         <>
           <Loading isLoading={isLoading} />
+          {isOpenModal && (
+            <Modal
+              title={"Thông báo"}
+              isOpenModal={isOpenModal}
+              setIsOpenModal={setIsOpenModal}
+              maxWidth={"sm"}
+            >
+              <Box
+                sx={{
+                  padding: "20px",
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: "10px",
+                  alignItems: "center",
 
+                  flexDirection: "column",
+                }}
+              >
+                <Box
+                  sx={{
+                    width: "80px",
+                    height: "80px",
+                    borderRadius: "50%",
+                    overflow: "hidden",
+                    backgroundColor: "#ccf1fa",
+                    border: (theme) =>
+                      `1px solid ${theme.palette.border.feeds}`,
+                  }}
+                >
+                  <BigHead />
+                </Box>
+                <Typography
+                  sx={{
+                    fontWeight: "bold",
+                    fontSize: "1.5rem",
+                    alignSelf: "center",
+                    color: (theme) => theme.palette.text.color.first,
+                  }}
+                >
+                  Tài khoản của bạn đang tham gia chatting trên thiết bị khác!
+                  Đừng lo không tham gia được, đây là giải pháp dành cho bạn:
+                </Typography>
+                <Typography
+                  sx={{
+                    fontWeight: "bold",
+                    fontSize: "1.5rem",
+                    alignSelf: "center",
+                    color: (theme) => theme.palette.text.color.second,
+                  }}
+                >
+                  Cách 1: Thoát tất cả thiết bị hiện tại.
+                </Typography>
+              </Box>
+            </Modal>
+          )}
           <YourSelf user={user} />
           {!isError && !getToggleStatusBanned && (
             <>
-              {!statusUser && (
+              {statusUserChatRandom === "" && (
                 <>
                   <Button
                     type="submit"
@@ -489,8 +536,18 @@ const FindPartnerRandom = ({ socket }) => {
                   </Button>
                 </>
               )}
-              {statusUser === "waiting" && (
+              {statusUserChatRandom === "waiting" && (
                 <>
+                  <Typography
+                    sx={{
+                      fontWeight: "bold",
+                      fontSize: "1.5rem",
+                      alignSelf: "center",
+                      color: (theme) => theme.palette.text.color.first,
+                    }}
+                  >
+                    Đang tiến hành tìm đối phương...
+                  </Typography>
                   <CountFindPartner
                     handleTimeoutFindPartner={handleTimeoutFindPartner}
                   />
@@ -505,30 +562,22 @@ const FindPartnerRandom = ({ socket }) => {
                 </>
               )}
 
-              {(statusUser === "chatting" ||
-                statusUser === "partner-outed-chat" ||
-                statusUser === "partner-disconnected") && (
+              {(statusUserChatRandom === "chatting" ||
+                statusUserChatRandom === "partner-outed-chat" ||
+                statusUserChatRandom === "partner-disconnected") && (
                 <>
                   <PartnerRandom
                     setIsLoading={setIsLoading}
-                    setStatusUser={setStatusUser}
-                    statusUser={statusUser}
                     isHideInfo={isHideInfo}
                     setIsHideInfo={setIsHideInfo}
                     socket={socket}
-                    partner={partner}
+                    partner={dataPartner}
                     user={user}
-                    isInRoom={isInRoom}
-                    setIsInRoom={setIsInRoom}
-                    setIsWaitingRoom={setIsWaitingRoom}
-                    isPending={isPending}
-                    setIsPending={setIsPending}
                   />
                   <Chat
-                    statusUser={statusUser}
                     isHideInfo={isHideInfo}
                     socket={socket}
-                    partner={partner}
+                    partner={dataPartner}
                   />
                 </>
               )}

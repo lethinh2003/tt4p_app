@@ -12,12 +12,13 @@ import { useSession } from "next-auth/react";
 import Followings from "./Followings";
 import Followers from "./Followers";
 import Link from "next/link";
+import Settings from "./Settings";
 import ButtonChangeAvatar from "./ChangeAvatar/ButtonChangeAvatar";
-const Profile = ({ account }) => {
+const Profile = ({ account, socket }) => {
   const { data: session } = useSession();
   const [key, setKey] = useState("posts");
   const callDataApi = async (account) => {
-    if (!account && !session) {
+    if (!account || !socket) {
       return null;
     }
     const results = await axios.get(
@@ -203,35 +204,66 @@ const Profile = ({ account }) => {
               </Box>
             ))}
             {session.user.account === data.data.account && (
-              <Box
-                onClick={() => handClick("activities")}
-                sx={{
-                  cursor: "pointer",
-                  height: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                <Typography
+              <>
+                <Box
+                  onClick={() => handClick("activities")}
                   sx={{
-                    fontSize: "1.7rem",
-                    fontWeight: "bold",
-                    color:
-                      key === "activities"
-                        ? "#0079D3"
-                        : (theme) => theme.palette.text.color.first,
-                    borderBottom:
-                      key === "activities" ? "2px solid #0079D3" : null,
-                    padding: "10px 0px",
-                    textTransform: "uppercase",
-                    "&:hover": {
-                      color: "#0079D3",
-                    },
+                    cursor: "pointer",
+                    height: "100%",
+                    display: "flex",
+                    alignItems: "center",
                   }}
                 >
-                  Acitivies
-                </Typography>
-              </Box>
+                  <Typography
+                    sx={{
+                      fontSize: "1.7rem",
+                      fontWeight: "bold",
+                      color:
+                        key === "activities"
+                          ? "#0079D3"
+                          : (theme) => theme.palette.text.color.first,
+                      borderBottom:
+                        key === "activities" ? "2px solid #0079D3" : null,
+                      padding: "10px 0px",
+                      textTransform: "uppercase",
+                      "&:hover": {
+                        color: "#0079D3",
+                      },
+                    }}
+                  >
+                    Acitivies
+                  </Typography>
+                </Box>
+                <Box
+                  onClick={() => handClick("settings")}
+                  sx={{
+                    cursor: "pointer",
+                    height: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      fontSize: "1.7rem",
+                      fontWeight: "bold",
+                      color:
+                        key === "settings"
+                          ? "#0079D3"
+                          : (theme) => theme.palette.text.color.first,
+                      borderBottom:
+                        key === "settings" ? "2px solid #0079D3" : null,
+                      padding: "10px 0px",
+                      textTransform: "uppercase",
+                      "&:hover": {
+                        color: "#0079D3",
+                      },
+                    }}
+                  >
+                    Settings
+                  </Typography>
+                </Box>
+              </>
             )}
           </Box>
           {key === "overview" && <Overview account={data.data} />}
@@ -240,6 +272,7 @@ const Profile = ({ account }) => {
           {key === "comments" && <Comments account={data.data} />}
           {key === "followings" && <Followings account={data.data} />}
           {key === "followers" && <Followers account={data.data} />}
+          {key === "settings" && <Settings account={data.data} />}
         </>
       )}
     </>

@@ -43,10 +43,10 @@ const Feeds = ({ isAuthenticated }) => {
   const theme = useTheme();
 
   useEffect(() => {
-    if (getFeedPosts.length === 0 && isAuthenticated) {
+    if (getFeedPosts.length === 0 && socket) {
       getAPIFeedPosts();
     }
-  }, [isAuthenticated]);
+  }, [socket]);
 
   useEffect(() => {
     if (filter !== getGlobalCategory) {

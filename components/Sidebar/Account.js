@@ -74,15 +74,11 @@ const Account = () => {
     });
   };
   useEffect(() => {
-    if (
-      status === "authenticated" &&
-      !dataUser &&
-      countCallApiGetUser.current === 1
-    ) {
+    if (socket && !dataUser && countCallApiGetUser.current === 1) {
       countCallApiGetUser.current = 2;
       dispatch(getUser(session.user.account));
     }
-  }, [status]);
+  }, [socket]);
   useEffect(() => {
     if (errorGetUser) {
       countCallApiGetUser.current = 1;

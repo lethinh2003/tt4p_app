@@ -1,19 +1,7 @@
-import { Avatar, Box, Typography } from "@mui/material";
-import { styled } from "@mui/material/styles";
-import axios from "axios";
-import { useSession } from "next-auth/react";
-import { useEffect, useRef, useState } from "react";
-import { toast } from "react-toastify";
+import { Box, Typography } from "@mui/material";
 import Introduce from "../Homepage/Introduce";
 import User from "./User";
 const HomePage = () => {
-  const { data: session, status } = useSession();
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const [posts, setPosts] = useState([]);
-  const [filter, setFilter] = useState("all");
-  const [isLoading, setIsLoading] = useState(false);
-
   return (
     <>
       <Box
@@ -27,10 +15,8 @@ const HomePage = () => {
       >
         <Box
           sx={{
-            display: "flex",
-
-            alignItems: "center",
-            justifyContent: "space-between",
+            borderBottom: (theme) => `1px solid ${theme.palette.border.dialog}`,
+            paddingBottom: "20px",
           }}
         >
           <Typography
@@ -49,7 +35,11 @@ const HomePage = () => {
             flexDirection: "column",
             alignItems: "center",
             gap: "20px",
+            padding: "10px",
             width: "100%",
+            backgroundColor: (theme) => theme.palette.feed.background.first,
+            border: (theme) => `1px solid ${theme.palette.border.dialog}`,
+            borderRadius: "5px",
           }}
         >
           <Introduce />

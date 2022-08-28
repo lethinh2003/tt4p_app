@@ -10,6 +10,7 @@ const Modal = ({
   setIsOpenModal,
   children,
   title,
+  maxWidth,
 }) => {
   //   const { data: session, status } = useSession();
   const handleClose = () => {
@@ -25,7 +26,7 @@ const Modal = ({
       border: `1px solid ${theme.palette.border.dialog}`,
       width: "100%",
       margin: "0",
-      maxWidth: "calc(100vw - 40px)",
+      // maxWidth: "calc(100vw - 40px)",
 
       "& .MuiDialogTitle-root": {
         borderBottom: `1px solid ${theme.palette.border.dialog}`,
@@ -43,7 +44,12 @@ const Modal = ({
 
   return (
     <>
-      <DialogWrapper fullWidth open={isOpenModal} onClose={handleClose}>
+      <DialogWrapper
+        fullWidth={true}
+        maxWidth={maxWidth ? maxWidth : "md"}
+        open={isOpenModal}
+        onClose={handleClose}
+      >
         <DialogTitle>{title ? title : "Thông báo"}</DialogTitle>
         <DialogContent>{children}</DialogContent>
       </DialogWrapper>

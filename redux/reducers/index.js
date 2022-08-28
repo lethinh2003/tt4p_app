@@ -22,12 +22,16 @@ import _feedCurrentPageReducer from "./_feedCurrentPageReducer";
 import _feedCurrentPositionScrollReducer from "./_feedCurrentPositionScrollReducer";
 import _avatarChangeReducer from "./_avatarChangeReducer";
 import _notifyReducer from "./_notifyReducer";
+import _messagesRandomChatReducer from "./_messagesRandomChatReducer";
+import _statusRandomChatReducer from "./_statusRandomChatReducer";
 const reducers = combineReducers({
   notifyNumber: _notifyReducer,
   postComments: _listPostCommentsReducer,
   user: getUserReducer,
   usersOnline: _listUsersOnlineReducer,
   partner: _partnerReducer,
+  messagesChatRandom: _messagesRandomChatReducer,
+  statusChatRandom: _statusRandomChatReducer,
   feedCategory: _feedCategoryReducer,
   feedPosts: _feedPostsReducer,
   feedCurrentPage: _feedCurrentPageReducer,

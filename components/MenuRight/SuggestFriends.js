@@ -14,7 +14,7 @@ const SuggestFriends = () => {
   const socket = useContext(SocketContext);
 
   const callDataApi = async (session) => {
-    if (session) {
+    if (session && socket) {
       const results = await axios.get(
         `${process.env.ENDPOINT_SERVER}/api/v1/users/suggestion-friends/${session.user.id}`
       );

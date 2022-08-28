@@ -3,7 +3,33 @@ import { ImEye } from "react-icons/im";
 import { CgProfile } from "react-icons/cg";
 import { styled } from "@mui/material/styles";
 import Link from "next/link";
+import { _darkMode } from "../../redux/actions/_darkMode";
+import { useDispatch, useSelector } from "react-redux";
+import { signOut } from "next-auth/react";
+
+import { SET_DARKMODE } from "../../redux/actions/constants";
 const MenuAccount = ({ setIsOpenMenuOptions, session }) => {
+  const dispatch = useDispatch();
+  const isDarkMode = useSelector((state) => state.darkMode.on);
+  const handleChangeTheme = (value) => {
+    if (value === "dark") {
+      dispatch(
+        _darkMode({
+          type: SET_DARKMODE,
+          data: true,
+        })
+      );
+      localStorage.setItem("darkMode", "true");
+    } else {
+      dispatch(
+        _darkMode({
+          type: SET_DARKMODE,
+          data: false,
+        })
+      );
+      localStorage.setItem("darkMode", "false");
+    }
+  };
   const MenuItem = styled(Box)(({ theme }) => ({
     cursor: "pointer",
     display: "flex",
@@ -76,7 +102,14 @@ const MenuAccount = ({ setIsOpenMenuOptions, session }) => {
               >
                 Dark Mode
               </Typography>
-              <Switch />
+              <Switch
+                checked={isDarkMode}
+                onClick={
+                  isDarkMode
+                    ? () => handleChangeTheme("light")
+                    : () => handleChangeTheme("dark")
+                }
+              />
             </MenuItem>
           </Box>
           <Box
@@ -124,16 +157,19 @@ const MenuAccount = ({ setIsOpenMenuOptions, session }) => {
               </Link>
             </MenuItem>
             <MenuItem>
-              <Typography
-                sx={{
-                  paddingLeft: "35px",
-                  fontSize: "1.7rem",
-                }}
-              >
-                Settings
-              </Typography>
+              <Link href={`/profile/${session.user.account}`}>
+                <Typography
+                  sx={{
+                    paddingLeft: "35px",
+                    fontSize: "1.7rem",
+                  }}
+                >
+                  Settings
+                </Typography>
+              </Link>
             </MenuItem>
-            <MenuItem>
+
+            <MenuItem onClick={() => signOut()}>
               <Typography
                 sx={{
                   paddingLeft: "35px",

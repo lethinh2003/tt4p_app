@@ -4,17 +4,22 @@ import { useSession } from "next-auth/react";
 import React, { useEffect, useRef, useState } from "react";
 import { ThreeDots } from "react-loading-icons";
 import ChatForm from "../Chat/ChatForm";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { _messagesCount } from "../../redux/actions/_messagesCount";
-import { INC_MESSAGES_COUNT } from "../../redux/actions/constants";
+import { _messagesRandomChat } from "../../redux/actions/_messagesRandomChat";
+import {
+  INC_MESSAGES_COUNT,
+  INSERT_MESSAGE_CHAT_RANDOM,
+} from "../../redux/actions/constants";
 import convertChat from "../../utils/convertChat";
 import ChatContent from "../Chat/ChatContent";
-const Chat = ({ socket, partner, isHideInfo, statusUser }) => {
+const Chat = ({ socket, partner, isHideInfo }) => {
   const dispatch = useDispatch();
   const { data: session, status } = useSession();
   const [namePartner, setNamePartner] = useState(partner ? partner.name : "");
+  const messages = useSelector((state) => state.messagesChatRandom);
+  const statusUserChatRandom = useSelector((state) => state.statusChatRandom);
 
-  const [messages, setMessages] = useState([]);
   const [typingMessage, setTypingMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
 
@@ -26,8 +31,12 @@ const Chat = ({ socket, partner, isHideInfo, statusUser }) => {
       const newMessage = convertChat(data.msg);
       data.vanilaMessage = data.msg;
       data.msg = newMessage;
-
-      setMessages((prev) => [...prev, data]);
+      dispatch(
+        _messagesRandomChat({
+          type: INSERT_MESSAGE_CHAT_RANDOM,
+          data: data,
+        })
+      );
       dispatch(
         _messagesCount({
           type: INC_MESSAGES_COUNT,
@@ -41,16 +50,16 @@ const Chat = ({ socket, partner, isHideInfo, statusUser }) => {
         // chatSoundRef.current.play();
       }
     });
-    socket.on("success-restore-message", (messages) => {
-      let newMessages = messages.map((item, i) => {
-        const newMessage = convertChat(item.msg);
-        item.vanilaMessage = item.msg;
-        item.msg = newMessage;
-        return item;
-      });
+    // socket.on("success-restore-message", (messages) => {
+    //   let newMessages = messages.map((item, i) => {
+    //     const newMessage = convertChat(item.msg);
+    //     item.vanilaMessage = item.msg;
+    //     item.msg = newMessage;
+    //     return item;
+    //   });
 
-      setMessages(newMessages);
-    });
+    //   setMessages(newMessages);
+    // });
 
     socket.on("chat-typing", (data) => {
       if (data.status === true) {
@@ -200,7 +209,7 @@ const Chat = ({ socket, partner, isHideInfo, statusUser }) => {
         }}
       >
         <BoxWrapper>
-          {statusUser === "partner-outed-chat" && (
+          {statusUserChatRandom === "partner-outed-chat" && (
             <Typography
               sx={{
                 fontWeight: "bold",
@@ -212,7 +221,7 @@ const Chat = ({ socket, partner, isHideInfo, statusUser }) => {
               Đối phương đã rời phòng, bấm Thoát Chat để tìm bạn mới.
             </Typography>
           )}
-          {statusUser === "partner-disconnected" && (
+          {statusUserChatRandom === "partner-disconnected" && (
             <Typography
               sx={{
                 fontWeight: "bold",
@@ -225,7 +234,7 @@ const Chat = ({ socket, partner, isHideInfo, statusUser }) => {
               hoặc bấm Thoát Chat để tìm bạn mới.
             </Typography>
           )}
-          {messages.length === 0 && statusUser === "chatting" && (
+          {messages.length === 0 && statusUserChatRandom === "chatting" && (
             <Typography
               sx={{
                 fontWeight: "bold",
@@ -273,7 +282,7 @@ const Chat = ({ socket, partner, isHideInfo, statusUser }) => {
             </BoxChatUserLeft>
           )}
         </BoxWrapper>
-        {statusUser === "chatting" && <ChatForm socket={socket} />}
+        {statusUserChatRandom === "chatting" && <ChatForm socket={socket} />}
       </Box>
     </>
   );

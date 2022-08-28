@@ -53,10 +53,9 @@ export default function Home() {
             >
               <Box
                 sx={{
-                  display: "flex",
-
-                  alignItems: "center",
-                  justifyContent: "space-between",
+                  borderBottom: (theme) =>
+                    `1px solid ${theme.palette.border.dialog}`,
+                  paddingBottom: "20px",
                 }}
               >
                 <Typography

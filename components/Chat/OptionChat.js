@@ -17,14 +17,11 @@ const OptionChat = () => {
       >
         <Link href="/chat/random">
           <Box
-            as={motion.div}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
             sx={{
               cursor: "pointer",
               width: "100%",
-              border: (theme) => `3px solid ${theme.palette.border.feeds}`,
-              backgroundColor: "#f5f9ff",
+              border: (theme) => `2px solid ${theme.palette.border.dialog}`,
+
               borderRadius: "10px",
               overflow: "hidden",
               display: "flex",
@@ -34,8 +31,10 @@ const OptionChat = () => {
 
               padding: "20px",
               gap: "20px",
-              boxShadow: (theme) =>
-                `0px 3px 20px 6px${theme.palette.feeds.boxShadow}`,
+              "&:hover": {
+                border: (theme) =>
+                  `2px solid ${theme.palette.border.dialogHover}`,
+              },
             }}
           >
             <Box

@@ -9,22 +9,28 @@ import RequestInfoDialog from "../Chat/RequestInfoDialog";
 import InfoPartnerAndUser from "../Partner/InfoPartnerAndUser";
 import InfoPartnerDialog from "../Partner/InfoPartnerDialog";
 import ButtonRequestInfoPartner from "../Partner/ButtonRequestInfoPartner";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { _partner } from "../../redux/actions/_partner";
-import { SET_PARTNER } from "../../redux/actions/constants";
+import { _messagesRandomChat } from "../../redux/actions/_messagesRandomChat";
+import { _statusRandomChat } from "../../redux/actions/_statusRandomChat";
+import {
+  SET_PARTNER_CHAT_RANDOM,
+  SET_MESSAGES_CHAT_RANDOM,
+  SET_STATUS_CHAT_RANDOM,
+} from "../../redux/actions/constants";
 const PartnerRandom = ({
   isHideInfo,
   setIsHideInfo,
   partner,
   user,
   socket,
-  setStatusUser,
-  statusUser,
   setIsLoading,
 }) => {
   const { isShow, toggle } = useModal();
   const { isShow: isShowInfoPartner, toggle: toggleInfoPartner } = useModal();
   const [countRequestInfo, setCountRequestInfo] = useState(5);
+  const statusUserChatRandom = useSelector((state) => state.statusChatRandom);
+
   const dispatch = useDispatch();
   useEffect(() => {
     socket.on("request-info-partner", () => {
@@ -46,59 +52,47 @@ const PartnerRandom = ({
     };
   }, [socket]);
   const handleClickOutChatRoom = async () => {
-    setIsLoading(true);
-    if (statusUser === "partner-outed-chat") {
-      socket.emit("agree-out-chat-room-for-current-user", (res) => {
-        if (res.status === "ok") {
-          socket.emit("update-status-user", {
-            room: `${user.account}-room`,
-            status: "",
-          });
-          dispatch(
-            _partner({
-              type: SET_PARTNER,
-              data: null,
-            })
-          );
-          setStatusUser("");
-        } else {
-          toast.error("Lỗi hệ thống!");
-        }
-        setIsLoading(false);
-      });
-    } else if (statusUser === "partner-disconnected") {
-      socket.emit("agree-out-chat-room-dont-wait-partner", (res) => {
-        if (res.status === "ok") {
-          socket.emit("update-status-user", {
-            room: `${user.account}-room`,
-            status: "",
-          });
-          dispatch(
-            _partner({
-              type: SET_PARTNER,
-              data: null,
-            })
-          );
-          setStatusUser("");
-        } else {
-          toast.error("Lỗi hệ thống!");
-        }
-        setIsLoading(false);
-      });
+    if (statusUserChatRandom === "partner-outed-chat") {
+      dispatch(
+        _partner({
+          type: SET_PARTNER_CHAT_RANDOM,
+          data: null,
+        })
+      );
+      dispatch(
+        _messagesRandomChat({
+          type: SET_MESSAGES_CHAT_RANDOM,
+          data: [],
+        })
+      );
+      dispatch(
+        _statusRandomChat({
+          type: SET_STATUS_CHAT_RANDOM,
+          data: "",
+        })
+      );
     } else {
+      setIsLoading(true);
       socket.emit("out-chat-room-for-current-user", (res) => {
         if (res.status === "ok") {
-          socket.emit("update-status-user", {
-            room: `${user.account}-room`,
-            status: "",
-          });
           dispatch(
             _partner({
-              type: SET_PARTNER,
+              type: SET_PARTNER_CHAT_RANDOM,
               data: null,
             })
           );
-          setStatusUser("");
+          dispatch(
+            _messagesRandomChat({
+              type: SET_MESSAGES_CHAT_RANDOM,
+              data: [],
+            })
+          );
+          dispatch(
+            _statusRandomChat({
+              type: SET_STATUS_CHAT_RANDOM,
+              data: "",
+            })
+          );
         } else {
           toast.error("Lỗi hệ thống!");
         }
@@ -143,19 +137,22 @@ const PartnerRandom = ({
           socket={socket}
         />
       )}
-
-      <InfoPartnerAndUser
-        user={user}
-        partner={partner}
-        socket={socket}
-        isHideInfo={isHideInfo}
-        setIsHideInfo={setIsHideInfo}
-      />
-      <ButtonRequestInfoPartner
-        handleClickRequestInfoPartner={handleClickRequestInfoPartner}
-        isHideInfo={isHideInfo}
-        countRequestInfo={countRequestInfo}
-      />
+      {statusUserChatRandom !== "partner-outed-chat" && (
+        <>
+          <InfoPartnerAndUser
+            user={user}
+            partner={partner}
+            socket={socket}
+            isHideInfo={isHideInfo}
+            setIsHideInfo={setIsHideInfo}
+          />
+          <ButtonRequestInfoPartner
+            handleClickRequestInfoPartner={handleClickRequestInfoPartner}
+            isHideInfo={isHideInfo}
+            countRequestInfo={countRequestInfo}
+          />
+        </>
+      )}
 
       <Button
         as={motion.div}

@@ -4,7 +4,6 @@ import { toast } from "react-toastify";
 import { io } from "socket.io-client";
 import SocketContext from "./socket";
 const SocketProvider = (props) => {
-  // const dispatch = useDispatch();
   const { data: session, status } = useSession();
   const [value, setValue] = useState();
   useEffect(() => {

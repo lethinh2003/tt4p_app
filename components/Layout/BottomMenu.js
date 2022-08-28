@@ -82,7 +82,7 @@ const Footer = () => {
     },
   });
   const BottomNavigationComponent = styled(Box)(({ theme }) => ({
-    borderTop: `1px solid ${theme.palette.sidebar.border}`,
+    borderTop: `1px solid ${theme.palette.border.dialog}`,
     margin: "10px 20px",
     borderRadius: "20px",
     padding: "5px 20px",
@@ -90,7 +90,7 @@ const Footer = () => {
     bottom: 0,
     right: 0,
     left: 0,
-    backgroundColor: theme.palette.bottomMenu.background.default,
+    backgroundColor: theme.palette.latestPost.background.first,
 
     height: "90px",
     zIndex: 1002,
@@ -108,7 +108,7 @@ const Footer = () => {
 
     position: "relative",
 
-    color: theme.palette.mode === "light" ? "#ffffff" : "#ffffff",
+    color: theme.palette.mode === "light" ? "#1a1f26" : "#ffffff",
     borderRadius: "20px",
     maxWidth: "calc(100% / 4)",
     width: "100%",
@@ -174,7 +174,7 @@ const Footer = () => {
           <BottomNavigationActionComponent
             as={motion.div}
             sx={{
-              color: value === item.value ? "#20b8fb" : "#ffffff",
+              color: value === item.value ? "#20b8fb" : null,
             }}
             whileHover={{ scale: 1.3 }}
             whileTap={{ scale: 0.9 }}
