@@ -7,7 +7,7 @@ import Item from "../SuggestFriend/Item";
 import { useContext } from "react";
 import SocketContext from "../../contexts/socket";
 import { useSession } from "next-auth/react";
-
+import Link from "next/link";
 const SuggestFriends = () => {
   const { data: session, status } = useSession();
 
@@ -67,17 +67,22 @@ const SuggestFriends = () => {
           >
             ↗️ Gợi ý theo dõi
           </Typography>
-          <Typography
-            sx={{
-              fontSize: "1.7rem",
-              fontWeight: "bold",
+          {session && (
+            <Link href={`/profile/${session.user.account}`}>
+              <Typography
+                sx={{
+                  cursor: "pointer",
+                  fontSize: "1.7rem",
+                  fontWeight: "bold",
 
-              paddingBottom: "20px",
-              color: (theme) => theme.palette.text.color.active,
-            }}
-          >
-            See all
-          </Typography>
+                  paddingBottom: "20px",
+                  color: (theme) => theme.palette.text.color.active,
+                }}
+              >
+                See all
+              </Typography>
+            </Link>
+          )}
         </Box>
         <Box
           sx={{

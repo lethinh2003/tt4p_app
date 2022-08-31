@@ -59,7 +59,6 @@ const FindPartner = ({ socket }) => {
   }, [socket]);
   const socketInitializer = () => {
     socket.on("find-partner", (data) => {
-      console.log(data);
       setIsLoading(false);
       // if (data.status === "fail") {
       //   // toast.error(data.message);
@@ -78,7 +77,7 @@ const FindPartner = ({ socket }) => {
     });
     socket.on("find-partner-success", (data) => {
       let { partner, message } = data;
-      console.log(data);
+
       clearInterval(TimeIntervalFindPartner.current);
       setIsInRoom(true);
       setPartner(partner);
@@ -89,11 +88,9 @@ const FindPartner = ({ socket }) => {
       toast.success(message);
     });
     socket.on("send-noti-disconnected-for-partner", (message) => {
-      console.log("message: ", message);
       toast.info(message);
     });
     socket.on("out-chat-room-for-partner", (partner) => {
-      console.log("vcl nha thinh l");
       socket.emit("out-chat-room", partner);
       setIsWaitingRoom(false);
       setIsInRoom(false);
@@ -216,7 +213,6 @@ const FindPartner = ({ socket }) => {
 
   useEffect(() => {
     if (partner) {
-      console.log(partner);
       setIsHideInfo(partner.hideInfo);
     }
   }, [partner]);

@@ -17,22 +17,48 @@ const PostDetail = (props) => {
   const socket = useContext(SocketContext);
   const { dataPost: item } = props;
   const router = useRouter();
+  const linkThumbnail = "https://i.imgur.com/TvA6QyE.png";
+  const titleThumbnail = item
+    ? `${item.title} | Trò chuyện bốn phương`
+    : `Bài viết | Trò chuyện bốn phương`;
 
   return (
     <>
+      {item && (
+        <Head>
+          <title> {titleThumbnail}</title>
+          <meta name="description" content={item.title} />
+          <meta
+            name="keywords"
+            content={`${item.title.split(" ").join(", ")}`}
+          />
+          <meta property="og:image" content={linkThumbnail} />
+          <meta property="og:title" content={titleThumbnail} />
+          <meta property="og:description" content={item.title} />
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta property="twitter:title" content={titleThumbnail} />
+          <meta property="twitter:description" content={item.title} />
+          <meta property="twitter:creator" content="Thinh Le" />
+          <meta property="twitter:image" content={linkThumbnail} />
+        </Head>
+      )}
       <Layout>
         <Box
           sx={{
             padding: {
               xs: "0px",
-              md: "0px 410px 0px 5px",
+              md: "0px 410px 110px 5px",
               lg: "0px 410px 0px 280px",
+            },
+            marginTop: {
+              md: "60px",
+              lg: "0px",
             },
           }}
         >
           <Box
             sx={{
-              padding: { xs: "20px 20px 110px 20px", md: "20px" },
+              padding: { xs: "20px 5px 110px 5px", md: "20px" },
             }}
           >
             <Box
@@ -58,19 +84,6 @@ const PostDetail = (props) => {
               </Typography>
               {item && (
                 <>
-                  <Head>
-                    <title>{`${item.title} - TroChuyen4Phuong`}</title>
-                    <meta name="description" content={item.title} />
-                    <meta
-                      name="keywords"
-                      content={`${item.title.split(" ").join(", ")}`}
-                    />
-                    <meta
-                      property="og:title"
-                      content={`${item.title} - TroChuyen4Phuong`}
-                    />
-                    <meta property="og:description" content={item.title} />
-                  </Head>
                   <IntroducePost item={item} />
 
                   <ContentPost socket={socket} item={item} />

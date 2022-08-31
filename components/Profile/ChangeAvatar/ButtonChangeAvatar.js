@@ -6,12 +6,12 @@ import { _avatarChange } from "../../../redux/actions/_avatarChange";
 import Modal from "../../Modal/Modal";
 import CurrentAvatar from "./CurrentAvatar";
 import StoriesAvatar from "./StoriesAvatar";
+import MainChangeAvatar from "./MainChangeAvatar";
 const ButtonChangeAvatar = ({ account, user }) => {
   const dispatch = useDispatch();
   const dataUser = useSelector((state) => state.user.data);
 
   const [isOpenModal, setIsOpenModal] = useState(false);
-  const [isLoadingModal, setIsLoadingModal] = useState(false);
   const [avatarSVG, setAvatarSVG] = useState(user.avatarSVG);
   const handleClickChangeAvatar = () => {
     setIsOpenModal(true);
@@ -38,39 +38,11 @@ const ButtonChangeAvatar = ({ account, user }) => {
           isOpenModal={isOpenModal}
           setIsOpenModal={setIsOpenModal}
         >
-          <Box
-            sx={{
-              padding: "20px",
-              display: "flex",
-              justifyContent: "center",
-              gap: "10px",
-              alignItems: "center",
-              pointerEvents: isLoadingModal ? "none" : "visible",
-              opacity: isLoadingModal ? 0.6 : 1,
-              flexDirection: { xs: "column-reverse", lg: "row" },
-            }}
-          >
-            <StoriesAvatar setAvatarSVG={setAvatarSVG} avatarSVG={avatarSVG} />
-            <Box
-              sx={{
-                width: "60%",
-                display: "flex",
-                justifyContent: "center",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <CurrentAvatar
-                setAvatarSVG={setAvatarSVG}
-                setIsLoadingModal={setIsLoadingModal}
-                setIsOpenModal={setIsOpenModal}
-                sx={{
-                  width: "350px",
-                  height: "350px",
-                }}
-              />
-            </Box>
-          </Box>
+          <MainChangeAvatar
+            setIsOpenModal={setIsOpenModal}
+            avatarSVG={avatarSVG}
+            setAvatarSVG={setAvatarSVG}
+          />
         </Modal>
       )}
       <Box

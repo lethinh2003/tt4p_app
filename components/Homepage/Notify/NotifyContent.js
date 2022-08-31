@@ -4,11 +4,15 @@ import axios from "axios";
 import { useEffect, useState, memo } from "react";
 import Item from "./Item";
 import { toast } from "react-toastify";
+import { SET_NOTIFY_NUMBER } from "../../../redux/actions/constants";
+import { _notify } from "../../../redux/actions/_notify";
+import { useDispatch } from "react-redux";
 const NotifyContent = ({ session, socket }) => {
+  const dispatch = useDispatch();
   //   const [isLoading, setIsLoading] = useState(false);
   const [dataNotify, setDataNotify] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [limitResults, setLimitResults] = useState(10);
+  const [limitResults, setLimitResults] = useState(20);
   const callDataApi = async () => {
     const results = await axios.get(
       `${process.env.ENDPOINT_SERVER}/api/v1/users/notifies/${session.user.id}?page=${currentPage}&pageSize=${limitResults}`
@@ -33,8 +37,14 @@ const NotifyContent = ({ session, socket }) => {
   }, [isErrorQuery]);
 
   useEffect(() => {
-    if (data) {
+    if (data && session && socket) {
       setDataNotify(data.data);
+      dispatch(
+        _notify({
+          type: SET_NOTIFY_NUMBER,
+          data: 0,
+        })
+      );
     }
   }, [data]);
 

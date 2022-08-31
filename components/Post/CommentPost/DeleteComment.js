@@ -13,7 +13,6 @@ import { _listPostComments } from "../../../redux/actions/_listPostComments";
 const DeleteComment = ({ socket, item, setDataItem, setIsLoadingOption }) => {
   const dispatch = useDispatch();
   const handleClickDelete = async (item) => {
-    console.log(item);
     try {
       dispatch(
         _listCommentsLoading({

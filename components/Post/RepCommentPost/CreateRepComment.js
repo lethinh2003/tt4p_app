@@ -102,7 +102,6 @@ const CreateRepComment = ({
   setReplyCommentData,
   replyCommentData,
 }) => {
-  console.log(item);
   const dispatch = useDispatch();
   const { data: session, status } = useSession();
   const [isLoading, setIsLoading] = useState(false);

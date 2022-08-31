@@ -74,7 +74,7 @@ const IntroducePost = ({ item }) => {
           sx={{
             display: "flex",
             gap: "10px",
-            fontSize: "2rem",
+            fontSize: "1.4rem",
             height: "100%",
             fontWeight: "bold",
             color: (theme) => theme.palette.text.color.second,

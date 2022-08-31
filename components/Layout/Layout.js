@@ -2,7 +2,7 @@ import { Box } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import Sidebar from "./Sidebar";
 import { useRef, useEffect } from "react";
-
+import SidebarMobile from "./SidebarMobile";
 const Layout = (props) => {
   const hihi = useRef(null);
 
@@ -16,11 +16,8 @@ const Layout = (props) => {
   const ContainerBoxWrapper = styled(Box)(({ theme }) => ({
     backgroundColor: theme.palette.box.background.default,
 
-    width: "100%",
     height: "100%",
     minHeight: "100vh",
-
-    boxShadow: `0px 4px 6px 2px ${theme.palette.box.shadow.default}`,
   }));
   const ContainerBoxRightWrapper = styled(Box)(({ theme }) => ({
     backgroundColor: theme.palette.box.background.default,
@@ -46,7 +43,15 @@ const Layout = (props) => {
     <>
       <ContainerBoxWrapper>
         <Sidebar />
-        {props.children}
+
+        <SidebarMobile />
+        <Box
+          sx={{
+            marginTop: { xs: "60px", md: 0 },
+          }}
+        >
+          {props.children}
+        </Box>
       </ContainerBoxWrapper>
     </>
   );

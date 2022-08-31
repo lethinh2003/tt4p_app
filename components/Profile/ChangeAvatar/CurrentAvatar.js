@@ -26,6 +26,7 @@ const CurrentAvatar = ({
       setIsOpenModal(false);
       setIsLoadingModal(false);
       dispatch(getUser(session.user.account));
+      window.location.reload();
     } catch (err) {
       setIsLoadingModal(false);
       if (err.response) {

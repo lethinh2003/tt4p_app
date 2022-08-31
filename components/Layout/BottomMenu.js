@@ -2,7 +2,7 @@ import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import MessageOutlinedIcon from "@mui/icons-material/MessageOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import { AiFillHome, AiFillMessage, AiTwotoneSetting } from "react-icons/ai";
+import { AiFillHome, AiFillMessage, AiFillPlusCircle } from "react-icons/ai";
 import { FaSignOutAlt } from "react-icons/fa";
 import { memo } from "react";
 import { Box, Button } from "@mui/material";
@@ -20,10 +20,12 @@ const Footer = () => {
   const router = useRouter();
   const getRouterValue = () => {
     let result;
-    if (router.pathname.startsWith("/posts") || router.pathname === "/") {
+    if (router.pathname === "/") {
       result = "home";
     } else if (router.pathname.startsWith("/chat")) {
       result = "message";
+    } else if (router.pathname.startsWith("/posts/create")) {
+      result = "create_post";
     }
     return result;
   };
@@ -36,6 +38,8 @@ const Footer = () => {
       router.push("/");
     } else if (value === "message") {
       router.push("/chat");
+    } else if (value === "create_post") {
+      router.push("/posts/create");
     } else if (value === "setting") {
       if (getToggleStatusBanned) {
         toast.error("Tài khoản bạn đang bị cấm, chức năng tạm khoá!");
@@ -82,8 +86,7 @@ const Footer = () => {
     },
   });
   const BottomNavigationComponent = styled(Box)(({ theme }) => ({
-    borderTop: `1px solid ${theme.palette.border.dialog}`,
-    margin: "10px 20px",
+    margin: "0px 5px",
     borderRadius: "20px",
     padding: "5px 20px",
     position: "fixed",
@@ -95,10 +98,7 @@ const Footer = () => {
     height: "90px",
     zIndex: 1002,
     gap: "10px",
-    borderTop:
-      theme.palette.mode === "light"
-        ? "1px solid #dcdee0"
-        : "1px solid #4b4c4e",
+    border: `2px solid ${theme.palette.border.dialog}`,
   }));
   const BottomNavigationActionComponent = styled(Box)(({ theme }) => ({
     cursor: "pointer",
@@ -153,9 +153,9 @@ const Footer = () => {
       icon: <AiFillMessage />,
     },
     {
-      value: "setting",
-      key: "/setting",
-      icon: <AiTwotoneSetting />,
+      value: "create_post",
+      key: "/create_post",
+      icon: <AiFillPlusCircle />,
     },
     {
       value: "signout",
@@ -167,7 +167,7 @@ const Footer = () => {
     <>
       <BottomNavigationComponent
         sx={{
-          display: { xs: "flex", md: "none" },
+          display: { xs: "flex", md: "flex", lg: "none" },
         }}
       >
         {BottomMenu.map((item, i) => (

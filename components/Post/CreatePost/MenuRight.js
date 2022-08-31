@@ -79,6 +79,8 @@ const MenuRight = () => {
         className="ms-sidebar"
         sx={{
           display: { xs: "none", md: "flex" },
+          paddingTop: { md: "80px", lg: "20px" },
+          paddingBottom: { md: "130px", lg: "20px" },
         }}
       >
         <div className="ms-sidebar__wrapper">

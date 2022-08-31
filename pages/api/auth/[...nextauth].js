@@ -57,7 +57,7 @@ export default NextAuth({
       async authorize(credentials, req) {
         try {
           const { account, password } = credentials;
-          console.log(account, password);
+
           const user = await axios.post(
             `${process.env.ENDPOINT_SERVER}/api/v1/users/login`,
             {

@@ -16,6 +16,7 @@ import {
   SET_PARTNERS_COUNT,
   SET_LIST_USERS_ONLINE,
   SET_POST_ACTIVITY,
+  SET_POST_SAVED,
 } from "../../redux/actions/constants";
 import { _listFollowings } from "../../redux/actions/_listFollowings";
 import { _listHeartedPosts } from "../../redux/actions/_listHeartedPosts";
@@ -25,6 +26,7 @@ import { getToggleBanned } from "../../redux/actions/getToggleBanned";
 import { getUser } from "../../redux/actions/getUser";
 import { _listUsersOnline } from "../../redux/actions/_listUsersOnline";
 import { _postActivity } from "../../redux/actions/_postActivity";
+import { _postSaved } from "../../redux/actions/_postSaved";
 import AvatarUser from "../Homepage/AvatarUser";
 import { IoIosArrowForward } from "react-icons/io";
 const Account = () => {
@@ -33,12 +35,14 @@ const Account = () => {
   const dispatch = useDispatch();
   const setIntervalJoinUserOnline = useRef(null);
   const countCallApi = useRef(1);
+  const countCallApiGetPostSaved = useRef(1);
   const countCallApiGetPostActivity = useRef(1);
   const countCallApiGetFollowings = useRef(1);
   const countCallApiGetUser = useRef(1);
   const dataUser = useSelector((state) => state.user.data);
   const dataUserFollowings = useSelector((state) => state.userFollowing);
   const dataUserPostActivity = useSelector((state) => state.postActivity);
+  const dataUserPostSaved = useSelector((state) => state.savedPosts);
   const dataUserHearts = useSelector((state) => state.userHearted);
   const requestingGetUser = useSelector((state) => state.user.requesting);
   const errorGetUser = useSelector((state) => state.user.error);
@@ -122,6 +126,13 @@ const Account = () => {
       ) {
         getPostActivity();
       }
+      // Get saved post
+      if (
+        dataUserPostSaved.length === 0 &&
+        countCallApiGetPostSaved.current === 1
+      ) {
+        getPostSaved();
+      }
     }
   }, [dataUser]);
   const getListHearted = async () => {
@@ -186,7 +197,7 @@ const Account = () => {
         resData.forEach((item) => {
           newAcitivity.push(item.post[0]);
         });
-        console.log(newAcitivity);
+
         dispatch(
           _postActivity({
             type: SET_POST_ACTIVITY,
@@ -196,6 +207,32 @@ const Account = () => {
       }
     } catch (err) {
       countCallApiGetPostActivity.current = 1;
+      if (err.response) {
+        toast.error(err.response.data.message);
+      }
+    }
+  };
+  const getPostSaved = async () => {
+    try {
+      countCallApiGetPostSaved.current = 2;
+      const res = await axios.get(
+        `${process.env.ENDPOINT_SERVER}/api/v1/posts/saved`
+      );
+      const resData = res.data.data;
+      if (resData.length > 0) {
+        const newAcitivity = [];
+        resData.forEach((item) => {
+          newAcitivity.push(item.post[0]);
+        });
+        dispatch(
+          _postSaved({
+            type: SET_POST_SAVED,
+            data: newAcitivity,
+          })
+        );
+      }
+    } catch (err) {
+      countCallApiGetPostSaved.current = 1;
       if (err.response) {
         toast.error(err.response.data.message);
       }

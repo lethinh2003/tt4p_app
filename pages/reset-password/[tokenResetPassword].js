@@ -11,7 +11,7 @@ const ResetPassword = () => {
   const [info, setInfo] = useState("");
   const router = useRouter();
   const { tokenResetPassword } = router.query;
-  console.log(tokenResetPassword);
+
   useEffect(() => {
     if (tokenResetPassword) {
       checkToken();

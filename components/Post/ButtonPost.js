@@ -20,8 +20,8 @@ const ButtonPost = ({ item, socket }) => {
       >
         <Heart item={item} socket={socket} />
         <Comment />
-        <Share />
-        <Save />
+        <Share item={item} />
+        <Save item={item} socket={socket} />
       </Box>
     </>
   );

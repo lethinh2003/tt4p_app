@@ -146,11 +146,11 @@ const PartnerRandom = ({
             isHideInfo={isHideInfo}
             setIsHideInfo={setIsHideInfo}
           />
-          <ButtonRequestInfoPartner
+          {/* <ButtonRequestInfoPartner
             handleClickRequestInfoPartner={handleClickRequestInfoPartner}
             isHideInfo={isHideInfo}
             countRequestInfo={countRequestInfo}
-          />
+          /> */}
         </>
       )}
 

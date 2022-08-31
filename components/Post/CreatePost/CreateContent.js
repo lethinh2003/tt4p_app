@@ -77,7 +77,7 @@ const CreateContent = ({
     opacity: "0.7",
     color: theme.palette.text.color.first,
   }));
-  console.log("render content");
+
   return (
     <>
       {!editorLoaded && <div>Editor loading</div>}

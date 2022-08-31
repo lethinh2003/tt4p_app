@@ -24,6 +24,7 @@ import _avatarChangeReducer from "./_avatarChangeReducer";
 import _notifyReducer from "./_notifyReducer";
 import _messagesRandomChatReducer from "./_messagesRandomChatReducer";
 import _statusRandomChatReducer from "./_statusRandomChatReducer";
+import _postSavedReducer from "./_postSavedReducer";
 const reducers = combineReducers({
   notifyNumber: _notifyReducer,
   postComments: _listPostCommentsReducer,
@@ -41,6 +42,7 @@ const reducers = combineReducers({
   _messagesCount: _messagesCountReducer,
   suggestFriends: getSuggestFriendsReducer,
   userFollowing: _listFollowingsReducer,
+  savedPosts: _postSavedReducer,
   userHearted: _listHeartedPostsReducer,
   listCommentsLoading: _listCommentsLoadingReducer,
   postActivity: _postActivityReducer,

@@ -40,7 +40,7 @@ const OptionMenu = ({ isOpenOption, setIsOpenOption }) => {
             room: `post_${item._id}`,
             commentId: res.data.data.comment[0],
           };
-          console.log(data);
+
           socket.emit("create-post-comment", data);
         }
         setReplyComment("");

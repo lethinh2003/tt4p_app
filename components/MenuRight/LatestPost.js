@@ -6,7 +6,11 @@ import AvatarUser from "../Homepage/AvatarUser";
 import { motion } from "framer-motion";
 import { memo, useEffect, useState } from "react";
 import EndList from "../Homepage/EndList";
+import { useSession } from "next-auth/react";
+
 const LatestPost = () => {
+  const { data: session } = useSession();
+
   const activityPosts = useSelector((state) => state.postActivity);
   return (
     <>
@@ -143,17 +147,22 @@ const LatestPost = () => {
           )}
 
           <Box>
-            <Typography
-              sx={{
-                fontSize: "1.7rem",
-                fontWeight: "bold",
+            {session && (
+              <Link href={`/profile/${session.user.account}`}>
+                <Typography
+                  sx={{
+                    cursor: "pointer",
+                    fontSize: "1.7rem",
+                    fontWeight: "bold",
 
-                paddingBottom: "20px",
-                color: (theme) => theme.palette.text.color.active,
-              }}
-            >
-              Xem tất cả
-            </Typography>
+                    paddingBottom: "20px",
+                    color: (theme) => theme.palette.text.color.active,
+                  }}
+                >
+                  Xem tất cả
+                </Typography>
+              </Link>
+            )}
           </Box>
         </Box>
       </Box>

@@ -18,6 +18,8 @@ const Sidebar = () => {
       result = "home";
     } else if (router.pathname.startsWith("/chat")) {
       result = "message";
+    } else if (router.pathname.startsWith("/profile")) {
+      result = "profile";
     }
     return result;
   };
@@ -143,7 +145,7 @@ const Sidebar = () => {
     {
       title: "Settings",
       value: "settings",
-      link: "/settings",
+      link: "/profile",
       icon: <AiTwotoneSetting />,
     },
   ];

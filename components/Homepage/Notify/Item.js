@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, ClickAwayListener } from "@mui/material";
 import { useState, memo } from "react";
 import AvatarUser from "../AvatarUser";
 import { timeFromNow } from "../../../utils/convertTime";
@@ -96,6 +96,7 @@ const Item = ({ item }) => {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
+              color: (theme) => theme.palette.text.color.first,
               backgroundColor: isOpenOptionMenu
                 ? (theme) => theme.palette.button.background.hover
                 : null,
@@ -113,6 +114,7 @@ const Item = ({ item }) => {
               setIsHide={setIsHide}
               setIsLoading={setIsLoading}
               isLoading={isLoading}
+              setIsOpenOptionMenu={setIsOpenOptionMenu}
             />
           )}
         </Box>

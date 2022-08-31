@@ -16,7 +16,7 @@ const Modal = ({
   const handleClose = () => {
     setIsOpenModal(false);
   };
-  console.log("re-render");
+
   const theme = useTheme();
 
   const DialogWrapper = styled(Dialog)(({ theme }) => ({

@@ -77,7 +77,7 @@ const DeleteComment = ({ item, setIsLoading, setIsHide }) => {
               item: item,
             };
             socket.emit("update-post-comments", dataUpdate);
-            console.log(dataUpdate);
+
             dispatch(
               _listCommentsLoading({
                 type: REMOVE_ITEM_LIST_COMMENTS_LOADING,

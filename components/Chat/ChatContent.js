@@ -5,9 +5,7 @@ import Image from "next/image";
 import AvatarUser from "../Homepage/AvatarUser";
 
 const ChatContent = ({ item, name, message, type }) => {
-  const handleClickChatDetail = (item) => {
-    console.log(item);
-  };
+  const handleClickChatDetail = (item) => {};
 
   const BoxAvatar = styled(Box)(({ theme }) => ({
     backgroundColor: "#ccc",

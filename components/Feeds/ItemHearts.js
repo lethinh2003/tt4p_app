@@ -33,7 +33,6 @@ const ItemHearts = ({ item, session, status, socket }) => {
         if (data.postID === item._id) {
           if (data.userID === session.user.id) {
             if (data.type === "create_success") {
-              console.log(item);
               dispatch(
                 _postActivity({
                   type: ADD_ITEM_POST_ACTIVITY,
@@ -173,7 +172,7 @@ const ItemHearts = ({ item, session, status, socket }) => {
         <RiHeartsFill
           onClick={() => handleClickHeart(item)}
           style={{
-            fontSize: "3rem",
+            fontSize: "2rem",
             cursor: "pointer",
           }}
         />

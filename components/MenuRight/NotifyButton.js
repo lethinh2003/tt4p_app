@@ -8,7 +8,7 @@ import SocketContext from "../../contexts/socket";
 import { useSelector, useDispatch } from "react-redux";
 import { _notify } from "../../redux/actions/_notify";
 import { useQuery } from "react-query";
-
+import Link from "next/link";
 import {
   SET_NOTIFY_NUMBER,
   INC_NOTIFY_NUMBER,
@@ -20,47 +20,9 @@ const NotifyButton = () => {
 
   const socket = useContext(SocketContext);
   const dispatch = useDispatch();
-  const countAPIRef = useRef(null);
+  const countCallApi = useRef(1);
   const notifyNumber = useSelector((state) => state.notifyNumber);
   const [isOpen, setIsOpen] = useState(false);
-
-  const callDataApi = async (session) => {
-    if (!session) {
-      return null;
-    }
-    const results = await axios.get(
-      `${process.env.ENDPOINT_SERVER}/api/v1/users/notifies/get_numbers/${session.user.id}`
-    );
-    return results.data;
-  };
-  const getListQuery = useQuery(
-    ["get-numbers-notify", session],
-    () => callDataApi(session),
-    {
-      cacheTime: Infinity,
-      refetchOnWindowFocus: false,
-      staleTime: 0,
-    }
-  );
-  const {
-    data,
-    isLoading,
-    isFetching,
-    isError: isErrorQuery,
-    error,
-  } = getListQuery;
-  useEffect(() => {
-    if (data) {
-      if (data.results !== notifyNumber) {
-        dispatch(
-          _notify({
-            type: SET_NOTIFY_NUMBER,
-            data: data.results,
-          })
-        );
-      }
-    }
-  }, [data]);
 
   useEffect(() => {
     if (socket && session) {
@@ -81,6 +43,10 @@ const NotifyButton = () => {
           })
         );
       });
+      if (countCallApi.current === 1) {
+        countCallApi.current = 2;
+        getNotifiesCount();
+      }
     }
     return () => {
       if (socket) {
@@ -88,32 +54,36 @@ const NotifyButton = () => {
         socket.off("inc-notify-number");
       }
     };
-  }, [session]);
-  const handleClickAway = () => {
-    if (isOpen === true && notifyNumber > 0) {
-      socket.emit("update-notify-number", session.user.id, (res) => {
-        if (res.status === "err") {
-          toast.error("Lỗi hệ thống!");
-        } else if (res.status === "ok") {
-          setIsOpen(false);
-        }
-      });
-    } else {
-      setIsOpen(false);
+  }, [socket]);
+
+  const getNotifiesCount = async () => {
+    try {
+      countCallApi.current = 2;
+      const res = await axios.get(
+        `${process.env.ENDPOINT_SERVER}/api/v1/users/notifies/get_numbers/${session.user.id}`
+      );
+      const resData = res.data.results;
+      if (resData !== notifyNumber) {
+        dispatch(
+          _notify({
+            type: SET_NOTIFY_NUMBER,
+            data: resData,
+          })
+        );
+      }
+    } catch (err) {
+      countCallApi.current = 1;
+      if (err.response) {
+        toast.error(err.response.data.message);
+      }
     }
   };
+
+  const handleClickAway = () => {
+    setIsOpen(false);
+  };
   const handleClickButton = () => {
-    if (isOpen === true && notifyNumber > 0) {
-      socket.emit("update-notify-number", session.user.id, (res) => {
-        if (res.status === "err") {
-          toast.error("Lỗi hệ thống!");
-        } else if (res.status === "ok") {
-          setIsOpen(!isOpen);
-        }
-      });
-    } else {
-      setIsOpen(!isOpen);
-    }
+    setIsOpen(!isOpen);
   };
   return (
     <>
@@ -209,15 +179,20 @@ const NotifyButton = () => {
                     `1px solid ${theme.palette.border.dialog}`,
                 }}
               >
-                <Typography
-                  sx={{
-                    fontSize: "1.7rem",
-                    fontWeight: "bold",
-                    color: (theme) => theme.palette.text.color.active,
-                  }}
-                >
-                  Xem tất cả
-                </Typography>
+                {session && (
+                  <Link href={`/profile/${session.user.account}`}>
+                    <Typography
+                      sx={{
+                        cursor: "pointer",
+                        fontSize: "1.7rem",
+                        fontWeight: "bold",
+                        color: (theme) => theme.palette.text.color.active,
+                      }}
+                    >
+                      Xem tất cả
+                    </Typography>
+                  </Link>
+                )}
               </Box>
             </Box>
           </ClickAwayListener>

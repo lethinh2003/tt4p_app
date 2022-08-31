@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, ClickAwayListener } from "@mui/material";
 import { useState, memo } from "react";
 import AvatarUser from "../AvatarUser";
 import { timeFromNow } from "../../../utils/convertTime";
@@ -6,7 +6,13 @@ import { BsThreeDots } from "react-icons/bs";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const OptionItem = ({ item, setIsHide, setIsLoading, isLoading }) => {
+const OptionItem = ({
+  item,
+  setIsHide,
+  setIsLoading,
+  isLoading,
+  setIsOpenOptionMenu,
+}) => {
   const handleClickDeleteNotify = async () => {
     try {
       setIsLoading(true);
@@ -31,40 +37,43 @@ const OptionItem = ({ item, setIsHide, setIsLoading, isLoading }) => {
   };
   return (
     <>
-      <Box
-        sx={{
-          zIndex: 1,
-          cursor: "pointer",
-          marginBottom: "5px",
-          position: "absolute",
-          backgroundColor: (theme) =>
-            theme.palette.notification.background.optionMenu,
-          border: (theme) => `1px solid ${theme.palette.border.dialog}`,
-          padding: "15px",
-          display: "flex",
-          flexDirection: "column",
-          gap: "10px",
-          width: "90%",
-          bottom: "15px",
-          borderRadius: "5px",
-          boxShadow: (theme) =>
-            `1px 7px 11px 0px ${theme.palette.notification.boxShadow.optionMenu}`,
-        }}
-      >
-        <Typography
-          onClick={() => handleClickDeleteNotify()}
+      <ClickAwayListener onClickAway={() => setIsOpenOptionMenu(false)}>
+        <Box
           sx={{
-            fontSize: "1.4rem",
-            fontWeight: "500",
-            "&:hover": {
-              color: (theme) =>
-                theme.palette.notification.color.optionMenuHover,
-            },
+            zIndex: 1,
+            cursor: "pointer",
+            marginBottom: "5px",
+            position: "absolute",
+            backgroundColor: (theme) =>
+              theme.palette.notification.background.optionMenu,
+            border: (theme) => `1px solid ${theme.palette.border.dialog}`,
+            padding: "15px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+            width: "90%",
+            bottom: "15px",
+            borderRadius: "5px",
+            boxShadow: (theme) =>
+              `1px 7px 11px 0px ${theme.palette.notification.boxShadow.optionMenu}`,
           }}
         >
-          Delete this notification
-        </Typography>
-      </Box>
+          <Typography
+            onClick={() => handleClickDeleteNotify()}
+            sx={{
+              fontSize: "1.4rem",
+              fontWeight: "500",
+              color: (theme) => theme.palette.text.color.first,
+              "&:hover": {
+                color: (theme) =>
+                  theme.palette.notification.color.optionMenuHover,
+              },
+            }}
+          >
+            Delete this notification
+          </Typography>
+        </Box>
+      </ClickAwayListener>
     </>
   );
 };

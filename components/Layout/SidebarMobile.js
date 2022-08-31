@@ -1,43 +1,35 @@
 import { Box, useScrollTrigger, Slide, AppBar, Toolbar } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState, memo } from "react";
+import React, { useEffect, useRef, useState, memo } from "react";
 import { VscListSelection } from "react-icons/vsc";
 import { motion } from "framer-motion";
 import AccountMobile from "../Sidebar/AccountMobile";
+import PropTypes from "prop-types";
+import Link from "next/link";
+import NotifyButton from "../MenuRight/NotifyButton";
+function ElevationScroll(props) {
+  const { children } = props;
 
-function HideOnScroll(props) {
-  const { children, window, threshold } = props;
-  const refScroll = useRef(null);
-  useEffect(() => {
-    const getLayoutDom = document.querySelector(".layout");
-    refScroll.current = getLayoutDom;
-    console.log(refScroll.current);
-  }, []);
   const trigger = useScrollTrigger({
     disableHysteresis: true,
-    threshold: threshold,
-    target: refScroll.current ? refScroll.current : undefined,
+    threshold: 0,
   });
 
-  return (
-    <Slide appear={false} direction="down" in={!trigger}>
-      {children}
-    </Slide>
-  );
+  return React.cloneElement(children, {
+    elevation: trigger ? 4 : 0,
+  });
 }
-const SidebarMobile = () => {
-  const router = useRouter();
-  const getRouterValue = () => {
-    let result;
-    if (router.pathname.startsWith("/posts") || router.pathname === "/") {
-      result = "home";
-    } else if (router.pathname.startsWith("/chat")) {
-      result = "message";
-    }
-    return result;
-  };
-  const [value, setValue] = useState(getRouterValue());
+
+ElevationScroll.propTypes = {
+  children: PropTypes.element.isRequired,
+};
+
+const SidebarMobile = (props) => {
+  const trigger = useScrollTrigger({
+    disableHysteresis: true,
+    threshold: 60,
+  });
 
   const SizebarMobileItem = styled(Box)(({ theme }) => ({
     fontSize: "3rem",
@@ -53,29 +45,59 @@ const SidebarMobile = () => {
 
   return (
     <>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <SizebarMobileItem
-          as={motion.div}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          sx={{}}
+      <ElevationScroll {...props}>
+        <AppBar
+          sx={{
+            width: "100%",
+            maxWidth: "100%",
+            padding: { xs: "0px 5px", md: "0px 20px" },
+
+            display: { xs: "block", md: "block", lg: "none" },
+            backgroundColor: (theme) =>
+              theme.palette.sidebar.background.default,
+          }}
         >
-          <VscListSelection />
-        </SizebarMobileItem>
-        <SizebarMobileItem
-          as={motion.div}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <AccountMobile />
-        </SizebarMobileItem>
-      </Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              borderBottom: (theme) =>
+                `1px solid ${theme.palette.border.dialog}`,
+              color: (theme) => theme.palette.text.color.first,
+            }}
+          >
+            <SizebarMobileItem>
+              <Link href="/">
+                <img
+                  src="https://i.imgur.com/A0OAtU5.png"
+                  style={{
+                    objectFit: "contain",
+                    width: "100%",
+                    height: "50px",
+                  }}
+                />
+              </Link>
+            </SizebarMobileItem>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: "5px",
+              }}
+            >
+              <SizebarMobileItem>
+                <NotifyButton />
+              </SizebarMobileItem>
+
+              <SizebarMobileItem>
+                <AccountMobile />
+              </SizebarMobileItem>
+            </Box>
+          </Box>
+        </AppBar>
+      </ElevationScroll>
     </>
   );
 };

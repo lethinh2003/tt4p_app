@@ -32,7 +32,6 @@ const Heart = ({ item, socket }) => {
     if (socket) {
       socket.on("update-likes-post", (data) => {
         if (data.userID === session.user.id) {
-          console.log(data);
           if (data.type === "create_success") {
             dispatch(
               _listHeartedPosts({
@@ -40,7 +39,7 @@ const Heart = ({ item, socket }) => {
                 data: item._id,
               })
             );
-            console.log(item);
+
             dispatch(
               _postActivity({
                 type: ADD_ITEM_POST_ACTIVITY,
@@ -85,6 +84,20 @@ const Heart = ({ item, socket }) => {
       setIsLoading(false);
       setHeartsCount(res.data.data.hearts_count);
       if (res.data.message === "create_success") {
+        dispatch(
+          _listHeartedPosts({
+            type: ADD_ITEM_LIST_HEARTED_POSTS,
+            data: item._id,
+          })
+        );
+
+        dispatch(
+          _postActivity({
+            type: ADD_ITEM_POST_ACTIVITY,
+            data: item,
+          })
+        );
+
         if (session.user.id != item.user[0]._id) {
           const sendNotify = await axios.post(
             `${process.env.ENDPOINT_SERVER}/api/v1/users/notifies`,
@@ -102,6 +115,12 @@ const Heart = ({ item, socket }) => {
           });
         }
       } else if (res.data.message === "delete_success") {
+        dispatch(
+          _listHeartedPosts({
+            type: REMOVE_ITEM_LIST_HEARTED_POSTS,
+            data: item._id,
+          })
+        );
         if (session.user.id != item.user[0]._id) {
           await Promise.all([
             axios.post(

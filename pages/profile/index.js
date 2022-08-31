@@ -1,28 +1,23 @@
 import { Box, Typography } from "@mui/material";
 import { getSession, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useContext, useEffect } from "react";
+import { useEffect } from "react";
 import Layout from "../../components/Layout/Layout";
 import MenuRight from "../../components/Profile/MenuRight";
-import Profile from "../../components/Profile/Profile";
-import SocketContext from "../../contexts/socket";
 import useAuth from "../../utils/useAuth";
 
 const Home = () => {
   const { data: session, status } = useSession();
 
   const isAuthenticated = useAuth(true);
-  const socket = useContext(SocketContext);
 
   const router = useRouter();
-  const { account } = router.query;
+
   useEffect(() => {
     if (session) {
-      if (!account) {
-        router.push(`/profile/${session.user.account}`);
-      }
+      router.push(`/profile/${session.user.account}`);
     }
-  }, [account, session]);
+  }, [session]);
 
   return (
     <>
@@ -64,14 +59,12 @@ const Home = () => {
                   alignItems: "center",
                 }}
               >
-                🗒️ Thông tin {account}
+                🗒️ Thông tin tài khoản
               </Typography>
-
-              <Profile account={account} socket={socket} />
             </Box>
           </Box>
         </Box>
-        <MenuRight account={account} />
+        <MenuRight />
       </Layout>
     </>
   );

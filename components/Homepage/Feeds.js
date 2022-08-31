@@ -240,7 +240,7 @@ const Feeds = ({ isAuthenticated }) => {
               overflowX: "auto",
             }}
           >
-            <Box sx={{ display: "flex", gap: "5px" }}>
+            <Box sx={{ display: "flex", gap: "5px", padding: "5px 0px" }}>
               {category.map((item, i) => (
                 <TitleFeeds
                   key={i}

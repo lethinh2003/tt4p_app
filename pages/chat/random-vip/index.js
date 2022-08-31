@@ -34,7 +34,7 @@ export default function Home() {
         >
           <Box
             sx={{
-              padding: { xs: "20px 20px 110px 20px", md: "20px" },
+              padding: { xs: "20px 5px 110px 5px", md: "20px" },
             }}
           >
             <Box

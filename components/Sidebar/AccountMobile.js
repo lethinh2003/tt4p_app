@@ -1,44 +1,78 @@
-import { Avatar, Box, Typography } from "@mui/material";
-import { styled } from "@mui/material/styles";
+import { useSelector } from "react-redux";
+import AvatarUser from "../Homepage/AvatarUser";
+import { BigHead } from "@bigheads/core";
+import { Badge, Box, Typography } from "@mui/material";
+import MenuMobile from "./MenuMobile";
+import { memo, useState } from "react";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useSession } from "next-auth/react";
-import { getUser } from "../../redux/actions/getUser";
-import { toast } from "react-toastify";
 
 const AccountMobile = () => {
-  const { data: session, status } = useSession();
-  const dispatch = useDispatch();
-  const [user, setUser] = useState("");
+  const router = useRouter();
 
   const dataUser = useSelector((state) => state.user.data);
-  const requestingGetUser = useSelector((state) => state.user.requesting);
-  const errorGetUser = useSelector((state) => state.user.error);
-  const errorMessageGetUser = useSelector((state) => state.user.message);
-
-  useEffect(() => {
-    if (status === "authenticated" && !dataUser) {
-      // dispatch(getUser(session.user.account));
+  const [isOpenMenu, setIsOpenMenu] = useState(false);
+  const handleClickMenu = () => {
+    if (isOpenMenu) {
+      router.push(`/profile/${dataUser.data.account}`);
+    } else {
+      setIsOpenMenu(true);
     }
-  }, []);
-  useEffect(() => {
-    if (errorGetUser) {
-      toast.error(errorMessageGetUser);
-    }
-  }, [errorGetUser]);
-  const AvatarProfile = styled(Avatar)(({ theme }) => ({
-    "&.MuiAvatar-root": {
-      border: `3px solid ${theme.palette.border.feeds}`,
-    },
-  }));
+  };
 
   return (
     <>
+      {isOpenMenu && (
+        <MenuMobile setIsOpenMenu={setIsOpenMenu} isOpenMenu={isOpenMenu} />
+      )}
       {dataUser && (
-        <AvatarProfile alt={dataUser.data.name} src={dataUser.data.avatar} />
+        <Box
+          onClick={() => handleClickMenu()}
+          sx={{
+            width: "50px",
+            height: "50px",
+            cursor: "pointer",
+            borderRadius: "50%",
+            position: "relative",
+            overflow: "hidden",
+            border: (theme) => `2px solid ${theme.palette.border.dialog}`,
+            maxWidth: "200px",
+          }}
+        >
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: "50px",
+            }}
+          >
+            <BigHead
+              accessory={dataUser.data.avatarSVG.accessory}
+              body={dataUser.data.avatarSVG.body}
+              circleColor={dataUser.data.avatarSVG.circleColor}
+              clothing={dataUser.data.avatarSVG.clothing}
+              clothingColor={dataUser.data.avatarSVG.clothingColor}
+              eyebrows={dataUser.data.avatarSVG.eyebrows}
+              eyes={dataUser.data.avatarSVG.eyes}
+              faceMask={dataUser.data.avatarSVG.faceMask}
+              faceMaskColor={dataUser.data.avatarSVG.faceMaskColor}
+              facialHair={dataUser.data.avatarSVG.facialHair}
+              graphic={dataUser.data.avatarSVG.graphic}
+              hair={dataUser.data.avatarSVG.hair}
+              hairColor={dataUser.data.avatarSVG.hairColor}
+              hat={dataUser.data.avatarSVG.hat}
+              hatColor={dataUser.data.avatarSVG.hatColor}
+              lashes={dataUser.data.avatarSVG.lashes}
+              lipColor={dataUser.data.avatarSVG.lipColor}
+              mask={dataUser.data.avatarSVG.mask}
+              mouth={dataUser.data.avatarSVG.mouth}
+              skinTone={dataUser.data.avatarSVG.skinTone}
+            />
+          </Box>
+        </Box>
       )}
     </>
   );
 };
-export default AccountMobile;
+export default memo(AccountMobile);
