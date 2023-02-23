@@ -1,11 +1,8 @@
+import axios from "axios";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import axios from "axios";
-import dbConnect from "../../../database/dbConnect";
-import { comparePassword } from "../../../utils/hashPassword";
-import bcrypt from "bcrypt";
-import User from "../../../models/User";
 import GoogleProvider from "next-auth/providers/google";
+import User from "../../../models/User";
 import sendEmail from "../../../utils/email";
 var randomstring = require("randomstring");
 var jwt = require("jsonwebtoken");
@@ -151,9 +148,8 @@ export default NextAuth({
       }
 
       // If accessTokenExpiry is 24 hours, we have to refresh token before 24 hours pass.
-      const shouldRefreshTime = Math.round(
-        token.accessTokenExpiry - 50 * 60 * 1000 - Date.now()
-      );
+      const shouldRefreshTime =
+        1 || Math.round(token.accessTokenExpiry - 50 * 60 * 1000 - Date.now());
 
       // If the token is still valid, just return it.
       if (shouldRefreshTime > 0) {
