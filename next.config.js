@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    appDir: true,
-  },
   optimizeFonts: false,
   env: {
     ENDPOINT_SERVER: process.env.ENDPOINT_SERVER,
