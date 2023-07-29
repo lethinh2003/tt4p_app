@@ -194,7 +194,7 @@ const AuthorInfo = ({ user }) => {
                     color: (theme) => theme.palette.text.color.first,
                   }}
                 >
-                  ✨ {user.followers.length}
+                  ✨ {user.followers?.length || 0}
                 </Typography>
               </Box>
             )}
